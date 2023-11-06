@@ -23,8 +23,6 @@ class SelectionFragment : Fragment() {
         val items= listOf("hello","karemel")
         val adapter=ArrayAdapter(requireContext(), R.layout.list_item,items)
 
-
-
         return binding.root
     }
 

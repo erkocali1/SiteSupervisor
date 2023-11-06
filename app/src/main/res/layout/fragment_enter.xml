@@ -31,12 +31,11 @@
                 style="@style/montserrat_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12sp"
                 android:text="Welcome"
                 android:textSize="32sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_goneMarginStart="12sp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
 
             <TextView
@@ -44,12 +43,11 @@
                 style="@style/montserrat_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12sp"
                 android:text="Please login with your information"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/welcome"
-                app:layout_goneMarginStart="12sp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/welcome" />
 
             <Button
                 android:id="@+id/btnLogin"

@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.muzo.sitesupervisor.R
+import com.muzo.sitesupervisor.databinding.FragmentEnterBinding
 
 
 class EnterFragment : Fragment() {
+    private lateinit var binding: FragmentEnterBinding
 
 
     override fun onCreateView(
@@ -16,7 +17,8 @@ class EnterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_enter, container, false)
+        binding = FragmentEnterBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
 }

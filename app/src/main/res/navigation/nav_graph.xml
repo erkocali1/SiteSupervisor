@@ -21,15 +21,40 @@
         android:id="@+id/loginFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.loginfragment.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_selectionFragment"
+            app:destination="@id/selectionFragment" />
+    </fragment>
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.registerfragment.RegisterFragment"
         android:label="fragment_register"
-        tools:layout="@layout/fragment_register" />
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_registerFragment_to_selectionFragment"
+            app:destination="@id/selectionFragment" />
+    </fragment>
     <fragment
         android:id="@+id/selectionFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.selectionFragment.SelectionFragment"
         android:label="fragment_selection"
-        tools:layout="@layout/fragment_selection" />
+        tools:layout="@layout/fragment_selection" >
+        <action
+            android:id="@+id/action_selectionFragment_to_createAreaFragment"
+            app:destination="@id/createAreaFragment" />
+        <action
+            android:id="@+id/action_selectionFragment_to_joinAreaFragment"
+            app:destination="@id/joinAreaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createAreaFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.createAreaFragment.CreateAreaFragment"
+        android:label="fragment_create_area"
+        tools:layout="@layout/fragment_create_area" />
+    <fragment
+        android:id="@+id/joinAreaFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.joinAreaFragment.JoinAreaFragment"
+        android:label="fragment_join_area"
+        tools:layout="@layout/fragment_join_area" />
 </navigation>
