@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "227847813556",
+    "project_id": "site-supervisor-2c5f7",
+    "storage_bucket": "site-supervisor-2c5f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227847813556:android:2d25c5b570b9cb163e5ae1",
+        "android_client_info": {
+          "package_name": "com.muzo.sitesupervisor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3LPAhx5LJQ6D2o9Fz_S7Tgn9AfYNsWYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
