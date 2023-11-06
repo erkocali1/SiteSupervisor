@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/enterbackground"
-    tools:context=".feature.fragment.enterfragment.EnterFragment">
+    tools:context=".feature.fragment.selectionFragment.SelectionFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -26,18 +26,6 @@
             android:padding="38sp"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/welcome"
-                style="@style/montserrat_bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12sp"
-                android:text="Welcome"
-                android:textSize="32sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_goneMarginStart="12sp" />
-
 
             <TextView
                 android:id="@+id/welcomeText"
@@ -45,11 +33,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12sp"
-                android:text="Please login with your information"
+                android:text="Please Continue with your Choice"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/welcome"
-                app:layout_goneMarginStart="12sp" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
             <Button
                 android:id="@+id/btnLogin"
@@ -58,7 +46,7 @@
                 app:layout_constraintTop_toBottomOf="@id/welcomeText"
                 android:layout_marginTop="38sp"
                 style="@style/montserrat_bold"
-                android:text="LOG IN"
+                android:text="Join"
                 android:backgroundTint="@color/logButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -68,7 +56,7 @@
                 style="@style/montserrat_semi_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You have already an account"
+                android:text="Join a Construction Site"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +70,7 @@
                 app:layout_constraintTop_toBottomOf="@id/LoginText"
                 android:layout_marginTop="18sp"
                 style="@style/montserrat_bold"
-                android:text="SIGN UP"
+                android:text="Create"
                 app:layout_constraintStart_toStartOf="parent"
                 android:backgroundTint="@color/logButton"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -92,7 +80,7 @@
                 style="@style/montserrat_semi_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dont Have an Account?"
+                android:text="Create a New Construction Site"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -103,6 +91,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

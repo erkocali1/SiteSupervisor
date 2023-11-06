@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".feature.fragment.joinAreaFragment.JoinAreaFragment">
+
+    <ImageView
+        android:id="@+id/iv_worker"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:padding="20sp"
+        android:src="@drawable/worker"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/list"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64sp"
+        android:hint="Select Your Construction Area"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        app:layout_constraintTop_toBottomOf="@id/iv_worker">
+
+        <AutoCompleteTextView
+            android:id="@+id/list_construction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:id="@+id/listText"
+        style="@style/montserrat_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4sp"
+        android:text="Take a look at a construction site "
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnJoin" />
+
+    <Button
+        android:id="@+id/btnJoin"
+        android:layout_width="150sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88sp"
+        android:backgroundTint="@color/logButton"
+        android:text="Join"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/list" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

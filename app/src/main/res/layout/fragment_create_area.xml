@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".feature.fragment.createAreaFragment.CreateAreaFragment">
+
+    <ImageView
+        android:id="@+id/iv_worker"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:padding="20sp"
+        android:src="@drawable/worker"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/constructionNameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20sp"
+        android:layout_marginTop="64sp"
+        android:layout_marginEnd="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_worker">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etConstructionName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Type Your Construction Site"
+            android:inputType="textPersonName" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/constText"
+        style="@style/montserrat_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12sp"
+        android:text="Create a New Construction Site "
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnCreate" />
+
+    <Button
+        android:id="@+id/btnCreate"
+        android:layout_width="150sp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/logButton"
+        android:text="Create"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="88sp"
+        app:layout_constraintTop_toBottomOf="@id/constructionNameLayout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
