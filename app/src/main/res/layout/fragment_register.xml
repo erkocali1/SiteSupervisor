@@ -134,7 +134,7 @@
 
 
             <Button
-                android:id="@+id/btnLogin"
+                android:id="@+id/btnRegister"
                 android:layout_width="160sp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24sp"

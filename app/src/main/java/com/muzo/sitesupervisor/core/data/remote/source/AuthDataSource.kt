@@ -5,6 +5,7 @@ import com.muzo.sitesupervisor.core.common.Resource
 
 
 interface AuthDataSource {
+
     val currentUser:FirebaseUser?
 
     suspend fun register(name:String,email:String,password:String):Resource<FirebaseUser>

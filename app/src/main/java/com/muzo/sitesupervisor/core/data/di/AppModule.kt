@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.core.data.di
 
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,7 +14,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseApp():FirebaseApp{
-        return FirebaseApp.getInstance()
+    fun provideFirebaseApp():FirebaseAuth{
+        return FirebaseAuth.getInstance()
     }
 }
