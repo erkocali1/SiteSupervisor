@@ -1,4 +1,4 @@
-package com.muzo.sitesupervisor.core.data.remote.source
+package com.muzo.sitesupervisor.core.data.remote.source.auth
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

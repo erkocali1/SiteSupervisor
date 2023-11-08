@@ -1,9 +1,9 @@
 package com.muzo.sitesupervisor.core.data.di
 
-import com.muzo.sitesupervisor.core.data.remote.repository.AuthRepository
-import com.muzo.sitesupervisor.core.data.remote.repository.AuthRepositoryImpl
-import com.muzo.sitesupervisor.core.data.remote.source.AuthDataSource
-import com.muzo.sitesupervisor.core.data.remote.source.AuthDataSourceImpl
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepositoryImpl
+import com.muzo.sitesupervisor.core.data.remote.source.auth.AuthDataSource
+import com.muzo.sitesupervisor.core.data.remote.source.auth.AuthDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

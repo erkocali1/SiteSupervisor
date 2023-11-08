@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.muzo.sitesupervisor.core.common.Resource
 
-import com.muzo.sitesupervisor.core.data.remote.repository.AuthRepository
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

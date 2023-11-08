@@ -1,8 +1,8 @@
-package com.muzo.sitesupervisor.core.data.remote.repository
+package com.muzo.sitesupervisor.core.data.remote.repository.auth
 
 import com.google.firebase.auth.FirebaseUser
 import com.muzo.sitesupervisor.core.common.Resource
-import com.muzo.sitesupervisor.core.data.remote.source.AuthDataSource
+import com.muzo.sitesupervisor.core.data.remote.source.auth.AuthDataSource
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
