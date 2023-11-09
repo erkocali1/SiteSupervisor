@@ -23,4 +23,8 @@ object AppModule {
     fun provideFireStoreInstance():FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
+
+
+
+
 }
