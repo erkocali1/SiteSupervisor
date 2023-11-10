@@ -31,9 +31,11 @@ class CreateAreaFragment : Fragment() {
     private fun observeData() {
 
         binding.btnCreate.setOnClickListener {
-            val constructionName = binding.btnCreate.text.toString()
-            val data=DataModel(message = "", collection = constructionName)
 
+
+            val constructionName = binding.etConstructionName.text.toString()
+            val data=DataModel(message = "selam", collection = constructionName)
+            viewModel.save(data)
             lifecycleScope.launch {
                 viewModel._uiState.collect { uiState ->
 
@@ -45,7 +47,7 @@ class CreateAreaFragment : Fragment() {
                         else -> binding.progressBar.visibility = View.GONE
 
                     }
-                    viewModel.save(data)
+
 
                 }
             }
