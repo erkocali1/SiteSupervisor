@@ -8,19 +8,16 @@ import javax.inject.Inject
 
 class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFirestore) :
     FireBaseSource {
-    override suspend fun saveData(data: DataModel): Resource<Unit> {
+    override suspend fun saveData(data: DataModel): Result<Unit> {
 
-
-        return try {
-            database.collection(data.collection)
-                .add(data).await()
-
-            Resource.Success(Unit)
-        } catch (e: Exception) {
-            Resource.Error(e)
+        return kotlin.runCatching {
+            database.collection(data.collection).add(data).await()
         }
 
     }
+
+
+
 
     override suspend fun fetchData() {
 

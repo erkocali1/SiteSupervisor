@@ -5,7 +5,7 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 
 interface FireBaseSource {
 
-    suspend fun saveData(data: DataModel):Resource<Unit>
+    suspend fun saveData(data: DataModel):Result<Unit>
 
 
     suspend fun fetchData()

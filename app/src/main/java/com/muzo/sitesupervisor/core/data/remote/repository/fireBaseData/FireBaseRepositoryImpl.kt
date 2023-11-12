@@ -8,7 +8,7 @@ import javax.inject.Inject
 class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: FireBaseSource) :
     FireBaseRepository {
 
-    override suspend fun saveData(data: DataModel): Resource<Unit> {
+    override suspend fun saveData(data: DataModel): Result<Unit> {
         return fireBaseSource.saveData(data)
     }
 

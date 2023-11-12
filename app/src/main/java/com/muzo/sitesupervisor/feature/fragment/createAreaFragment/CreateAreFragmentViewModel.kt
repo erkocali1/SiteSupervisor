@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
+import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,12 +32,15 @@ class CreateAreFragmentViewModel @Inject constructor(private val fireBaseSaveDat
                     }
 
                     is Resource.Error -> {
-                        _uiState.value = _uiState.value.copy(loading = false)
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            message = result.exception?.message
+                        )
                     }
 
                     is Resource.Success -> {
-                        _uiState.value =
-                            _uiState.value.copy(loading = false)
+                        _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE,isSuccessful =true)
+
                     }
                 }
             }.launchIn(this)
@@ -50,4 +54,6 @@ class CreateAreFragmentViewModel @Inject constructor(private val fireBaseSaveDat
 
 data class SaveDataState(
     val loading: Boolean = false,
+    val message: String? = null,
+    val isSuccessful: Boolean = false
 )

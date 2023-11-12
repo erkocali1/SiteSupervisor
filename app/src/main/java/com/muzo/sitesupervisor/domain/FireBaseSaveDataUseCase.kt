@@ -1,6 +1,6 @@
 package com.muzo.sitesupervisor.domain
 
-import com.muzo.sitesupervisor.core.common.Resource
+import com.muzo.sitesupervisor.core.constans.Constants.Companion.ERROR_MESSAGE
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.fireBaseData.FireBaseRepository
 import kotlinx.coroutines.flow.Flow
@@ -9,13 +9,15 @@ import javax.inject.Inject
 
 class FireBaseSaveDataUseCase @Inject constructor(private val repository: FireBaseRepository) {
 
-    suspend operator fun invoke(dataModel: DataModel): Flow<Resource<Unit>> {
+    suspend operator fun invoke(dataModel: DataModel): Flow<Unit> {
         return flow {
-            repository.saveData(data = dataModel)
+            val result = repository.saveData(data = dataModel)
+            (result.getOrNull() ?: throw IllegalArgumentException(ERROR_MESSAGE)).also {
+                emit(it)
+            }
+
         }
-
     }
-
 }
 
 
