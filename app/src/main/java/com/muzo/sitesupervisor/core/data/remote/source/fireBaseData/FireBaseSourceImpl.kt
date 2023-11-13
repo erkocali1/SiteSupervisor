@@ -11,7 +11,11 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
     override suspend fun saveData(data: DataModel): Result<Unit> {
 
         return kotlin.runCatching {
-            database.collection(data.collection).add(data).await()
+            database.collection("users")
+                .document("hehe")
+                .collection("post")
+                .document("postId")
+                .set(data)
         }
 
     }

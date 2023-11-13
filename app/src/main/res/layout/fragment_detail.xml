@@ -16,7 +16,7 @@
         android:src="@drawable/ic_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/brownDark" />
+        app:tint="@color/black" />
 
     <TextView
         android:id="@+id/back_text"
@@ -25,12 +25,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:text="All Notes"
-        android:textColor="@color/brownDark"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/back"
         app:layout_constraintStart_toEndOf="@+id/back"
         app:layout_constraintTop_toTopOf="@+id/back" />
 
     <androidx.cardview.widget.CardView
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:id="@+id/ok_btn"
         android:layout_width="40sp"
         android:layout_height="40sp"
@@ -46,13 +48,16 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:id="@+id/ok_delete"
         android:layout_width="40sp"
         android:layout_height="40sp"
         android:layout_marginEnd="8sp"
         app:cardCornerRadius="40sp"
         app:layout_constraintEnd_toStartOf="@id/ok_btn"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:focusable="true">
 
         <ImageView
 
@@ -119,6 +124,8 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
             android:layout_marginTop="4sp"
             android:id="@+id/cv_add_photo"
             android:layout_width="40sp"

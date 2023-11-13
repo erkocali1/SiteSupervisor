@@ -36,10 +36,11 @@ class CreateAreaFragment : Fragment() {
 
 
             val constructionName = binding.etConstructionName.text.toString()
+            val currentUser=viewModel.currentUser
             val data = DataModel(message = "selam", collection = constructionName)
             viewModel.save(data)
             lifecycleScope.launch {
-                viewModel._uiState.collect { uiState ->
+                viewModel.uiState.collect { uiState ->
                     when {
                         uiState.loading -> {
                             binding.progressBar.show()

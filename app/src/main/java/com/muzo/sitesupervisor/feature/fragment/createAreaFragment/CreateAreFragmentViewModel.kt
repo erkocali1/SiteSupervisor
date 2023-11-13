@@ -6,6 +6,7 @@ import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,11 +17,17 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class CreateAreFragmentViewModel @Inject constructor(private val fireBaseSaveDataUseCase: FireBaseSaveDataUseCase) :
-    ViewModel() {
+class CreateAreFragmentViewModel @Inject constructor(
+    private val fireBaseSaveDataUseCase: FireBaseSaveDataUseCase,
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
-    val _uiState: MutableStateFlow<SaveDataState> = MutableStateFlow(SaveDataState())
+    private val _uiState: MutableStateFlow<SaveDataState> = MutableStateFlow(SaveDataState())
     val uiState = _uiState
+
+
+    val currentUser=authRepository.currentUser
+
 
 
     fun save(data: DataModel) {
@@ -33,13 +40,16 @@ class CreateAreFragmentViewModel @Inject constructor(private val fireBaseSaveDat
 
                     is Resource.Error -> {
                         _uiState.value = _uiState.value.copy(
-                            loading = false,
-                            message = result.exception?.message
+                            loading = false, message = result.exception?.message
                         )
                     }
 
                     is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE,isSuccessful =true)
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            message = OK_MESSAGE,
+                            isSuccessful = true
+                        )
 
                     }
                 }
@@ -53,7 +63,5 @@ class CreateAreFragmentViewModel @Inject constructor(private val fireBaseSaveDat
 }
 
 data class SaveDataState(
-    val loading: Boolean = false,
-    val message: String? = null,
-    val isSuccessful: Boolean = false
+    val loading: Boolean = false, val message: String? = null, val isSuccessful: Boolean = false
 )
