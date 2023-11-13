@@ -22,4 +22,25 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="titillium_web_black">
+        <item name="android:fontFamily">@font/titillium_web_black</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="titillium_web_bold">
+        <item name="android:fontFamily">@font/titillium_web_bold</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="titillium_web_light">
+        <item name="android:fontFamily">@font/titillium_web_light</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="titillium_web_regular">
+        <item name="android:fontFamily">@font/titillium_web_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+
 </resources>

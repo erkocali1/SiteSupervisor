@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="150sp"
+        android:layout_margin="18sp"
+        android:backgroundTint="@color/cardBackground"
+        android:elevation="5dp"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="18sp">
+
+            <ImageView
+                android:id="@+id/iv_job"
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:src="@drawable/worker"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_day"
+                style="@style/titillium_web_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:text="DAY"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/iv_job"
+                app:layout_constraintTop_toTopOf="@id/iv_job" />
+
+            <TextView
+                android:id="@+id/text_Title"
+                style="@style/titillium_web_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:layout_marginTop="6sp"
+                android:text="TİTLE"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/iv_job"
+                app:layout_constraintTop_toBottomOf="@id/text_day" />
+
+            <TextView
+                android:id="@+id/text_desc"
+                style="@style/titillium_web_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:layout_marginTop="6sp"
+                android:text="TEXT YOUR DESC"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/iv_job"
+                app:layout_constraintTop_toBottomOf="@id/text_Title" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

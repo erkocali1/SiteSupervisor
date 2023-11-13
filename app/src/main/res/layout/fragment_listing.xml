@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".feature.fragment.listingNotes.ListingFragment">
+
+
+    <TextView
+        android:id="@+id/text_Title"
+        style="@style/titillium_web_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12sp"
+        android:layout_marginTop="12sp"
+        android:text="Hello"
+        android:textColor="@color/brownDark"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_constant"
+        style="@style/titillium_web_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12sp"
+        android:layout_marginTop="12sp"
+        android:text="Let's plan the construction site"
+        android:textColor="@color/brownLight"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_Title" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8sp"
+        android:layout_marginBottom="80sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_constant"
+        tools:listitem="@layout/item_row" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/search"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="8sp"
+        android:layout_marginEnd="8sp"
+        android:layout_marginBottom="8sp"
+        app:cardCornerRadius="50sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_search" />
+
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_add"
+        app:tint="@color/brownLight"
+        android:layout_marginBottom="95sp"
+        app:backgroundTint="@color/brownExtraLight"
+        android:layout_marginEnd="15sp"
+        app:layout_constraintCircleRadius="85dp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

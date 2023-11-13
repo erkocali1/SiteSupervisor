@@ -11,4 +11,9 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="logButton">#383e42</color>
     <color name="splash">#e2d1c3</color>
+    <color name="cardBackground">#f6f6f6</color>
+    <color name="brownDark">#884A39</color>
+    <color name="brownLight">#C38154</color>
+    <color name="brownExtraLight">#F9E0BB</color>
+    <color name="backgroundWhite">#F5F7F8</color>
 </resources>

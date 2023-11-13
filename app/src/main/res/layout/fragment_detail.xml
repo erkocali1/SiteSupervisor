@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundWhite"
+    android:padding="16dp"
+    tools:context=".feature.fragment.detailFragment.DetailFragment">
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="12sp"
+        android:src="@drawable/ic_back_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/brownDark" />
+
+    <TextView
+        android:id="@+id/back_text"
+        style="@style/montserrat_semi_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:text="All Notes"
+        android:textColor="@color/brownDark"
+        app:layout_constraintBottom_toBottomOf="@+id/back"
+        app:layout_constraintStart_toEndOf="@+id/back"
+        app:layout_constraintTop_toTopOf="@+id/back" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/ok_btn"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        app:cardCornerRadius="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_tick" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/ok_delete"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_marginEnd="8sp"
+        app:cardCornerRadius="40sp"
+        app:layout_constraintEnd_toStartOf="@id/ok_btn"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_cancel" />
+
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:id="@+id/top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/brownDark"
+        app:layout_constraintTop_toBottomOf="@+id/ok_delete"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_divider">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_date_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4sp"
+            app:cardCornerRadius="8sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/text_day"
+                style="@style/montserrat_semi_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8sp"
+                android:text="hello"
+                android:textSize="14sp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_time_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4sp"
+            android:layout_marginTop="4sp"
+            app:cardCornerRadius="8sp"
+            app:layout_constraintStart_toEndOf="@id/cv_date_picker"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/text_time"
+                style="@style/montserrat_semi_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8sp"
+                android:text="hello"
+                android:textSize="14sp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_marginTop="4sp"
+            android:id="@+id/cv_add_photo"
+            android:layout_width="40sp"
+            android:layout_height="40sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_add_photo" />
+
+        </androidx.cardview.widget.CardView>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/titleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6sp"
+            android:background="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cv_date_picker">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Type Your Construction Site"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/desLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="6sp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_des"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top|left"
+                android:hint="Type Your Construction Site"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
