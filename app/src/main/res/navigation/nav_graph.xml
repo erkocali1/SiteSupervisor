@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/createAreaFragment">
+    app:startDestination="@id/enterFragment">
 
     <fragment
         android:id="@+id/enterFragment"
@@ -54,7 +54,11 @@
         android:id="@+id/createAreaFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.createAreaFragment.CreateAreaFragment"
         android:label="fragment_create_area"
-        tools:layout="@layout/fragment_create_area" />
+        tools:layout="@layout/fragment_create_area" >
+        <action
+            android:id="@+id/action_createAreaFragment_to_listingFragment"
+            app:destination="@id/listingFragment" />
+    </fragment>
     <fragment
         android:id="@+id/joinAreaFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.joinAreaFragment.JoinAreaFragment"

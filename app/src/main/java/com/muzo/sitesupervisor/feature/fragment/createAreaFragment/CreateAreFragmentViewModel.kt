@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
-import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,26 +12,27 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.util.Calendar
 import javax.inject.Inject
 
 
 @HiltViewModel
 class CreateAreFragmentViewModel @Inject constructor(
     private val fireBaseSaveDataUseCase: FireBaseSaveDataUseCase,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SaveDataState> = MutableStateFlow(SaveDataState())
     val uiState = _uiState
 
 
-    val currentUser=authRepository.currentUser
+    val currentUser = authRepository.currentUser
 
 
-
-    fun save(data: DataModel) {
+    fun saveArea(userId: String, area: String) {
         viewModelScope.launch {
-            fireBaseSaveDataUseCase(data).asReSource().onEach { result ->
+            fireBaseSaveDataUseCase(userId, area).asReSource().onEach { result ->
                 when (result) {
                     is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
@@ -59,9 +59,18 @@ class CreateAreFragmentViewModel @Inject constructor(
 
     }
 
+    fun getCurrentDateAndTime(): Pair<String, String> {
+        val calendar = Calendar.getInstance()
+        val currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.time)
+        val currentTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
+        return Pair(currentDate, currentTime)
+    }
+
 
 }
 
 data class SaveDataState(
-    val loading: Boolean = false, val message: String? = null, val isSuccessful: Boolean = false
+    val loading: Boolean = false,
+    val message: String? = null,
+    val isSuccessful: Boolean = false
 )

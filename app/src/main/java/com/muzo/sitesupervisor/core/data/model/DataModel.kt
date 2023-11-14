@@ -1,11 +1,14 @@
 package com.muzo.sitesupervisor.core.data.model
 
-import com.google.firebase.auth.FirebaseUser
+import android.icu.text.CaseMap.Title
+import java.sql.Timestamp
+
 
 data class DataModel(
-    val message:String,
-    val collection:String,
-
-    
+    val message:String="Önemli buldugunuz bilgileri kaydedin",
+    val title: String="Şantiye defteri oluşturuldu",
+    val photoUrl:String="",
+    val timestamp:Number=12341,
+    val currentUser:String=""
 
 )
