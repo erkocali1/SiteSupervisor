@@ -7,38 +7,53 @@ import javax.inject.Inject
 
 class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFirestore) :
     FireBaseSource {
-    override suspend fun saveData(userId: String, area: String, data: DataModel): Result<Unit> {
+
+
+    override suspend fun saveArea(dataModel: DataModel): Result<Unit> {
 
         return kotlin.runCatching {
-            database.collection("Users")
-                .document(userId)
-                .collection("construcitonName")
-                .document(area)
-                .set(data)
-                .await()
 
-        }
+            val post = hashMapOf(
+                "message" to dataModel.message,
+                "title" to dataModel.title,
+                "photoUrl" to dataModel.photoUrl,
+                "timeStamp" to dataModel.timestamp
 
-    }
-
-    override suspend fun saveArea(userId: String, area: String): Result<Unit> {
-        return kotlin.runCatching {
-
-            val data= hashMapOf(
-                "data" to 5
-            )
+                )
 
             database.collection("Users")
-                .document(userId)
+                .document(dataModel.currentUser)
                 .collection("construcitonName")
-                .document(area)
-                .set(data)
+                .document(dataModel.constructionArea)
+                .set(post)
                 .await()
         }
     }
 
 
-    override suspend fun fetchData() {
+    override suspend fun fetchData(currentUser: String, constructionName: String): Result<List<DataModel>> {
+        return kotlin.runCatching {
+            val querySnapshot = database.collection("Users")
+                .document(currentUser)
+                .collection("construcitonName")
+                .document(constructionName)
+                .collection("specificCollection")
+                .get()
+                .await()
 
+            val dataList = mutableListOf<DataModel>()
+            for (document in querySnapshot.documents) {
+                val message = document.getString("message") ?: ""
+                val title = document.getString("title") ?: ""
+                val photoUrl = document.getString("photoUrl") ?: ""
+                val timeStamp = document.getLong("timeStamp") ?: 0L
+
+                val dataModel = DataModel(message, title, photoUrl, timeStamp, currentUser, constructionName)
+                dataList.add(dataModel)
+            }
+            Result.success(dataList)
+        }.getOrElse {
+            Result.failure(it)
+        }
     }
 }

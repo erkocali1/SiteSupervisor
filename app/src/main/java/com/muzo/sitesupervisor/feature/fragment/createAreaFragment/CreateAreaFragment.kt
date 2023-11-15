@@ -1,7 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.createAreaFragment
 
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,12 +36,12 @@ class CreateAreaFragment : Fragment() {
 
         binding.btnCreate.setOnClickListener {
 
-
             val constructionName = binding.etConstructionName.text.toString()
-            val currentUser = viewModel.currentUser?.uid.toString()
+
+            postFirstEntity()
 
             if (constructionName.isNotEmpty()) {
-                viewModel.saveArea(currentUser, constructionName)
+                viewModel.saveArea(postFirstEntity())
 
                 lifecycleScope.launch {
                     viewModel.uiState.collect { uiState ->
@@ -78,8 +77,19 @@ class CreateAreaFragment : Fragment() {
         findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment)
     }
 
-    private fun postFirstEntity(dataModel: DataModel){
+    private fun postFirstEntity(): DataModel {
+        val constructionName = binding.etConstructionName.text.toString()
+        val currentUser = viewModel.currentUser?.uid.toString()
 
+        return DataModel(
+            message = "Hadi kaydetmeye başlayalım",
+            title = "Şantiye defteri oluşturuldu",
+            photoUrl = "",
+            timestamp = 1234,
+            currentUser = currentUser,
+            constructionArea = constructionName
+
+        )
     }
 
 }

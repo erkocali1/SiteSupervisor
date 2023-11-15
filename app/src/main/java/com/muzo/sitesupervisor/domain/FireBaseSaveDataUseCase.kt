@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 class FireBaseSaveDataUseCase @Inject constructor(private val repository: FireBaseRepository) {
 
-    suspend operator fun invoke(userId: String, area: String): Flow<Unit> {
+    suspend operator fun invoke(dataModel: DataModel): Flow<Unit> {
         return flow {
-            val result = repository.saveArea(userId, area)
+            val result = repository.saveArea(dataModel)
             (result.getOrNull() ?: throw IllegalArgumentException(ERROR_MESSAGE)).also {
                 emit(it)
             }

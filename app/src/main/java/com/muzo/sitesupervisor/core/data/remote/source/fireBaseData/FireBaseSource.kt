@@ -4,11 +4,11 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 
 interface FireBaseSource {
 
-    suspend fun saveData(userId: String, area: String, data: DataModel): Result<Unit>
-    suspend fun saveArea(userId: String, area: String): Result<Unit>
+
+    suspend fun saveArea(dataModel: DataModel): Result<Unit>
 
 
-    suspend fun fetchData()
+    suspend fun fetchData(currentUser: String, constructionName: String): Result<List<DataModel>>
 
 
 }

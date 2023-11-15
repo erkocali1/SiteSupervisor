@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
+import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,9 +31,9 @@ class CreateAreFragmentViewModel @Inject constructor(
     val currentUser = authRepository.currentUser
 
 
-    fun saveArea(userId: String, area: String) {
+    fun saveArea(dataModel: DataModel) {
         viewModelScope.launch {
-            fireBaseSaveDataUseCase(userId, area).asReSource().onEach { result ->
+            fireBaseSaveDataUseCase(dataModel).asReSource().onEach { result ->
                 when (result) {
                     is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
@@ -46,9 +47,7 @@ class CreateAreFragmentViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
-                            loading = false,
-                            message = OK_MESSAGE,
-                            isSuccessful = true
+                            loading = false, message = OK_MESSAGE, isSuccessful = true
                         )
 
                     }
@@ -70,7 +69,5 @@ class CreateAreFragmentViewModel @Inject constructor(
 }
 
 data class SaveDataState(
-    val loading: Boolean = false,
-    val message: String? = null,
-    val isSuccessful: Boolean = false
+    val loading: Boolean = false, val message: String? = null, val isSuccessful: Boolean = false
 )
