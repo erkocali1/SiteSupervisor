@@ -35,10 +35,8 @@ class ListingFragment : Fragment() {
         binding = FragmentListingBinding.inflate(layoutInflater, container, false)
 
 
-        binding.fabBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_listingFragment_to_detailFragment)
-
-        }
+        navigateDetailFragment()
+        observeData()
 
         return binding.root
     }
@@ -51,7 +49,7 @@ class ListingFragment : Fragment() {
                     uiState.loading -> {
                         binding.progressBar.show()
                     }
-
+//bu kısım çalıştığı icin aşağıdaki kısım calısmıyor buraya bak
                     uiState.message != null -> {
                         toastMessage(uiState.message.toString())
                         binding.progressBar.hide()
@@ -82,6 +80,13 @@ class ListingFragment : Fragment() {
 
     private fun toastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun navigateDetailFragment(){
+        binding.fabBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_listingFragment_to_detailFragment)
+
+        }
     }
 
 

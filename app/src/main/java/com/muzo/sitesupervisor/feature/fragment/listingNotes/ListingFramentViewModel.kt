@@ -10,6 +10,7 @@ import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,10 +24,10 @@ class ListingFramentViewModel @Inject constructor(
 
     private val _uiState: MutableStateFlow<GetDataState> = MutableStateFlow(GetDataState())
     val uiState = _uiState
-    val currentUser = authRepository.currentUser?.uid
+    val currentUser = authRepository.currentUser?.uid.toString()
 
     init {
-        getData(currentUser!!,"ali")
+        getData(currentUser,"123")
     }
 
     private fun getData(currentUser: String, constructionName: String) {
@@ -53,9 +54,7 @@ class ListingFramentViewModel @Inject constructor(
                         )
                     }
                 }
-
-
-            }
+            }.launchIn(this)
         }
 
 

@@ -19,7 +19,7 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
                 "photoUrl" to dataModel.photoUrl,
                 "timeStamp" to dataModel.timestamp
 
-                )
+            )
 
             database.collection("Users")
                 .document(dataModel.currentUser)
@@ -33,27 +33,35 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
 
     override suspend fun fetchData(currentUser: String, constructionName: String): Result<List<DataModel>> {
         return kotlin.runCatching {
-            val querySnapshot = database.collection("Users")
+            val dataModelList = mutableListOf<DataModel>()
+
+            val documentSnapshot = database.collection("Users")
                 .document(currentUser)
                 .collection("construcitonName")
                 .document(constructionName)
-                .collection("specificCollection")
                 .get()
                 .await()
 
-            val dataList = mutableListOf<DataModel>()
-            for (document in querySnapshot.documents) {
-                val message = document.getString("message") ?: ""
-                val title = document.getString("title") ?: ""
-                val photoUrl = document.getString("photoUrl") ?: ""
-                val timeStamp = document.getLong("timeStamp") ?: 0L
+            if (documentSnapshot.exists()) {
+                val data = documentSnapshot.data
+                val message = data?.get("message") as? String ?: ""
+                val title = data?.get("title") as? String ?: ""
+                val photoUrl = data?.get("photoUrl") as? String ?: ""
+                val timestamp = data?.get("timeStamp") as? Long ?: 0L
 
-                val dataModel = DataModel(message, title, photoUrl, timeStamp, currentUser, constructionName)
-                dataList.add(dataModel)
+                val retrievedDataModel = DataModel(
+                    message,
+                    title,
+                    photoUrl,
+                    timestamp,
+                    currentUser,
+                    constructionName
+                )
+                dataModelList.add(retrievedDataModel)
             }
-            Result.success(dataList)
-        }.getOrElse {
-            Result.failure(it)
+
+            dataModelList.toList()
         }
     }
+
 }
