@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.core.data.remote.repository.fireBaseData
 
+import com.muzo.sitesupervisor.core.data.model.ConstructionName
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.source.fireBaseData.FireBaseSource
 import javax.inject.Inject
@@ -17,6 +18,10 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         constructionName: String
     ): Result<List<DataModel>> {
         return fireBaseSource.fetchData(currentUser, constructionName)
+    }
+
+    override suspend fun fetchArea(): Result<List<ConstructionName>> {
+    return fireBaseSource.fetchArea()
     }
 
 

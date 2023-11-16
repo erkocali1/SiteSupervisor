@@ -1,7 +1,9 @@
 package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.muzo.sitesupervisor.core.common.await
+import com.muzo.sitesupervisor.core.data.model.ConstructionName
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import javax.inject.Inject
 
@@ -21,26 +23,24 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
 
             )
 
-            database.collection("Users")
-                .document(dataModel.currentUser)
-                .collection("construcitonName")
-                .document(dataModel.constructionArea)
-                .set(post)
+            database.collection("Users").document(dataModel.currentUser)
+                .collection("construcitonName").document(dataModel.constructionArea).set(post)
                 .await()
         }
     }
 
 
-    override suspend fun fetchData(currentUser: String, constructionName: String): Result<List<DataModel>> {
+    override suspend fun fetchData(
+        currentUser: String, constructionName: String
+    ): Result<List<DataModel>> {
         return kotlin.runCatching {
             val dataModelList = mutableListOf<DataModel>()
 
-            val documentSnapshot = database.collection("Users")
-                .document(currentUser)
-                .collection("construcitonName")
-                .document(constructionName)
-                .get()
-                .await()
+            val documentSnapshot =
+                database.collection("Users").document(currentUser).collection("construcitonName")
+                    .document(constructionName).get().await()
+
+            Log.d("FirebaseDebug", "$documentSnapshot")
 
             if (documentSnapshot.exists()) {
                 val data = documentSnapshot.data
@@ -50,12 +50,7 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
                 val timestamp = data?.get("timeStamp") as? Long ?: 0L
 
                 val retrievedDataModel = DataModel(
-                    message,
-                    title,
-                    photoUrl,
-                    timestamp,
-                    currentUser,
-                    constructionName
+                    message, title, photoUrl, timestamp, currentUser, constructionName
                 )
                 dataModelList.add(retrievedDataModel)
             }
@@ -63,5 +58,35 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
             dataModelList.toList()
         }
     }
+
+    override suspend fun fetchArea(): Result<List<ConstructionName>> {
+        return kotlin.runCatching {
+            val constructionNames = mutableListOf<ConstructionName>()
+
+            val usersCollection = database.collection("Users")
+                .get()
+                .await()
+
+            usersCollection.documents
+
+            if (!usersCollection.isEmpty) {
+                for (userDoc in usersCollection) {
+                    val userId = userDoc.id
+                    val constructionNameModel = ConstructionName("", userId)
+                    constructionNames.add(constructionNameModel)
+                    Log.d("FirebaseDebug", "Hello Africa")
+                }
+            } else {
+                Log.d("FirebaseDebug", "Users collection is empty!")
+            }
+
+            constructionNames.toList()
+        }
+    }
+
+
+
+
+
 
 }
