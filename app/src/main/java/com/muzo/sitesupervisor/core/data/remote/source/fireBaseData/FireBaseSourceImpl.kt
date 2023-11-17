@@ -16,25 +16,28 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
         FirebaseFirestore.setLoggingEnabled(true)
     }
     override suspend fun saveArea(dataModel: DataModel): Result<Unit> {
-
         return kotlin.runCatching {
-
             val post = hashMapOf(
                 "message" to dataModel.message,
                 "title" to dataModel.title,
                 "photoUrl" to dataModel.photoUrl,
                 "timeStamp" to dataModel.timestamp
-
             )
 
-            Log.d("FirebaseDebug", dataModel.currentUser)
-            Log.d("FirebaseDebug", dataModel.constructionArea)
+            val currentUserRef = database.collection("Users").document(dataModel.currentUser)
+            val constructionSiteRef = currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
 
-            database.collection("Users").document(dataModel.currentUser)
-                .collection("construcitonName").document(dataModel.constructionArea).set(post)
-                .await()
+            // Üst belgeyi oluşturmak
+            currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+            constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+
+            val postsRef = constructionSiteRef.collection("posts").document("20231117")
+
+            postsRef.set(post).await()
         }
     }
+
+
 
 
     override suspend fun fetchData(
@@ -44,8 +47,14 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
             val dataModelList = mutableListOf<DataModel>()
 
             val documentSnapshot =
-                database.collection("Users").document(currentUser).collection("construcitonName")
-                    .document(constructionName).get().await()
+                database.collection("Users")
+                    .document(currentUser)
+                    .collection("construcitonName")
+                    .document(constructionName)
+                    .collection("posts")
+                    .document("20231117")
+                    .get()
+                    .await()
 
             if (documentSnapshot.exists()) {
                 val data = documentSnapshot.data
