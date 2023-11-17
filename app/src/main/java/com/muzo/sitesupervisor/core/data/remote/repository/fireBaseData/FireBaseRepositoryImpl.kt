@@ -13,10 +13,7 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.saveArea(data)
     }
 
-    override suspend fun fetchData(
-        currentUser: String,
-        constructionName: String
-    ): Result<List<DataModel>> {
+    override suspend fun fetchData(currentUser: String, constructionName: String): Result<List<DataModel>> {
         return fireBaseSource.fetchData(currentUser, constructionName)
     }
 

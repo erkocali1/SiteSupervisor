@@ -1,16 +1,20 @@
 package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
+import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.runtime.currentComposer
 import com.google.firebase.firestore.FirebaseFirestore
 import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.ConstructionName
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import javax.inject.Inject
 
-class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFirestore) :
-    FireBaseSource {
+class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFirestore) : FireBaseSource {
 
 
+    init {
+        FirebaseFirestore.setLoggingEnabled(true)
+    }
     override suspend fun saveArea(dataModel: DataModel): Result<Unit> {
 
         return kotlin.runCatching {
@@ -22,6 +26,9 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
                 "timeStamp" to dataModel.timestamp
 
             )
+
+            Log.d("FirebaseDebug", dataModel.currentUser)
+            Log.d("FirebaseDebug", dataModel.constructionArea)
 
             database.collection("Users").document(dataModel.currentUser)
                 .collection("construcitonName").document(dataModel.constructionArea).set(post)
@@ -39,8 +46,6 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
             val documentSnapshot =
                 database.collection("Users").document(currentUser).collection("construcitonName")
                     .document(constructionName).get().await()
-
-            Log.d("FirebaseDebug", "$documentSnapshot")
 
             if (documentSnapshot.exists()) {
                 val data = documentSnapshot.data
@@ -63,30 +68,38 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
         return kotlin.runCatching {
             val constructionNames = mutableListOf<ConstructionName>()
 
-            val usersCollection = database.collection("Users")
-                .get()
-                .await()
+            val usersSnapshot = database.collection("Users")
+                .get().await()
 
-            usersCollection.documents
+            if (usersSnapshot.isEmpty){
+                Log.d("FirebaseDebug", "usersSnapshot is empty")
+            }
 
-            if (!usersCollection.isEmpty) {
-                for (userDoc in usersCollection) {
-                    val userId = userDoc.id
-                    val constructionNameModel = ConstructionName("", userId)
-                    constructionNames.add(constructionNameModel)
-                    Log.d("FirebaseDebug", "Hello Africa")
+            for (userDocument in usersSnapshot.documents) {
+                val userId = userDocument.id
+                val constructionsSnapshot = userDocument.reference.collection("construcitonName").get().await()
+
+                for (constructionDocument in constructionsSnapshot.documents) {
+                    val data = constructionDocument.data
+                    val message = data?.get("message") as? String ?: ""
+                    val title = data?.get("title") as? String ?: ""
+                    val photoUrl = data?.get("photoUrl") as? String ?: ""
+                    val timestamp = data?.get("timeStamp") as? Number ?: 0
+
+                    val constructionName = ConstructionName(
+                        userId,
+                        constructionDocument.id,
+                        message,
+                        title,
+                        photoUrl,
+                        timestamp.toLong()
+                    )
+                    constructionNames.add(constructionName)
                 }
-            } else {
-                Log.d("FirebaseDebug", "Users collection is empty!")
             }
 
             constructionNames.toList()
         }
     }
-
-
-
-
-
 
 }

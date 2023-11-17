@@ -45,10 +45,11 @@ class CreateAreaFragment : Fragment() {
 
             val constructionName = binding.etConstructionName.text.toString()
 
-            postFirstEntity()
+
 
             if (constructionName.isNotEmpty()) {
-                viewModel.saveArea(postFirstEntity())
+                val dataModel = createDataModel(constructionName)
+                viewModel.saveArea(dataModel)
 
                 lifecycleScope.launch {
                     viewModel.uiState.collect { uiState ->
@@ -84,13 +85,13 @@ class CreateAreaFragment : Fragment() {
         findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment)
     }
 
-    private fun postFirstEntity(): DataModel {
-        val constructionName = binding.etConstructionName.text.toString()
+    private fun createDataModel(constructionName: String): DataModel {
+
         val currentUser = viewModel.currentUser?.uid.toString()
 
         return DataModel(
-            message = "Hadi kaydetmeye başlayalım",
-            title = "Şantiye defteri oluşturuldu",
+            message = "Lets start",
+            title = "First Commit",
             photoUrl = "",
             timestamp = 1234,
             currentUser = currentUser,
