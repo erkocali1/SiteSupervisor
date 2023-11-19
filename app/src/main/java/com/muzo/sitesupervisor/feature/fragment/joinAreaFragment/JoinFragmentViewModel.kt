@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants
-import com.muzo.sitesupervisor.core.data.model.ConstructionName
-import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.domain.GetAreaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +65,7 @@ data class GetAreaState(
     val loading: Boolean = false,
     val message: String? = null,
     val isSuccessful: Boolean = false,
-    val resultList: List<ConstructionName>? = null
+    val resultList: List<String>? = null
 )
 
 

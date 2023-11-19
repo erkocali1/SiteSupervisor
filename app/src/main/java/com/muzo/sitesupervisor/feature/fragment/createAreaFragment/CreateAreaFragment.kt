@@ -61,7 +61,7 @@ class CreateAreaFragment : Fragment() {
 
                             uiState.isSuccessful -> {
                                 toastMessage(uiState.message!!)
-                                navigateFragment()
+                                navigateFragment(constructionName)
                             }
 
                             uiState.message != null -> {
@@ -81,36 +81,40 @@ class CreateAreaFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun navigateFragment() {
-        findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment)
+    private fun navigateFragment(constructionName: String) {
+
+        val bundle = Bundle().apply {
+            putString("constructionName", constructionName)
+        }
+        findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment, bundle)
     }
 
     private fun createDataModel(constructionName: String): DataModel {
 
         val currentUser = viewModel.currentUser?.uid.toString()
-
         return DataModel(
             message = "Lets start",
             title = "First Commit",
             photoUrl = "",
-            timestamp = 1234,
+            day = "1234",
+            time="123",
             currentUser = currentUser,
             constructionArea = constructionName
-
         )
+
+
     }
 
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
             .setTitle("Şantiye bilgilerini doldurun").setCancelable(false)
-            .setMessage("Şantiye bilgilerinizi 123-43 soldaki formata uygun olucak şekilde giriniz").setDarkMode(false).setGravity(Gravity.CENTER)
-            .setAnimation(DialogAnimation.DEFAULT).setOnClickListener(object :
-                OnDialogClickListener {
+            .setMessage("Şantiye bilgilerinizi 123-43 soldaki formata uygun olucak şekilde giriniz")
+            .setDarkMode(false).setGravity(Gravity.CENTER).setAnimation(DialogAnimation.DEFAULT)
+            .setOnClickListener(object : OnDialogClickListener {
                 override fun onClick(dialog: AestheticDialog.Builder) {
                     dialog.dismiss()
                     //actions...
                 }
             }).show()
     }
-
 }

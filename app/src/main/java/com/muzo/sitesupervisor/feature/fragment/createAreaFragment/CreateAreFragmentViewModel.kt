@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateAreFragmentViewModel @Inject constructor(
     private val fireBaseSaveDataUseCase: FireBaseSaveDataUseCase,
-    private val authRepository: AuthRepository,
+    authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SaveDataState> = MutableStateFlow(SaveDataState())
@@ -58,12 +58,7 @@ class CreateAreFragmentViewModel @Inject constructor(
 
     }
 
-    fun getCurrentDateAndTime(): Pair<String, String> {
-        val calendar = Calendar.getInstance()
-        val currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.time)
-        val currentTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
-        return Pair(currentDate, currentTime)
-    }
+
 
 
 }

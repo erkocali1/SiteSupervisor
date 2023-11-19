@@ -5,12 +5,15 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.muzo.sitesupervisor.R
+import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
-import com.muzo.sitesupervisor.core.data.model.ConstructionName
 import com.muzo.sitesupervisor.databinding.FragmentJoinAreaBinding
 import com.thecode.aestheticdialogs.AestheticDialog
 import com.thecode.aestheticdialogs.DialogAnimation
@@ -24,7 +27,7 @@ import kotlinx.coroutines.launch
 class JoinAreaFragment : Fragment() {
     private lateinit var binding: FragmentJoinAreaBinding
     private val viewModel: JoinFragmentViewModel by viewModels()
-    private lateinit var list: List<ConstructionName>
+    private lateinit var list: List<String>
 
 
     override fun onCreateView(
@@ -49,19 +52,15 @@ class JoinAreaFragment : Fragment() {
                         binding.progressBar.show()
 
                     }
-
                     uiState.resultList != null -> {
+                        binding.progressBar.hide()
                         list = uiState.resultList
-                        list = emptyList()
+                        setList(list)
                     }
-
-                    else -> toastMessage("${uiState.message}")
                 }
-
             }
         }
     }
-
 
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
@@ -80,5 +79,25 @@ class JoinAreaFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun setList(constructionNames: List<String>) {
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, constructionNames)
+        binding.listConstruction.setAdapter(adapter)
+
+        binding.listConstruction.setOnItemClickListener { _, _, position, _ ->
+            val selectedConstruction = constructionNames[position]
+            toastMessage("You selected the $selectedConstruction construction name")
+            joinEvent(selectedConstruction)
+        }
+    }
+
+    private fun joinEvent(constructionName: String) {
+
+        binding.btnJoin.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("constructionName", constructionName)
+            }
+            findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment, bundle)
+        }
+    }
 
 }

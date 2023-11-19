@@ -5,7 +5,8 @@ data class DataModel(
     val message: String,
     val title: String,
     val photoUrl: String,
-    val timestamp: Number,
+    val day: String,
+    val time: String,
     val currentUser: String,
     val constructionArea :String
 

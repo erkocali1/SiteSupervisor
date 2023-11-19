@@ -28,15 +28,16 @@ class ListingFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
 
         binding = FragmentListingBinding.inflate(layoutInflater, container, false)
 
 
-        navigateDetailFragment()
+        listingEvent()
         observeData()
+        navigateDetailFragment()
+
 
         return binding.root
     }
@@ -49,24 +50,17 @@ class ListingFragment : Fragment() {
                     uiState.loading -> {
                         binding.progressBar.show()
                     }
-//bu kısım çalıştığı icin aşağıdaki kısım calısmıyor buraya bak
-                    uiState.message != null -> {
-                        toastMessage(uiState.message.toString())
-                        binding.progressBar.hide()
-                    }
 
                     uiState.resultList != null -> {
+                        toastMessage(uiState.message.toString())
                         binding.progressBar.hide()
                         list = uiState.resultList
                         setupAdapter()
 
                     }
-
                 }
             }
-
         }
-
 
     }
 
@@ -82,12 +76,21 @@ class ListingFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun navigateDetailFragment(){
+    private fun navigateDetailFragment() {
         binding.fabBtn.setOnClickListener {
             findNavController().navigate(R.id.action_listingFragment_to_detailFragment)
 
         }
     }
-
+    private fun listingEvent() {
+        val constructionName = arguments?.getString("constructionName")
+        val currentUser=viewModel.currentUser
+        constructionName?.let {
+            viewModel.getData(currentUser,constructionName)
+        }
+    }
+    private fun isSupervisor(){
+        val currentUser=viewModel.currentUser
+    }
 
 }

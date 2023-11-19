@@ -26,11 +26,9 @@ class ListingFramentViewModel @Inject constructor(
     val uiState = _uiState
     val currentUser = authRepository.currentUser?.uid.toString()
 
-    init {
-        getData(currentUser,"123")
-    }
 
-    private fun getData(currentUser: String, constructionName: String) {
+
+     fun getData(currentUser: String, constructionName: String) {
 
         viewModelScope.launch {
             useCase(currentUser, constructionName).asReSource().onEach { result ->
