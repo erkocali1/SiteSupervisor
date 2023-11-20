@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.joinAreaFragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
+import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.databinding.FragmentJoinAreaBinding
 import com.thecode.aestheticdialogs.AestheticDialog
 import com.thecode.aestheticdialogs.DialogAnimation
@@ -27,7 +29,7 @@ import kotlinx.coroutines.launch
 class JoinAreaFragment : Fragment() {
     private lateinit var binding: FragmentJoinAreaBinding
     private val viewModel: JoinFragmentViewModel by viewModels()
-    private lateinit var list: List<String>
+    private lateinit var list: List<UserConstructionData>
 
 
     override fun onCreateView(
@@ -55,7 +57,7 @@ class JoinAreaFragment : Fragment() {
                     uiState.resultList != null -> {
                         binding.progressBar.hide()
                         list = uiState.resultList
-                        setList(list)
+                        setList(getConstructionNames(list))
                     }
                 }
             }
@@ -79,6 +81,15 @@ class JoinAreaFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun getConstructionNames(data: List<UserConstructionData>): List<String> {
+        // Sadece şantiye isimlerini alarak bir liste oluştur
+        val constructionNames = mutableListOf<String>()
+        for (userConstructionData in data) {
+            constructionNames.addAll(userConstructionData.constructionAreas)
+        }
+        return constructionNames
+    }
+
     private fun setList(constructionNames: List<String>) {
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item, constructionNames)
         binding.listConstruction.setAdapter(adapter)
@@ -91,13 +102,24 @@ class JoinAreaFragment : Fragment() {
     }
 
     private fun joinEvent(constructionName: String) {
+        val selectedUserConstructionData = list.find { userConstructionData ->
+            userConstructionData.constructionAreas.contains(constructionName)
+        }
+
+        val currentUser = selectedUserConstructionData?.currentUser ?: "Default Current User"
+
+        val userConstructionData = UserConstructionData(currentUser, listOf(constructionName))
+
+        val bundle = Bundle().apply {
+            putParcelable("userConstructionData", userConstructionData)
+        }
 
         binding.btnJoin.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("constructionName", constructionName)
-            }
+            Log.d("kontrol",userConstructionData.currentUser)
             findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment, bundle)
         }
     }
+
+
 
 }

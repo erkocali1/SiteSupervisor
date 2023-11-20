@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.listingNotes
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.databinding.FragmentListingBinding
 import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,8 +35,7 @@ class ListingFragment : Fragment() {
 
         binding = FragmentListingBinding.inflate(layoutInflater, container, false)
 
-
-        listingEvent()
+        getConstructionName()
         observeData()
         navigateDetailFragment()
 
@@ -82,15 +83,25 @@ class ListingFragment : Fragment() {
 
         }
     }
-    private fun listingEvent() {
-        val constructionName = arguments?.getString("constructionName")
-        val currentUser=viewModel.currentUser
-        constructionName?.let {
-            viewModel.getData(currentUser,constructionName)
-        }
-    }
-    private fun isSupervisor(){
-        val currentUser=viewModel.currentUser
+
+    private fun isSupervisor() {
+        val currentUser = viewModel.currentUser
     }
 
+    private fun getConstructionName() {
+        val userConstructionData =
+            arguments?.getParcelable<UserConstructionData>("userConstructionData")
+        val currentUser = userConstructionData?.currentUser
+        val constructionArea = userConstructionData?.constructionAreas
+
+
+
+        val constructionAreaAsString = constructionArea?.joinToString(", ")
+
+        if (currentUser != null && constructionAreaAsString != null) {
+            viewModel.getData(currentUser, constructionAreaAsString)
+            Log.d("bakacaz", "$currentUser and $constructionAreaAsString")
+
+        }
+    }
 }

@@ -71,12 +71,15 @@ class DetailFragment : Fragment() {
             viewModel.updateData(dataModel)
         }
     }
-
     private fun clickListener() {
-        if (isAllFieldsFilled()) {
-            updateEvent()
-        } else {
-            toastMessage("Lütfen tüm bilgileri düzgün doldurunuz")
+
+        binding.okBtn.setOnClickListener {
+            if (isAllFieldsFilled()) {
+                updateEvent()
+            } else {
+                toastMessage("Lütfen tüm bilgileri düzgün doldurunuz")
+            }
+
         }
     }
 
@@ -91,6 +94,5 @@ class DetailFragment : Fragment() {
     private fun toastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
-
 
 }

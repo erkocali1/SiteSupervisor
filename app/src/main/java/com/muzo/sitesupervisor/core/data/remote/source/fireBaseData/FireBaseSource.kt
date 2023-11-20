@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 
 interface FireBaseSource {
 
@@ -10,10 +11,9 @@ interface FireBaseSource {
 
     suspend fun fetchData(currentUser: String, constructionName: String): Result<List<DataModel>>
 
-    suspend fun fetchArea():Result<List<String>>
+    suspend fun fetchArea(): Result<List<UserConstructionData>>
 
     suspend fun updateArea(dataModel: DataModel): Result<Unit>
-
 
 
 }

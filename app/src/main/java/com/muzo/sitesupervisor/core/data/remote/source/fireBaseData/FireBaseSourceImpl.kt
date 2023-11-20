@@ -3,6 +3,7 @@ package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import javax.inject.Inject
 
 class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFirestore) : FireBaseSource {
@@ -22,7 +23,7 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
 
             )
 
-            val currentUserRef = database.collection("Users").document(dataModel.currentUser)
+            val currentUserRef = database.collection("Users").document("dataModel.currentUser")
             val constructionSiteRef = currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
 
 
@@ -64,14 +65,13 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
                 )
                 dataModelList.add(retrievedDataModel)
             }
-
             dataModelList.toList()
         }
     }
 
-    override suspend fun fetchArea(): Result<List<String>> {
+    override suspend fun fetchArea(): Result<List<UserConstructionData>> {
         return kotlin.runCatching {
-            val constructionAreas = mutableListOf<String>()
+            val userConstructionDataList = mutableListOf<UserConstructionData>()
 
             val usersSnapshot = database.collection("Users").get().await()
 
@@ -79,15 +79,21 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
                 val constructionsSnapshot =
                     userDocument.reference.collection("construcitonName").get().await()
 
+                val constructionList = mutableListOf<String>()
                 for (constructionDocument in constructionsSnapshot.documents) {
                     val constructionArea = constructionDocument.id
-                    constructionAreas.add(constructionArea)
+                    constructionList.add(constructionArea)
                 }
+
+                val currentUser = userDocument.id
+                val userData = UserConstructionData(currentUser, constructionList)
+                userConstructionDataList.add(userData)
             }
 
-            constructionAreas.toList()
+            userConstructionDataList.toList()
         }
     }
+
 
     override suspend fun updateArea(dataModel: DataModel): Result<Unit> {
         return kotlin.runCatching {
@@ -107,6 +113,5 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
             postsRef.update(post).await()
         }
     }
-
 
 }

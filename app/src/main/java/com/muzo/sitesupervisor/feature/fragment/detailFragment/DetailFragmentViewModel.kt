@@ -8,6 +8,8 @@ import com.muzo.sitesupervisor.core.constans.Constants.Companion.ERROR_MESSAGE
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
+import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
+import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailFragmentViewModel @Inject constructor(
-    private val useCase: UpdateUseCase, authRepository: AuthRepository
+    private val updateUseCase: UpdateUseCase,
+    authRepository: AuthRepository,
+    private val getDataUseCase: GetDataUseCase,
+    private val addDataUseCase: FireBaseSaveDataUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
@@ -33,7 +38,7 @@ class DetailFragmentViewModel @Inject constructor(
 
 
         viewModelScope.launch {
-            useCase(dataModel).asReSource().onEach { result ->
+            updateUseCase(dataModel).asReSource().onEach { result ->
                 when (result) {
                     Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
@@ -58,10 +63,60 @@ class DetailFragmentViewModel @Inject constructor(
         val currentTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
         return Pair(currentDate, currentTime)
     }
+
+    private fun getData(constructionName: String, currentUser: String) {
+
+        viewModelScope.launch {
+            getDataUseCase(constructionName, currentUser).asReSource().onEach { result ->
+                when (result) {
+                    Resource.Loading -> {
+                        _uiState.value = _uiState.value.copy(loading = true)
+                    }
+
+                    is Resource.Error -> {
+                        _uiState.value =
+                            _uiState.value.copy(message = ERROR_MESSAGE, loading = false)
+                    }
+
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            message = OK_MESSAGE,
+                            loading = true,
+                            resultList = result.data
+                        )
+                    }
+                }
+            }
+        }
+    }
+    private fun addData(dataModel: DataModel) {
+
+        viewModelScope.launch {
+            addDataUseCase(dataModel).asReSource().onEach { result ->
+                when (result) {
+
+                    Resource.Loading -> {
+                        _uiState.value = _uiState.value.copy(loading = true)
+                    }
+
+                    is Resource.Error -> {
+
+                        _uiState.value =
+                            _uiState.value.copy(message = ERROR_MESSAGE, loading = false)
+                    }
+
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(message = OK_MESSAGE, loading = true)
+                    }
+                }
+            }
+        }
+    }
 }
 
 data class UpdateState(
     val loading: Boolean = false,
     val message: String? = null,
     val isSuccessful: Boolean = false,
+    val resultList: List<DataModel>? = null
 )
