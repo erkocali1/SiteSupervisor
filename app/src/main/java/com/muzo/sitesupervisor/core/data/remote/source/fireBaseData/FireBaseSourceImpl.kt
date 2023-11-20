@@ -1,17 +1,22 @@
 package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
+import android.net.Uri
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import javax.inject.Inject
 
-class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFirestore) : FireBaseSource {
+class FireBaseSourceImpl @Inject constructor(
+    private val database: FirebaseFirestore, private val storage: FirebaseStorage
+) : FireBaseSource {
 
 
     init {
         FirebaseFirestore.setLoggingEnabled(true)
     }
+
     override suspend fun saveArea(dataModel: DataModel): Result<Unit> {
         return kotlin.runCatching {
             val post = hashMapOf(
@@ -24,7 +29,8 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
             )
 
             val currentUserRef = database.collection("Users").document("dataModel.currentUser")
-            val constructionSiteRef = currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
 
 
             currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
@@ -43,13 +49,8 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
             val dataModelList = mutableListOf<DataModel>()
 
             val documentSnapshot =
-                database.collection("Users")
-                    .document(currentUser)
-                    .collection("construcitonName")
-                    .document(constructionName)
-                    .collection("posts")
-                    .document("20231117")
-                    .get()
+                database.collection("Users").document(currentUser).collection("construcitonName")
+                    .document(constructionName).collection("posts").document("20231117").get()
                     .await()
 
             if (documentSnapshot.exists()) {
@@ -57,11 +58,11 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
                 val photoUrl = data?.get("photoUrl") as? String ?: ""
-                val day = data?.get("timeStamp") as? String ?: ""
-                val time = data?.get("timeStamp") as? String ?: ""
+                val day = data?.get("time") as? String ?: ""
+                val time = data?.get("day") as? String ?: ""
 
                 val retrievedDataModel = DataModel(
-                    message, title, photoUrl, day,time, currentUser, constructionName
+                    message, title, photoUrl, day, time, currentUser, constructionName
                 )
                 dataModelList.add(retrievedDataModel)
             }
@@ -105,12 +106,19 @@ class FireBaseSourceImpl @Inject constructor(private val database: FirebaseFires
                 "time" to dataModel.time
             ).toMutableMap()
             val currentUserRef = database.collection("Users").document(dataModel.currentUser)
-            val constructionSiteRef = currentUserRef.collection("construcitonName")
-                .document(dataModel.constructionArea)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
 
             val postsRef = constructionSiteRef.collection("posts").document("20231117")
 
             postsRef.update(post).await()
+        }
+    }
+
+    override suspend fun upLoadImage(fileUri: Uri): Result<Unit> {
+        val reference = storage.reference.child("ilk")
+        return kotlin.runCatching {
+            reference.putFile(fileUri)
         }
     }
 

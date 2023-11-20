@@ -1,13 +1,20 @@
 package com.muzo.sitesupervisor.feature.fragment.detailFragment
 
+import android.app.Activity
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
@@ -28,6 +35,11 @@ class DetailFragment : Fragment() {
         showDayAndTime()
         clickListener()
         observeData()
+        showData()
+        addPhoto()
+
+
+
         return binding.root
     }
 
@@ -38,6 +50,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun takeData(): DataModel {
+
         val title = binding.etTitle.text.toString()
         val message = binding.etDes.text.toString()
         val photoUrl = ""
@@ -71,6 +84,7 @@ class DetailFragment : Fragment() {
             viewModel.updateData(dataModel)
         }
     }
+
     private fun clickListener() {
 
         binding.okBtn.setOnClickListener {
@@ -95,4 +109,62 @@ class DetailFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun showData() {
+
+        val receivedData = arguments?.getParcelable<DataModel>("dataList")
+        val title = receivedData?.title
+        val message = receivedData?.message
+        val photoUrl = receivedData?.photoUrl
+        val day = receivedData?.day
+        val time = receivedData?.time
+        val currentUser = receivedData?.currentUser
+        val constructionName = receivedData?.constructionArea
+
+        binding.etTitle.setText(title)
+        binding.etDes.setText(message)
+        binding.textDay.text = day
+        binding.textTime.text = time
+
+    }
+
+    fun addPhoto() {
+        binding.cvTimePicker.setOnClickListener {
+            ImagePicker.with(requireActivity())
+                .crop()                    //Crop image(Optional), Check Customization for more option
+                .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                .maxResultSize(
+                    1080, 1080
+                ) //Final image resolution will be less than 1080 x 1080(Optional)
+
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
+        }
+
+    }
+
+    private val startForProfileImageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            val resultCode = result.resultCode
+            val data = result.data
+            if (resultCode == Activity.RESULT_OK) {
+                val imageUri = data?.data ?: return@registerForActivityResult
+                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    ImageDecoder.decodeBitmap(
+                        ImageDecoder.createSource(
+                            requireContext().contentResolver, imageUri
+                        )
+                    )
+                } else {
+                    MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
+                }
+                binding.ivButtonOK.setImageURI(imageUri)
+                viewModel.uploadData(imageUri)
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                toastMessage("eror")
+            } else {
+                toastMessage("okey")
+            }
+        }
 }
+

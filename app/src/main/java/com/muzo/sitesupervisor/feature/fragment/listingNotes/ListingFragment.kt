@@ -35,7 +35,7 @@ class ListingFragment : Fragment() {
 
         binding = FragmentListingBinding.inflate(layoutInflater, container, false)
 
-        getConstructionName()
+        getConstruction()
         observeData()
         navigateDetailFragment()
 
@@ -62,12 +62,17 @@ class ListingFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun setupAdapter() {
 
-        adapter = ListingAdapter(list)
+        adapter = ListingAdapter(list) { data ->
+            val postList = bind(data)
+            val bundle = Bundle().apply {
+                putParcelable("dataList", postList)
+            }
+            findNavController().navigate(R.id.action_listingFragment_to_detailFragment, bundle)
+        }
         binding.rv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rv.adapter = adapter
@@ -84,24 +89,42 @@ class ListingFragment : Fragment() {
         }
     }
 
-    private fun isSupervisor() {
-        val currentUser = viewModel.currentUser
-    }
-
-    private fun getConstructionName() {
+    private fun getConstruction() {
         val userConstructionData =
             arguments?.getParcelable<UserConstructionData>("userConstructionData")
-        val currentUser = userConstructionData?.currentUser
+        val supervisorUser = userConstructionData?.currentUser
         val constructionArea = userConstructionData?.constructionAreas
+        val currentUser = viewModel.currentUser
 
-
+        //checkUser or Guest
+        validationUser(currentUser, supervisorUser)
 
         val constructionAreaAsString = constructionArea?.joinToString(", ")
 
-        if (currentUser != null && constructionAreaAsString != null) {
-            viewModel.getData(currentUser, constructionAreaAsString)
-            Log.d("bakacaz", "$currentUser and $constructionAreaAsString")
-
+        if (supervisorUser != null && constructionAreaAsString != null) {
+            viewModel.getData(supervisorUser, constructionAreaAsString)
+            Log.d("bakacaz", "$supervisorUser and $constructionAreaAsString")
         }
+
+    }
+
+    private fun validationUser(currentUser: String, superVisorUser: String?) {
+        if (currentUser == superVisorUser) {
+            binding.fabBtn.show()
+        } else {
+            binding.fabBtn.hide()
+        }
+    }
+
+    private fun bind(item: DataModel): DataModel {
+        return DataModel(
+            message = item.message,
+            day = item.day,
+            title = item.title,
+            time = item.time,
+            constructionArea = item.constructionArea,
+            currentUser = item.currentUser,
+            photoUrl = item.photoUrl
+        )
     }
 }

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.ItemRowBinding
 
-class ListingAdapter(private val list: List<DataModel>) :
+class ListingAdapter(private val list: List<DataModel>, val onClick: (item: DataModel) -> Unit) :
     RecyclerView.Adapter<ListingAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemRowBinding) :
@@ -17,6 +17,11 @@ class ListingAdapter(private val list: List<DataModel>) :
             binding.apply {
                 textTitle.text = item.title
                 textDesc.text = item.message
+                textDay.text=item.day
+
+                root.setOnClickListener {
+                    onClick(item)
+                }
             }
         }
 

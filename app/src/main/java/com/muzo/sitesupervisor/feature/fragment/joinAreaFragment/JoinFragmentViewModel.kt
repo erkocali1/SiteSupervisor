@@ -26,42 +26,35 @@ class JoinFragmentViewModel @Inject constructor(private val useCase: GetAreaUseC
         getArea()
     }
 
-
-    private fun getArea(){
+    private fun getArea() {
         viewModelScope.launch {
-            useCase().asReSource().onEach {  result ->
-                when(result){
-                    is Resource.Loading->{
-                        _uiState.value=_uiState.value.copy(
+            useCase().asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _uiState.value = _uiState.value.copy(
                             loading = true
                         )
                     }
-                    is Resource.Error->{
+
+                    is Resource.Error -> {
                         _uiState.value = _uiState.value.copy(
                             loading = false, message = result.exception?.message
                         )
-
                     }
-                    is Resource.Success->{
+                    is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
-                            loading = false, message = Constants.OK_MESSAGE, isSuccessful = true, resultList = result.data
+                            loading = false,
+                            message = Constants.OK_MESSAGE,
+                            isSuccessful = true,
+                            resultList = result.data
                         )
 
                     }
                 }
             }.launchIn(this)
         }
-
-
-
     }
-
 }
-
-
-
-
-
 data class GetAreaState(
     val loading: Boolean = false,
     val message: String? = null,

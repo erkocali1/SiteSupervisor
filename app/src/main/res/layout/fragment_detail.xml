@@ -31,16 +31,17 @@
         app:layout_constraintTop_toTopOf="@+id/back" />
 
     <androidx.cardview.widget.CardView
-        android:foreground="?android:attr/selectableItemBackground"
-        android:clickable="true"
         android:id="@+id/ok_btn"
         android:layout_width="40sp"
         android:layout_height="40sp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/iv_buttonOK"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/ic_tick" />
@@ -48,19 +49,18 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:foreground="?android:attr/selectableItemBackground"
-        android:clickable="true"
         android:id="@+id/ok_delete"
         android:layout_width="40sp"
         android:layout_height="40sp"
         android:layout_marginEnd="8sp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="40sp"
         app:layout_constraintEnd_toStartOf="@id/ok_btn"
-        app:layout_constraintTop_toTopOf="parent"
-        android:focusable="true">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/ic_cancel" />
@@ -120,27 +120,36 @@
                 android:padding="8sp"
                 android:text="hello"
                 android:textSize="14sp" />
-
         </androidx.cardview.widget.CardView>
 
-        <androidx.cardview.widget.CardView
-            android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true"
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_marginTop="4sp"
+            android:id="@+id/rv_ivPicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"
+            tools:listitem="@layout/item_image"
+            tools:itemCount="5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cv_time_picker" />
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/cv_add_photo"
             android:layout_width="40sp"
             android:layout_height="40sp"
+            android:layout_marginTop="4sp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
             <ImageView
-
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_add_photo" />
 
         </androidx.cardview.widget.CardView>
-
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -150,7 +159,7 @@
             android:layout_marginTop="6sp"
             android:background="@color/white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cv_date_picker">
+            app:layout_constraintTop_toBottomOf="@id/rv_ivPicker">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_title"
@@ -186,11 +195,11 @@
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="invisible" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

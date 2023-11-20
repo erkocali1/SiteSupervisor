@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.detailFragment
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
@@ -11,6 +12,7 @@ import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
+import com.muzo.sitesupervisor.domain.UploadImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
@@ -25,7 +27,8 @@ class DetailFragmentViewModel @Inject constructor(
     private val updateUseCase: UpdateUseCase,
     authRepository: AuthRepository,
     private val getDataUseCase: GetDataUseCase,
-    private val addDataUseCase: FireBaseSaveDataUseCase
+    private val addDataUseCase: FireBaseSaveDataUseCase,
+    private val uploadImageUseCase: UploadImageUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
@@ -57,6 +60,26 @@ class DetailFragmentViewModel @Inject constructor(
         }
     }
 
+    fun uploadData(fileUri: Uri) {
+        viewModelScope.launch {
+            uploadImageUseCase(fileUri).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Error ->
+                        _uiState.value =
+                        _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
+
+                    Resource.Loading -> {
+                        _uiState.value =
+                            _uiState.value.copy(loading = true)
+                    }
+                    is Resource.Success ->
+                        _uiState.value =
+                        _uiState.value.copy(loading = false, message = OK_MESSAGE)
+                }
+            }
+        }
+    }
+
     fun getCurrentDateAndTime(): Pair<String, String> {
         val calendar = Calendar.getInstance()
         val currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.time)
@@ -80,15 +103,14 @@ class DetailFragmentViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
-                            message = OK_MESSAGE,
-                            loading = true,
-                            resultList = result.data
+                            message = OK_MESSAGE, loading = true, resultList = result.data
                         )
                     }
                 }
             }
         }
     }
+
     private fun addData(dataModel: DataModel) {
 
         viewModelScope.launch {
