@@ -1,10 +1,8 @@
 package com.muzo.sitesupervisor.feature.fragment.detailFragment
 
 import android.app.Activity
-import android.graphics.ImageDecoder
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +16,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
+import com.muzo.sitesupervisor.feature.adapters.ImageViewAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -25,6 +24,8 @@ import kotlinx.coroutines.launch
 class DetailFragment : Fragment() {
     private val viewModel: DetailFragmentViewModel by viewModels()
     private lateinit var binding: FragmentDetailBinding
+    private lateinit var adapter: ImageViewAdapter
+    private val uriList = mutableListOf<Uri>()
 
 
     override fun onCreateView(
@@ -149,16 +150,8 @@ class DetailFragment : Fragment() {
             val data = result.data
             if (resultCode == Activity.RESULT_OK) {
                 val imageUri = data?.data ?: return@registerForActivityResult
-                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    ImageDecoder.decodeBitmap(
-                        ImageDecoder.createSource(
-                            requireContext().contentResolver, imageUri
-                        )
-                    )
-                } else {
-                    MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
-                }
-                binding.ivButtonOK.setImageURI(imageUri)
+
+                setupAdapter(listOf(imageUri))
                 viewModel.uploadData(imageUri)
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
                 toastMessage("eror")
@@ -166,5 +159,15 @@ class DetailFragment : Fragment() {
                 toastMessage("okey")
             }
         }
+
+    private fun setupAdapter(uriList: List<Uri>) {
+        this.uriList.addAll(uriList)
+        adapter = ImageViewAdapter().apply {
+            submitList(this@DetailFragment.uriList)
+        }
+        binding.rvIvPicker.adapter = adapter
+    }
+
+
 }
 
