@@ -7,15 +7,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class UploadImageUseCase @Inject constructor(private val repository: FireBaseRepository) {
+class GetImageUrlUseCase @Inject constructor(private val repository: FireBaseRepository) {
 
-    suspend operator fun invoke(fileUri: List<Uri>): Flow<Unit> {
+    suspend operator fun invoke(imagePath: String): Flow<Uri> {
         return flow {
-            val result = repository.upLoadImage(fileUri)
+            val result = repository.getImageUrl(imagePath)
             (result.getOrNull() ?: throw IllegalArgumentException(Constants.ERROR_MESSAGE)).also {
                 emit(it)
             }
         }
-
     }
 }

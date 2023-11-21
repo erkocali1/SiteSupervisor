@@ -70,6 +70,7 @@ class ListingFragment : Fragment() {
             val postList = bind(data)
             val bundle = Bundle().apply {
                 putParcelable("dataList", postList)
+                putString("from", "recyclerview")
             }
             findNavController().navigate(R.id.action_listingFragment_to_detailFragment, bundle)
         }
@@ -84,7 +85,10 @@ class ListingFragment : Fragment() {
 
     private fun navigateDetailFragment() {
         binding.fabBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_listingFragment_to_detailFragment)
+            val bundleFab=Bundle().apply {
+                putString("from", "fab")
+            }
+            findNavController().navigate(R.id.action_listingFragment_to_detailFragment,bundleFab)
 
         }
     }

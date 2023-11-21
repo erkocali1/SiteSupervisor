@@ -15,6 +15,7 @@ import com.muzo.sitesupervisor.domain.UpdateUseCase
 import com.muzo.sitesupervisor.domain.UploadImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.text.DateFormat
@@ -34,7 +35,7 @@ class DetailFragmentViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
     val uiState = _uiState
 
-    val currentUser = authRepository.currentUser.toString()
+    val currentUser = authRepository.currentUser?.uid.toString()
 
 
     fun updateData(dataModel: DataModel) {
@@ -56,27 +57,26 @@ class DetailFragmentViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE)
                     }
                 }
-            }
+            }.launchIn(this)
         }
     }
 
-    fun uploadData(fileUri: Uri) {
+    fun uploadPhoto(fileUri: List<Uri>) {
         viewModelScope.launch {
             uploadImageUseCase(fileUri).asReSource().onEach { result ->
                 when (result) {
-                    is Resource.Error ->
-                        _uiState.value =
+                    is Resource.Error -> _uiState.value =
                         _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
 
                     Resource.Loading -> {
-                        _uiState.value =
-                            _uiState.value.copy(loading = true)
+                        _uiState.value = _uiState.value.copy(loading = true)
                     }
-                    is Resource.Success ->
-                        _uiState.value =
-                        _uiState.value.copy(loading = false, message = OK_MESSAGE)
+
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE)
+                    }
                 }
-            }
+            }.launchIn(this)
         }
     }
 
@@ -107,7 +107,7 @@ class DetailFragmentViewModel @Inject constructor(
                         )
                     }
                 }
-            }
+            }.launchIn(this)
         }
     }
 
@@ -131,7 +131,7 @@ class DetailFragmentViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(message = OK_MESSAGE, loading = true)
                     }
                 }
-            }
+            }.launchIn(this)
         }
     }
 }

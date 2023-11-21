@@ -16,7 +16,9 @@ interface FireBaseRepository {
 
     suspend fun updateArea(dataModel: DataModel): Result<Unit>
 
-    suspend fun upLoadImage(fileUri: Uri): Result<Unit>
+    suspend fun upLoadImage(fileUri: List<Uri>): Result<Unit>
+
+    suspend fun getImageUrl(imagePath: String): Result<Uri>
 
 
 }

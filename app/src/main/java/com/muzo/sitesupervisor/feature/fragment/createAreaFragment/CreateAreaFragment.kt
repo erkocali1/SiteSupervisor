@@ -14,6 +14,7 @@ import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.databinding.FragmentCreateAreaBinding
 import com.thecode.aestheticdialogs.AestheticDialog
 import com.thecode.aestheticdialogs.DialogAnimation
@@ -45,10 +46,9 @@ class CreateAreaFragment : Fragment() {
 
             val constructionName = binding.etConstructionName.text.toString()
 
-
-
             if (constructionName.isNotEmpty()) {
                 val dataModel = createDataModel(constructionName)
+
                 viewModel.saveArea(dataModel)
 
                 lifecycleScope.launch {
@@ -61,7 +61,7 @@ class CreateAreaFragment : Fragment() {
 
                             uiState.isSuccessful -> {
                                 toastMessage(uiState.message!!)
-                                navigateFragment(constructionName)
+                                navigateFragment()
                             }
 
                             uiState.message != null -> {
@@ -81,10 +81,14 @@ class CreateAreaFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun navigateFragment(constructionName: String) {
+    private fun navigateFragment() {
+
+        val constructionName = binding.etConstructionName.text.toString()
+        val currentUser = viewModel.currentUser?.uid.toString()
+        val userConstructionData = UserConstructionData(currentUser, listOf(constructionName))
 
         val bundle = Bundle().apply {
-            putString("constructionName", constructionName)
+            putParcelable("userConstructionData", userConstructionData)
         }
         findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment, bundle)
     }
@@ -97,7 +101,7 @@ class CreateAreaFragment : Fragment() {
             title = "First Commit",
             photoUrl = "",
             day = "1234",
-            time="123",
+            time = "123",
             currentUser = currentUser,
             constructionArea = constructionName
         )

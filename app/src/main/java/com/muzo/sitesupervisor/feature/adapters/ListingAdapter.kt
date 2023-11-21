@@ -19,6 +19,7 @@ class ListingAdapter(private val list: List<DataModel>, val onClick: (item: Data
                 textDesc.text = item.message
                 textDay.text=item.day
 
+
                 root.setOnClickListener {
                     onClick(item)
                 }

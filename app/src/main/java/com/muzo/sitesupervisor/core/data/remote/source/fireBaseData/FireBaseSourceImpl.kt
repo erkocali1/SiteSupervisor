@@ -28,7 +28,7 @@ class FireBaseSourceImpl @Inject constructor(
 
             )
 
-            val currentUserRef = database.collection("Users").document("dataModel.currentUser")
+            val currentUserRef = database.collection("Users").document(dataModel.currentUser)
             val constructionSiteRef =
                 currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
 
@@ -115,10 +115,21 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun upLoadImage(fileUri: Uri): Result<Unit> {
-        val reference = storage.reference.child("ilk")
+    override suspend fun upLoadImage(fileUri: List<Uri>): Result<Unit> {
+
         return kotlin.runCatching {
-            reference.putFile(fileUri)
+            fileUri.forEach { fileUri ->
+                val reference = storage.reference.child("ilk")
+
+                 reference.putFile(fileUri).await()
+            }
+        }
+    }
+    override suspend fun getImageUrl(imagePath: String): Result<Uri> {
+        return kotlin.runCatching {
+            val storageRef = storage.reference.child(imagePath)
+            val downloadUrl = storageRef.downloadUrl.await()
+            downloadUrl // Geri döndürülecek URL
         }
     }
 

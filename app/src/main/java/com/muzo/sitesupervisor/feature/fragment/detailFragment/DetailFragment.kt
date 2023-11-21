@@ -26,6 +26,7 @@ class DetailFragment : Fragment() {
     private lateinit var binding: FragmentDetailBinding
     private lateinit var adapter: ImageViewAdapter
     private val uriList = mutableListOf<Uri>()
+    private var from: String? = null
 
 
     override fun onCreateView(
@@ -33,10 +34,10 @@ class DetailFragment : Fragment() {
     ): View? {
         binding = FragmentDetailBinding.inflate(layoutInflater, container, false)
 
+        getFromLocation()
         showDayAndTime()
         clickListener()
         observeData()
-        showData()
         addPhoto()
 
 
@@ -51,13 +52,13 @@ class DetailFragment : Fragment() {
     }
 
     private fun takeData(): DataModel {
-
+        val receivedData = arguments?.getParcelable<DataModel>("dataList")
         val title = binding.etTitle.text.toString()
         val message = binding.etDes.text.toString()
-        val photoUrl = ""
+        val photoUrl = "first"
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
-        val constructionName = arguments?.getString("constructionName")
+        val constructionName =receivedData?.constructionArea
 
         return DataModel(message, title, photoUrl, day, time, currentUser, constructionName!!)
 
@@ -83,6 +84,7 @@ class DetailFragment : Fragment() {
         val dataModel = takeData()
         lifecycleScope.launch {
             viewModel.updateData(dataModel)
+            savePhotoFireBase(this@DetailFragment.uriList)
         }
     }
 
@@ -128,8 +130,8 @@ class DetailFragment : Fragment() {
 
     }
 
-    fun addPhoto() {
-        binding.cvTimePicker.setOnClickListener {
+    private fun addPhoto() {
+        binding.cvAddPhoto.setOnClickListener {
             ImagePicker.with(requireActivity())
                 .crop()                    //Crop image(Optional), Check Customization for more option
                 .compress(1024)            //Final image size will be less than 1 MB(Optional)
@@ -152,7 +154,7 @@ class DetailFragment : Fragment() {
                 val imageUri = data?.data ?: return@registerForActivityResult
 
                 setupAdapter(listOf(imageUri))
-                viewModel.uploadData(imageUri)
+
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
                 toastMessage("eror")
             } else {
@@ -166,6 +168,20 @@ class DetailFragment : Fragment() {
             submitList(this@DetailFragment.uriList)
         }
         binding.rvIvPicker.adapter = adapter
+    }
+
+    private fun savePhotoFireBase(list: List<Uri>) {
+        viewModel.uploadPhoto(list)
+    }
+
+
+    private fun getFromLocation() {
+        from = arguments?.getString("from")
+        if (from == "fab") {
+            toastMessage("yeni bilgileri giriniz")
+        } else if (from == "recyclerview") {
+            showData()
+        }
     }
 
 

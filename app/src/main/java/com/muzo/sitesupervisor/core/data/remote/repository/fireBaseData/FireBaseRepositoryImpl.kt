@@ -26,8 +26,12 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.updateArea(dataModel)
     }
 
-    override suspend fun upLoadImage(fileUri: Uri): Result<Unit> {
+    override suspend fun upLoadImage(fileUri: List<Uri>): Result<Unit> {
         return fireBaseSource.upLoadImage(fileUri)
+    }
+
+    override suspend fun getImageUrl(imagePath: String): Result<Uri> {
+        return fireBaseSource.getImageUrl(imagePath)
     }
 
 
