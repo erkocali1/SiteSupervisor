@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
+import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
@@ -13,8 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.text.DateFormat
-import java.util.Calendar
 import javax.inject.Inject
 
 
@@ -22,6 +21,7 @@ import javax.inject.Inject
 class CreateAreFragmentViewModel @Inject constructor(
     private val fireBaseSaveDataUseCase: FireBaseSaveDataUseCase,
     authRepository: AuthRepository,
+    private val localPostRepository: LocalPostRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SaveDataState> = MutableStateFlow(SaveDataState())
@@ -58,6 +58,10 @@ class CreateAreFragmentViewModel @Inject constructor(
 
     }
 
+    suspend fun saveRoom(saveList: DataModel): Long {
+         val baba =localPostRepository.savePost(saveList)
+        return baba
+    }
 
 
 

@@ -19,38 +19,39 @@ class FireBaseSourceImpl @Inject constructor(
 
     override suspend fun saveArea(dataModel: DataModel): Result<Unit> {
         return kotlin.runCatching {
-            val post = hashMapOf(
-                "message" to dataModel.message,
-                "title" to dataModel.title,
-                "photoUrl" to dataModel.photoUrl,
-                "day" to dataModel.day,
-                "time" to dataModel.time
 
-            )
 
             val currentUserRef = database.collection("Users").document(dataModel.currentUser)
             val constructionSiteRef =
                 currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
 
-
             currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
             constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
 
-            val postsRef = constructionSiteRef.collection("posts").document("20231117")
+            val postsRef = constructionSiteRef.collection("posts").document(dataModel.id.toString())
+
+            val post = hashMapOf(
+                "message" to dataModel.message,
+                "title" to dataModel.title,
+                "photoUrl" to dataModel.photoUrl,
+                "day" to dataModel.day,
+                "time" to dataModel.time,
+                "postId" to dataModel.id
+            )
 
             postsRef.set(post).await()
         }
     }
 
     override suspend fun fetchData(
-        currentUser: String, constructionName: String
+        currentUser: String, constructionName: String, postId: String
     ): Result<List<DataModel>> {
         return kotlin.runCatching {
             val dataModelList = mutableListOf<DataModel>()
 
             val documentSnapshot =
                 database.collection("Users").document(currentUser).collection("construcitonName")
-                    .document(constructionName).collection("posts").document("20231117").get()
+                    .document(constructionName).collection("posts").document(postId).get()
                     .await()
 
             if (documentSnapshot.exists()) {
@@ -60,9 +61,10 @@ class FireBaseSourceImpl @Inject constructor(
                 val photoUrl = data?.get("photoUrl") as? String ?: ""
                 val day = data?.get("time") as? String ?: ""
                 val time = data?.get("day") as? String ?: ""
+                val id = data?.get("id") as? Long ?: 0
 
                 val retrievedDataModel = DataModel(
-                    message, title, photoUrl, day, time, currentUser, constructionName
+                    id = id, message, title, photoUrl, day, time, currentUser, constructionName
                 )
                 dataModelList.add(retrievedDataModel)
             }
@@ -96,22 +98,26 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
+
     override suspend fun updateArea(dataModel: DataModel): Result<Unit> {
         return kotlin.runCatching {
-            val post: MutableMap<String, Any> = hashMapOf(
-                "message" to dataModel.message,
-                "title" to dataModel.title,
-                "photoUrl" to dataModel.photoUrl,
-                "day" to dataModel.day,
-                "time" to dataModel.time
-            ).toMutableMap()
+
             val currentUserRef = database.collection("Users").document(dataModel.currentUser)
             val constructionSiteRef =
                 currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
 
-            val postsRef = constructionSiteRef.collection("posts").document("20231117")
+            val postsRef = constructionSiteRef.collection("posts").document(dataModel.id.toString())
 
-            postsRef.update(post).await()
+            val post = hashMapOf(
+                "message" to dataModel.message,
+                "title" to dataModel.title,
+                "photoUrl" to dataModel.photoUrl,
+                "day" to dataModel.day,
+                "time" to dataModel.time,
+                "postId" to dataModel.id
+            )
+
+            postsRef.set(post).await()
         }
     }
 
@@ -121,10 +127,11 @@ class FireBaseSourceImpl @Inject constructor(
             fileUri.forEach { fileUri ->
                 val reference = storage.reference.child("ilk")
 
-                 reference.putFile(fileUri).await()
+                reference.putFile(fileUri).await()
             }
         }
     }
+
     override suspend fun getImageUrl(imagePath: String): Result<Uri> {
         return kotlin.runCatching {
             val storageRef = storage.reference.child(imagePath)
@@ -132,5 +139,47 @@ class FireBaseSourceImpl @Inject constructor(
             downloadUrl // Geri döndürülecek URL
         }
     }
+
+    override suspend fun getAllPost(
+        currentUser: String,
+        constructionName: String
+    ): Result<List<DataModel>> {
+        return kotlin.runCatching {
+            val dataModelList = mutableListOf<DataModel>()
+
+            val postsSnapshot = database.collection("Users")
+                .document(currentUser)
+                .collection("construcitonName")
+                .document(constructionName)
+                .collection("posts")
+                .get()
+                .await()
+
+            for (postDocument in postsSnapshot.documents) {
+                val data = postDocument.data
+                val message = data?.get("message") as? String ?: ""
+                val title = data?.get("title") as? String ?: ""
+                val photoUrl = data?.get("photoUrl") as? String ?: ""
+                val day = data?.get("time") as? String ?: ""
+                val time = data?.get("day") as? String ?: ""
+                val id = data?.get("postId") as? Long ?: 0
+
+                val retrievedDataModel = DataModel(
+                    id = id,
+                    message = message,
+                    title = title,
+                    photoUrl = photoUrl,
+                    day = day,
+                    time = time,
+                    currentUser = currentUser,
+                    constructionArea = constructionName
+                )
+                dataModelList.add(retrievedDataModel)
+            }
+
+            dataModelList.toList()
+        }
+    }
+
 
 }

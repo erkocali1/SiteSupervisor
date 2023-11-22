@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 class CreateAreaFragment : Fragment() {
     private lateinit var binding: FragmentCreateAreaBinding
     private val viewModel: CreateAreFragmentViewModel by viewModels()
+    private var postId: Long? = null
 
 
     override fun onCreateView(
@@ -49,6 +50,11 @@ class CreateAreaFragment : Fragment() {
             if (constructionName.isNotEmpty()) {
                 val dataModel = createDataModel(constructionName)
 
+
+                lifecycleScope.launch {
+                    postId = viewModel.saveRoom(dataModel)
+                    dataModel.id = postId
+                }
                 viewModel.saveArea(dataModel)
 
                 lifecycleScope.launch {
@@ -85,10 +91,12 @@ class CreateAreaFragment : Fragment() {
 
         val constructionName = binding.etConstructionName.text.toString()
         val currentUser = viewModel.currentUser?.uid.toString()
+        val currentId = postId.toString()
         val userConstructionData = UserConstructionData(currentUser, listOf(constructionName))
 
         val bundle = Bundle().apply {
             putParcelable("userConstructionData", userConstructionData)
+            putString("postId", currentId)
         }
         findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment, bundle)
     }
@@ -97,6 +105,7 @@ class CreateAreaFragment : Fragment() {
 
         val currentUser = viewModel.currentUser?.uid.toString()
         return DataModel(
+            id = postId,
             message = "Lets start",
             title = "First Commit",
             photoUrl = "",

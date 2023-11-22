@@ -1,5 +1,7 @@
 package com.muzo.sitesupervisor.core.data.di
 
+import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
+import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepositoryImpl
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepositoryImpl
 import com.muzo.sitesupervisor.core.data.remote.repository.fireBaseData.FireBaseRepository
@@ -36,6 +38,12 @@ interface SiteSupervisorAppModule {
     fun bindFireBaseRepository(
         fireBaseRepositoryImpl: FireBaseRepositoryImpl
     ): FireBaseRepository
+
+
+    @Binds
+    fun localRepository(
+        localPostRepositoryImpl: LocalPostRepositoryImpl
+    ): LocalPostRepository
 
 
 }

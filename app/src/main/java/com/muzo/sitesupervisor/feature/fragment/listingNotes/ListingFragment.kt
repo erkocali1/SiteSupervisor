@@ -85,10 +85,10 @@ class ListingFragment : Fragment() {
 
     private fun navigateDetailFragment() {
         binding.fabBtn.setOnClickListener {
-            val bundleFab=Bundle().apply {
+            val bundleFab = Bundle().apply {
                 putString("from", "fab")
             }
-            findNavController().navigate(R.id.action_listingFragment_to_detailFragment,bundleFab)
+            findNavController().navigate(R.id.action_listingFragment_to_detailFragment, bundleFab)
 
         }
     }
@@ -106,7 +106,7 @@ class ListingFragment : Fragment() {
         val constructionAreaAsString = constructionArea?.joinToString(", ")
 
         if (supervisorUser != null && constructionAreaAsString != null) {
-            viewModel.getData(supervisorUser, constructionAreaAsString)
+            viewModel.getAllData(supervisorUser, constructionAreaAsString)
             Log.d("bakacaz", "$supervisorUser and $constructionAreaAsString")
         }
 
@@ -122,6 +122,7 @@ class ListingFragment : Fragment() {
 
     private fun bind(item: DataModel): DataModel {
         return DataModel(
+            id=item.id,
             message = item.message,
             day = item.day,
             title = item.title,

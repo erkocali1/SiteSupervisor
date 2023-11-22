@@ -12,7 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
@@ -27,6 +29,7 @@ class DetailFragment : Fragment() {
     private lateinit var adapter: ImageViewAdapter
     private val uriList = mutableListOf<Uri>()
     private var from: String? = null
+    private var postId: Long? = null
 
 
     override fun onCreateView(
@@ -52,15 +55,17 @@ class DetailFragment : Fragment() {
     }
 
     private fun takeData(): DataModel {
+
         val receivedData = arguments?.getParcelable<DataModel>("dataList")
         val title = binding.etTitle.text.toString()
         val message = binding.etDes.text.toString()
         val photoUrl = "first"
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
-        val constructionName =receivedData?.constructionArea
+        val constructionName = receivedData?.constructionArea
+        val id = receivedData?.id
 
-        return DataModel(message, title, photoUrl, day, time, currentUser, constructionName!!)
+        return DataModel(id!!, message, title, photoUrl, day, time, currentUser, constructionName!!)
 
     }
 
@@ -74,17 +79,28 @@ class DetailFragment : Fragment() {
 
                     uiState.isSuccessful -> {
                         toastMessage(uiState.message!!)
+                        navigateListingFragment()
+
                     }
                 }
             }
         }
     }
 
+    private fun saveNewDataEvent() {
+        lifecycleScope.launch {
+            val postId = viewModel.saveRoom(takeData())
+            val newTakeData = takeData().apply { id = postId }
+            viewModel.addData(newTakeData)
+        }
+    }
+
+
     private fun updateEvent() {
         val dataModel = takeData()
         lifecycleScope.launch {
             viewModel.updateData(dataModel)
-            savePhotoFireBase(this@DetailFragment.uriList)
+            //     savePhotoFireBase(this@DetailFragment.uriList)
         }
     }
 
@@ -92,7 +108,12 @@ class DetailFragment : Fragment() {
 
         binding.okBtn.setOnClickListener {
             if (isAllFieldsFilled()) {
-                updateEvent()
+                if (getFromLocation()) {
+                    saveNewDataEvent()
+                } else {
+                    updateEvent()
+                }
+
             } else {
                 toastMessage("Lütfen tüm bilgileri düzgün doldurunuz")
             }
@@ -120,8 +141,7 @@ class DetailFragment : Fragment() {
         val photoUrl = receivedData?.photoUrl
         val day = receivedData?.day
         val time = receivedData?.time
-        val currentUser = receivedData?.currentUser
-        val constructionName = receivedData?.constructionArea
+
 
         binding.etTitle.setText(title)
         binding.etDes.setText(message)
@@ -175,13 +195,21 @@ class DetailFragment : Fragment() {
     }
 
 
-    private fun getFromLocation() {
+    private fun getFromLocation(): Boolean {
         from = arguments?.getString("from")
-        if (from == "fab") {
-            toastMessage("yeni bilgileri giriniz")
-        } else if (from == "recyclerview") {
-            showData()
+        return when (from) {
+            "fab" -> true
+            "recyclerview" -> {
+                showData()
+                false
+            }
+
+            else -> false
         }
+    }
+
+    private fun navigateListingFragment() {
+        findNavController().navigate(R.id.action_detailFragment_to_listingFragment)
     }
 
 

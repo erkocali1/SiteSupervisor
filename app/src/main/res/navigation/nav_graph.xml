@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/selectionFragment">
+    app:startDestination="@id/enterFragment">
 
     <fragment
         android:id="@+id/enterFragment"
@@ -81,5 +81,9 @@
         android:id="@+id/detailFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.detailFragment.DetailFragment"
         android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" />
+        tools:layout="@layout/fragment_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_listingFragment"
+            app:destination="@id/listingFragment" />
+    </fragment>
 </navigation>

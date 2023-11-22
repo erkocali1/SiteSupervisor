@@ -6,6 +6,7 @@ class Constants {
 
         const val ERROR_MESSAGE="Registration failed"
         const val OK_MESSAGE="Your application is okey"
+        const val DATABASE_NAME="news_db"
     }
 
 }

@@ -7,6 +7,7 @@ import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
+import com.muzo.sitesupervisor.domain.GetAllPostUseCase
 import com.muzo.sitesupervisor.domain.GetDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListingFramentViewModel @Inject constructor(
-    private val useCase: GetDataUseCase,
+    private val getDataUseCase: GetDataUseCase,
+    private val getAllPostUseCase:GetAllPostUseCase,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -28,10 +30,10 @@ class ListingFramentViewModel @Inject constructor(
 
 
 
-     fun getData(currentUser: String, constructionName: String) {
+     fun getAllData(currentUser: String, constructionName: String) {
 
         viewModelScope.launch {
-            useCase(currentUser, constructionName).asReSource().onEach { result ->
+            getAllPostUseCase(currentUser, constructionName).asReSource().onEach { result ->
                 when (result) {
                     is Resource.Error -> {
                         _uiState.value = _uiState.value.copy(

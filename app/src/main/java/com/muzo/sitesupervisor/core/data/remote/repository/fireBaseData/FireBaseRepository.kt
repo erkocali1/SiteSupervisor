@@ -10,7 +10,7 @@ interface FireBaseRepository {
 
     suspend fun saveArea(data: DataModel): Result<Unit>
 
-    suspend fun fetchData(currentUser: String, constructionName: String):Result<List<DataModel>>
+    suspend fun fetchData(currentUser: String, constructionName: String,postId:String):Result<List<DataModel>>
 
     suspend fun fetchArea():Result<List<UserConstructionData>>
 
@@ -19,6 +19,8 @@ interface FireBaseRepository {
     suspend fun upLoadImage(fileUri: List<Uri>): Result<Unit>
 
     suspend fun getImageUrl(imagePath: String): Result<Uri>
+
+    suspend fun getAllPost(currentUser: String, constructionName: String):Result<List<DataModel>>
 
 
 }
