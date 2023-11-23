@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
+import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class CreateAreFragmentViewModel @Inject constructor(
     private val fireBaseSaveDataUseCase: FireBaseSaveDataUseCase,
     authRepository: AuthRepository,
-    private val localPostRepository: LocalPostRepository
+    private val localPostRepository: LocalPostRepository,
+    private val myDataStore: MyDataStore,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SaveDataState> = MutableStateFlow(SaveDataState())
@@ -59,10 +61,13 @@ class CreateAreFragmentViewModel @Inject constructor(
     }
 
     suspend fun saveRoom(saveList: DataModel): Long {
-         val baba =localPostRepository.savePost(saveList)
+        val baba = localPostRepository.savePost(saveList)
         return baba
     }
 
+    suspend fun saveDataStore(currentUser: String, constructionArea: String) {
+        myDataStore.saveData("user_key", "construction_key", currentUser, constructionArea)
+    }
 
 
 }

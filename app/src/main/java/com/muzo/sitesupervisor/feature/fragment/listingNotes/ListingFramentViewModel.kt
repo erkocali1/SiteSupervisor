@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
+import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetAllPostUseCase
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class ListingFramentViewModel @Inject constructor(
     private val getDataUseCase: GetDataUseCase,
     private val getAllPostUseCase:GetAllPostUseCase,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val dataStore: MyDataStore
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<GetDataState> = MutableStateFlow(GetDataState())
@@ -58,6 +60,9 @@ class ListingFramentViewModel @Inject constructor(
         }
 
 
+    }
+    suspend fun readDataStore(userKey:String):String{
+      return  dataStore.readDataStore(userKey)!!
     }
 
 

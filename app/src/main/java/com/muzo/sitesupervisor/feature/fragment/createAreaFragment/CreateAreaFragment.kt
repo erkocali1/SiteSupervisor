@@ -14,7 +14,6 @@ import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
-import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.databinding.FragmentCreateAreaBinding
 import com.thecode.aestheticdialogs.AestheticDialog
 import com.thecode.aestheticdialogs.DialogAnimation
@@ -92,14 +91,17 @@ class CreateAreaFragment : Fragment() {
         val constructionName = binding.etConstructionName.text.toString()
         val currentUser = viewModel.currentUser?.uid.toString()
         val currentId = postId.toString()
-        val userConstructionData = UserConstructionData(currentUser, listOf(constructionName))
 
-        val bundle = Bundle().apply {
-            putParcelable("userConstructionData", userConstructionData)
-            putString("postId", currentId)
+        lifecycleScope.launch {
+            viewModel.saveDataStore(constructionName, currentUser)
+
+            val bundle = Bundle().apply {
+                putString("postId", currentId)
+            }
+            findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment, bundle)
         }
-        findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment, bundle)
     }
+
 
     private fun createDataModel(constructionName: String): DataModel {
 
@@ -130,4 +132,5 @@ class CreateAreaFragment : Fragment() {
                 }
             }).show()
     }
+
 }

@@ -15,10 +15,10 @@ import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
-import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.databinding.FragmentListingBinding
 import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -27,6 +27,8 @@ class ListingFragment : Fragment() {
     private lateinit var binding: FragmentListingBinding
     private lateinit var adapter: ListingAdapter
     private lateinit var list: List<DataModel>
+
+
 
 
     override fun onCreateView(
@@ -85,29 +87,36 @@ class ListingFragment : Fragment() {
 
     private fun navigateDetailFragment() {
         binding.fabBtn.setOnClickListener {
+
             val bundleFab = Bundle().apply {
                 putString("from", "fab")
             }
             findNavController().navigate(R.id.action_listingFragment_to_detailFragment, bundleFab)
-
         }
     }
 
+
     private fun getConstruction() {
-        val userConstructionData =
-            arguments?.getParcelable<UserConstructionData>("userConstructionData")
-        val supervisorUser = userConstructionData?.currentUser
-        val constructionArea = userConstructionData?.constructionAreas
-        val currentUser = viewModel.currentUser
 
-        //checkUser or Guest
-        validationUser(currentUser, supervisorUser)
+        lifecycleScope.launch {
 
-        val constructionAreaAsString = constructionArea?.joinToString(", ")
+            val supervisorUser = viewModel.readDataStore("user_key")
+            val constructionArea = viewModel.readDataStore("construction_key")
 
-        if (supervisorUser != null && constructionAreaAsString != null) {
-            viewModel.getAllData(supervisorUser, constructionAreaAsString)
-            Log.d("bakacaz", "$supervisorUser and $constructionAreaAsString")
+
+
+            val currentUser = viewModel.currentUser
+
+            Log.d("DataStore",supervisorUser)
+            Log.d("DataStore",constructionArea)
+
+            //checkUser or Guest
+            validationUser(currentUser, supervisorUser)
+
+            if (supervisorUser != null && constructionArea != null) {
+                viewModel.getAllData(constructionArea, supervisorUser)
+                Log.d("bakacaz", "$supervisorUser and $constructionArea")
+            }
         }
 
     }
@@ -122,7 +131,7 @@ class ListingFragment : Fragment() {
 
     private fun bind(item: DataModel): DataModel {
         return DataModel(
-            id=item.id,
+            id = item.id,
             message = item.message,
             day = item.day,
             title = item.title,

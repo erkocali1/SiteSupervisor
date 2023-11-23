@@ -7,6 +7,7 @@ import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.ERROR_MESSAGE
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
+import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
@@ -15,7 +16,9 @@ import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
 import com.muzo.sitesupervisor.domain.UploadImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,7 +34,8 @@ class DetailFragmentViewModel @Inject constructor(
     private val getDataUseCase: GetDataUseCase,
     private val addDataUseCase: FireBaseSaveDataUseCase,
     private val uploadImageUseCase: UploadImageUseCase,
-    private val localPostRepository: LocalPostRepository
+    private val localPostRepository: LocalPostRepository,
+    private val dataStore: MyDataStore
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
@@ -114,11 +118,11 @@ class DetailFragmentViewModel @Inject constructor(
     }
 
     suspend fun saveRoom(saveList: DataModel): Long {
-        val baba =localPostRepository.savePost(saveList)
+        val baba = localPostRepository.savePost(saveList)
         return baba
     }
 
-     fun addData(dataModel: DataModel) {
+    fun addData(dataModel: DataModel) {
 
         viewModelScope.launch {
             addDataUseCase(dataModel).asReSource().onEach { result ->
@@ -141,6 +145,13 @@ class DetailFragmentViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
+
+    suspend fun readDataStore(userKey: String): Flow<String> {
+        return flow{
+           dataStore.readDataStore(userKey)
+        }
+    }
+
 }
 
 data class UpdateState(
