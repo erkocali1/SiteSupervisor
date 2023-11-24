@@ -47,14 +47,15 @@ class CreateAreaFragment : Fragment() {
             val constructionName = binding.etConstructionName.text.toString()
 
             if (constructionName.isNotEmpty()) {
+
                 val dataModel = createDataModel(constructionName)
 
 
                 lifecycleScope.launch {
                     postId = viewModel.saveRoom(dataModel)
                     dataModel.id = postId
+                    viewModel.saveArea(dataModel)
                 }
-                viewModel.saveArea(dataModel)
 
                 lifecycleScope.launch {
                     viewModel.uiState.collect { uiState ->
@@ -90,15 +91,11 @@ class CreateAreaFragment : Fragment() {
 
         val constructionName = binding.etConstructionName.text.toString()
         val currentUser = viewModel.currentUser?.uid.toString()
-        val currentId = postId.toString()
 
         lifecycleScope.launch {
-            viewModel.saveDataStore(constructionName, currentUser)
+            viewModel.saveDataStore(currentUser, constructionName)
 
-            val bundle = Bundle().apply {
-                putString("postId", currentId)
-            }
-            findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment, bundle)
+            findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment)
         }
     }
 

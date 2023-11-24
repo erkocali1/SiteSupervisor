@@ -140,10 +140,7 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllPost(
-        currentUser: String,
-        constructionName: String
-    ): Result<List<DataModel>> {
+    override suspend fun getAllPost(currentUser: String, constructionName: String): Result<List<DataModel>> {
         return kotlin.runCatching {
             val dataModelList = mutableListOf<DataModel>()
 

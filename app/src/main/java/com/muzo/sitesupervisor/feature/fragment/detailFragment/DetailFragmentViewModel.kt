@@ -1,7 +1,9 @@
 package com.muzo.sitesupervisor.feature.fragment.detailFragment
 
 import android.net.Uri
+import android.provider.ContactsContract.Data
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
@@ -16,9 +18,9 @@ import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
 import com.muzo.sitesupervisor.domain.UploadImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -40,6 +42,8 @@ class DetailFragmentViewModel @Inject constructor(
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
     val uiState = _uiState
+
+
 
     val currentUser = authRepository.currentUser?.uid.toString()
 
@@ -122,6 +126,9 @@ class DetailFragmentViewModel @Inject constructor(
         return baba
     }
 
+
+
+
     fun addData(dataModel: DataModel) {
 
         viewModelScope.launch {
@@ -145,12 +152,10 @@ class DetailFragmentViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
-
-    suspend fun readDataStore(userKey: String): Flow<String> {
-        return flow{
-           dataStore.readDataStore(userKey)
-        }
+    fun readDataStore(userKey: String): Flow<String?> {
+        return dataStore.readDataStore(userKey)
     }
+
 
 }
 
@@ -158,5 +163,6 @@ data class UpdateState(
     val loading: Boolean = false,
     val message: String? = null,
     val isSuccessful: Boolean = false,
-    val resultList: List<DataModel>? = null
+    val resultList: List<DataModel>? = null,
+    val resultId: Long? = null
 )

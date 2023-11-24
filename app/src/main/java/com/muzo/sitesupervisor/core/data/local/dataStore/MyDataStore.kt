@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -31,11 +31,11 @@ class MyDataStore @Inject constructor(private val dataStore: DataStore<Preferenc
         }
     }
 
-    suspend fun readDataStore(userKey: String): String? {
+    fun readDataStore(userKey: String): Flow<String?> {
         val dataStoreKey = stringPreferencesKey(userKey)
         return dataStore.data.map { prefs ->
             prefs[dataStoreKey] ?: ""
-        }.first()
+        }
     }
 
 

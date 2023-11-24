@@ -22,8 +22,8 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.ImageViewAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -32,12 +32,25 @@ class DetailFragment : Fragment() {
     private lateinit var adapter: ImageViewAdapter
     private val uriList = mutableListOf<Uri>()
     private var from: String? = null
+    private var postId: Long? = null
+    private lateinit var constructionArea:String
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentDetailBinding.inflate(layoutInflater, container, false)
+
+
+        lifecycleScope.launch {
+
+
+            viewModel.readDataStore("construction_key").collect { area ->
+                constructionArea = area!!
+                Log.d("bura değerlenicek", area)
+            }
+        }
+
 
         getFromLocation()
         showDayAndTime()
@@ -56,11 +69,8 @@ class DetailFragment : Fragment() {
         binding.textTime.text = currentTime
     }
 
-    private suspend fun takeData(): DataModel {
+    private  fun takeData(): DataModel {
 
-
-        val constructionAreaFlow = viewModel.readDataStore("construction_key")
-        val constructionArea = constructionAreaFlow.first()
 
         val receivedData = arguments?.getParcelable<DataModel>("dataList")
         val title = binding.etTitle.text.toString()
@@ -69,11 +79,14 @@ class DetailFragment : Fragment() {
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
 
-        val constructionName = receivedData?.constructionArea ?: constructionArea
-        val id = receivedData?.id ?: 0L
+        val postId = receivedData?.id ?: 0
 
-        return DataModel(id, message, title, photoUrl, day, time, currentUser!!, constructionName)
+        return DataModel(
+            postId, message, title, photoUrl, day, time, currentUser ?: "", constructionArea
+        )
     }
+
+
 
 
     private fun observeData() {
@@ -95,14 +108,18 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun saveNewDataEvent() {
+    private  fun saveNewDataEvent() {
+
+           val data = takeData()
+
         lifecycleScope.launch {
-            val postId = viewModel.saveRoom(takeData())
-            Log.d("recivedDataid2", id.toString())
-            val newTakeData = takeData().apply { id = postId }
-            viewModel.addData(newTakeData)
+            postId = viewModel.saveRoom(data)
+            data.id=postId
+            viewModel.addData(data)
+            Log.d("bura değerlenicek", postId.toString())
+            navigateListingFragment()
         }
-        navigateListingFragment()
+
     }
 
 
@@ -222,6 +239,7 @@ class DetailFragment : Fragment() {
     private fun navigateListingFragment() {
         findNavController().navigate(R.id.action_detailFragment_to_listingFragment)
     }
+
 
 
 }

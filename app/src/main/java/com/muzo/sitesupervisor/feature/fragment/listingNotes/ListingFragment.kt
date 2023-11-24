@@ -18,7 +18,6 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentListingBinding
 import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -27,8 +26,6 @@ class ListingFragment : Fragment() {
     private lateinit var binding: FragmentListingBinding
     private lateinit var adapter: ListingAdapter
     private lateinit var list: List<DataModel>
-
-
 
 
     override fun onCreateView(
@@ -99,26 +96,26 @@ class ListingFragment : Fragment() {
     private fun getConstruction() {
 
         lifecycleScope.launch {
-
-            val supervisorUser = viewModel.readDataStore("user_key")
-            val constructionArea = viewModel.readDataStore("construction_key")
-
-
+            val supervisorUserFlow = viewModel.readDataStore("user_key")
+            val constructionAreaFlow = viewModel.readDataStore("construction_key")
 
             val currentUser = viewModel.currentUser
 
-            Log.d("DataStore",supervisorUser)
-            Log.d("DataStore",constructionArea)
+            supervisorUserFlow.collect { supervisorUser ->
+                constructionAreaFlow.collect { constructionArea ->
+                    Log.d("DataStore super", supervisorUser ?: "null")
+                    Log.d("DataStore", constructionArea ?: "null")
 
-            //checkUser or Guest
-            validationUser(currentUser, supervisorUser)
+                    // Check User or Guest
+                    validationUser(currentUser, supervisorUser)
 
-            if (supervisorUser != null && constructionArea != null) {
-                viewModel.getAllData(constructionArea, supervisorUser)
-                Log.d("bakacaz", "$supervisorUser and $constructionArea")
+                    if (supervisorUser != null && constructionArea != null) {
+                        viewModel.getAllData(currentUser, constructionArea)
+                        Log.d("bakacaz", "$supervisorUser and $constructionArea")
+                    }
+                }
             }
         }
-
     }
 
     private fun validationUser(currentUser: String, superVisorUser: String?) {

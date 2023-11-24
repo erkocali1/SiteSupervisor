@@ -11,6 +11,7 @@ import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetAllPostUseCase
 import com.muzo.sitesupervisor.domain.GetDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -61,8 +62,8 @@ class ListingFramentViewModel @Inject constructor(
 
 
     }
-    suspend fun readDataStore(userKey:String):String{
-      return  dataStore.readDataStore(userKey)!!
+    fun readDataStore(userKey: String): Flow<String?> {
+        return dataStore.readDataStore(userKey)
     }
 
 
