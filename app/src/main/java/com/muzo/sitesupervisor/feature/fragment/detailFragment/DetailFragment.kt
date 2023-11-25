@@ -22,7 +22,6 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.ImageViewAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -99,8 +98,6 @@ class DetailFragment : Fragment() {
                     uiState.isSuccessful -> {
                         binding.progressBar.hide()
                         toastMessage(uiState.message!!)
-                        navigateListingFragment()
-
                     }
                 }
             }
@@ -115,9 +112,24 @@ class DetailFragment : Fragment() {
             postId = viewModel.saveRoom(data)
             data.id = postId
             viewModel.addData(data)
-            delay(1000)
             Log.d("bura değerlenicek", postId.toString())
-            navigateListingFragment()
+
+        }
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                when {
+                    uiState.isSuccessful -> {
+                        binding.progressBar.hide()
+                        navigateListingFragment()
+
+                    }
+
+                    uiState.loading -> {
+                        binding.progressBar.show()
+                    }
+
+                }
+            }
         }
     }
 
@@ -236,7 +248,9 @@ class DetailFragment : Fragment() {
     }
 
     private fun navigateListingFragment() {
+        Log.d("selam", "1 kez")
         findNavController().navigate(R.id.action_detailFragment_to_listingFragment)
+
     }
 
 
