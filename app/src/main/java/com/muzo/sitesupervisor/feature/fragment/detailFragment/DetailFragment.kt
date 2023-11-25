@@ -22,6 +22,7 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.ImageViewAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -33,7 +34,7 @@ class DetailFragment : Fragment() {
     private val uriList = mutableListOf<Uri>()
     private var from: String? = null
     private var postId: Long? = null
-    private lateinit var constructionArea:String
+    private lateinit var constructionArea: String
 
 
     override fun onCreateView(
@@ -69,7 +70,7 @@ class DetailFragment : Fragment() {
         binding.textTime.text = currentTime
     }
 
-    private  fun takeData(): DataModel {
+    private fun takeData(): DataModel {
 
 
         val receivedData = arguments?.getParcelable<DataModel>("dataList")
@@ -79,14 +80,12 @@ class DetailFragment : Fragment() {
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
 
-        val postId = receivedData?.id ?: 0
+        postId = receivedData?.id
 
         return DataModel(
             postId, message, title, photoUrl, day, time, currentUser ?: "", constructionArea
         )
     }
-
-
 
 
     private fun observeData() {
@@ -108,18 +107,18 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private  fun saveNewDataEvent() {
+    private fun saveNewDataEvent() {
 
-           val data = takeData()
+        val data = takeData()
 
         lifecycleScope.launch {
             postId = viewModel.saveRoom(data)
-            data.id=postId
+            data.id = postId
             viewModel.addData(data)
+            delay(1000)
             Log.d("bura değerlenicek", postId.toString())
             navigateListingFragment()
         }
-
     }
 
 
@@ -239,7 +238,6 @@ class DetailFragment : Fragment() {
     private fun navigateListingFragment() {
         findNavController().navigate(R.id.action_detailFragment_to_listingFragment)
     }
-
 
 
 }
