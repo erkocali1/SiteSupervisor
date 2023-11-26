@@ -60,7 +60,11 @@ class DetailFragmentViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE)
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            message = OK_MESSAGE,
+                            isSuccessful = true
+                        )
                     }
                 }
             }.launchIn(this)
@@ -141,9 +145,7 @@ class DetailFragmentViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
-                            message = OK_MESSAGE,
-                            loading = false,
-                            isSuccessful = true
+                            message = OK_MESSAGE, loading = false, isSuccessful = true
                         )
                     }
                 }

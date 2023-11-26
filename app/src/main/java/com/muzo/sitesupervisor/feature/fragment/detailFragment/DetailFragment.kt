@@ -34,6 +34,7 @@ class DetailFragment : Fragment() {
     private var from: String? = null
     private var postId: Long? = null
     private lateinit var constructionArea: String
+    private var isEnter=true
 
 
     override fun onCreateView(
@@ -43,13 +44,12 @@ class DetailFragment : Fragment() {
 
 
         lifecycleScope.launch {
-
-
             viewModel.readDataStore("construction_key").collect { area ->
                 constructionArea = area!!
                 Log.d("bura değerlenicek", area)
             }
         }
+
 
 
         getFromLocation()
@@ -114,14 +114,11 @@ class DetailFragment : Fragment() {
             viewModel.addData(data)
             Log.d("bura değerlenicek", postId.toString())
 
-        }
-        lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
                 when {
                     uiState.isSuccessful -> {
                         binding.progressBar.hide()
                         navigateListingFragment()
-
                     }
 
                     uiState.loading -> {
@@ -130,16 +127,29 @@ class DetailFragment : Fragment() {
 
                 }
             }
+
         }
     }
 
 
     private fun updateEvent() {
+        val dataModel = takeData()
 
         lifecycleScope.launch {
-            val dataModel = takeData()
             viewModel.updateData(dataModel)
-            //     savePhotoFireBase(this@DetailFragment.uriList)
+            viewModel.uiState.collect { uiState ->
+                when {
+                    uiState.isSuccessful -> {
+                        binding.progressBar.hide()
+                        navigateListingFragment()
+                    }
+
+                    uiState.loading -> {
+                        binding.progressBar.show()
+                    }
+                }
+
+            }
         }
     }
 
@@ -180,7 +190,6 @@ class DetailFragment : Fragment() {
         val photoUrl = receivedData?.photoUrl
         val day = receivedData?.day
         val time = receivedData?.time
-
 
         binding.etTitle.setText(title)
         binding.etDes.setText(message)
@@ -239,16 +248,17 @@ class DetailFragment : Fragment() {
         return when (from) {
             "fab" -> true
             "recyclerview" -> {
-                showData()
+                if (isEnter){
+                    showData()
+                    isEnter=false
+                }
                 false
             }
-
             else -> false
         }
     }
 
     private fun navigateListingFragment() {
-        Log.d("selam", "1 kez")
         findNavController().navigate(R.id.action_detailFragment_to_listingFragment)
 
     }
