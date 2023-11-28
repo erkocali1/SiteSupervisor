@@ -107,7 +107,7 @@ class CreateAreaFragment : Fragment() {
             id = postId,
             message = "Lets start",
             title = "First Commit",
-            photoUrl = "",
+            photoUrl = listOf("",""),
             day = "1234",
             time = "123",
             currentUser = currentUser,

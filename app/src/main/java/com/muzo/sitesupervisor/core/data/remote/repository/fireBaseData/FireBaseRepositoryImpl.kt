@@ -14,28 +14,40 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.saveArea(data)
     }
 
-    override suspend fun fetchData(currentUser: String, constructionName: String,postId:String): Result<List<DataModel>> {
-        return fireBaseSource.fetchData(currentUser, constructionName, postId )
+    override suspend fun fetchData(
+        currentUser: String,
+        constructionName: String,
+        postId: String
+    ): Result<List<DataModel>> {
+        return fireBaseSource.fetchData(currentUser, constructionName, postId)
     }
 
-    override suspend fun fetchArea():Result<List<UserConstructionData>>{
-    return fireBaseSource.fetchArea()
+    override suspend fun fetchArea(): Result<List<UserConstructionData>> {
+        return fireBaseSource.fetchArea()
     }
 
     override suspend fun updateArea(dataModel: DataModel): Result<Unit> {
         return fireBaseSource.updateArea(dataModel)
     }
 
-    override suspend fun upLoadImage(fileUri: List<Uri>): Result<Unit> {
-        return fireBaseSource.upLoadImage(fileUri)
-    }
-
-    override suspend fun getImageUrl(imagePath: String): Result<Uri> {
-        return fireBaseSource.getImageUrl(imagePath)
-    }
-
     override suspend fun getAllPost(currentUser: String, constructionName: String): Result<List<DataModel>> {
-        return fireBaseSource.getAllPost(currentUser,constructionName)
+        return fireBaseSource.getAllPost(currentUser, constructionName)
+    }
+
+    override suspend fun getConstructionSitePostIds(userId: String, constructionName: String): Result<List<String>> {
+        return fireBaseSource.getConstructionSitePostIds(userId, constructionName)
+    }
+
+    override suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String): Result<List<Uri>> {
+        return fireBaseSource.addImageToFirebaseStorage(fileUris, postId)
+    }
+
+    override suspend fun addImageUrlToFireStore(downloadUrl:List<Uri>, currentUser: String, constructionName: String, postId: String): Result<Unit> {
+        return fireBaseSource.addImageUrlToFireStore(downloadUrl, currentUser, constructionName, postId)
+    }
+
+    override suspend fun getImageUrlFromFireStore(currentUser: String, constructionName: String, postId: String): Result<List<String>> {
+        return fireBaseSource.getImageUrlFromFireStore(currentUser, constructionName, postId)
     }
 
 

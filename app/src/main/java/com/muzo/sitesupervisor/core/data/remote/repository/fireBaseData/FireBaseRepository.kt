@@ -16,11 +16,15 @@ interface FireBaseRepository {
 
     suspend fun updateArea(dataModel: DataModel): Result<Unit>
 
-    suspend fun upLoadImage(fileUri: List<Uri>): Result<Unit>
-
-    suspend fun getImageUrl(imagePath: String): Result<Uri>
-
     suspend fun getAllPost(currentUser: String, constructionName: String):Result<List<DataModel>>
+
+     suspend fun getConstructionSitePostIds(userId: String, constructionName: String): Result<List<String>>
+
+    suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?,postId: String): Result<List<Uri>>
+
+    suspend fun addImageUrlToFireStore(downloadUrl: List<Uri>,currentUser: String,constructionName: String,postId: String):Result<Unit>
+
+    suspend fun getImageUrlFromFireStore(currentUser: String,constructionName: String,postId: String):Result<List<String>>
 
 
 }

@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.detailFragment
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
@@ -11,10 +12,11 @@ import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
+import com.muzo.sitesupervisor.domain.AddImageToFirebaseStorageUseCase
+import com.muzo.sitesupervisor.domain.AddImageUrlToFireStoreUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
-import com.muzo.sitesupervisor.domain.UploadImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +34,9 @@ class DetailFragmentViewModel @Inject constructor(
     authRepository: AuthRepository,
     private val getDataUseCase: GetDataUseCase,
     private val addDataUseCase: FireBaseSaveDataUseCase,
-    private val uploadImageUseCase: UploadImageUseCase,
     private val localPostRepository: LocalPostRepository,
+    private val addImageToFirebaseStorageUseCase: AddImageToFirebaseStorageUseCase,
+    private val addImageUrlToFireStoreUseCase: AddImageUrlToFireStoreUseCase,
     private val dataStore: MyDataStore
 ) : ViewModel() {
 
@@ -71,24 +74,44 @@ class DetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun uploadPhoto(fileUri: List<Uri>) {
+    fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String) {
         viewModelScope.launch {
-            uploadImageUseCase(fileUri).asReSource().onEach { result ->
+            addImageToFirebaseStorageUseCase(fileUris,postId).asReSource().onEach { result ->
+                Log.d("hello","fileUris=> $fileUris postıd=> $postId")
                 when (result) {
-                    is Resource.Error -> _uiState.value =
+                    is Resource.Error ->  {_uiState.value =
                         _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
-
-                    Resource.Loading -> {
+                    }
+                   is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
                     }
 
                     is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE,resultUriList=result.data)
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+    fun addImageUrlToFireStore(downloadUrl:List<Uri>, currentUser: String, constructionName: String, postId: String){
+        viewModelScope.launch {
+            addImageUrlToFireStoreUseCase(downloadUrl, currentUser, constructionName, postId).asReSource().onEach {result->
+                when(result){
+                    is Resource.Error -> _uiState.value =
+                        _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
+
+                    is Resource.Loading -> {
+                        _uiState.value = _uiState.value.copy(loading = true)
+                    }
+                    is Resource.Success->{
                         _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE)
                     }
                 }
             }.launchIn(this)
         }
     }
+
 
     fun getCurrentDateAndTime(): Pair<String, String> {
         val calendar = Calendar.getInstance()
@@ -102,7 +125,7 @@ class DetailFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             getDataUseCase(constructionName, currentUser, postId).asReSource().onEach { result ->
                 when (result) {
-                    Resource.Loading -> {
+                  is  Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
                     }
 
@@ -133,7 +156,7 @@ class DetailFragmentViewModel @Inject constructor(
             addDataUseCase(dataModel).asReSource().onEach { result ->
                 when (result) {
 
-                    Resource.Loading -> {
+                   is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
                     }
 
@@ -165,5 +188,5 @@ data class UpdateState(
     val message: String? = null,
     val isSuccessful: Boolean = false,
     val resultList: List<DataModel>? = null,
-    val resultId: Long? = null
+    val resultUriList:List<Uri>?=null
 )

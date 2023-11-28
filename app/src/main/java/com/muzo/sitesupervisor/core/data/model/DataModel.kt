@@ -14,7 +14,7 @@ data class DataModel(
     @PrimaryKey(autoGenerate = true) var id: Long?=null,
     val message: String,
     val title: String,
-    val photoUrl: String,
+    val photoUrl: List<String>?=null,
     val day: String,
     val time: String,
     val currentUser: String,

@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.listingNotes
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentListingBinding
 import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -26,6 +28,7 @@ class ListingFragment : Fragment() {
     private lateinit var binding: FragmentListingBinding
     private lateinit var adapter: ListingAdapter
     private lateinit var list: List<DataModel>
+    private lateinit var idsList: List<Uri>
 
 
     override fun onCreateView(
@@ -112,6 +115,7 @@ class ListingFragment : Fragment() {
                     if (supervisorUser != null && constructionArea != null) {
                         viewModel.getAllData(currentUser, constructionArea)
                         Log.d("bakacaz", "$supervisorUser and $constructionArea")
+
                     }
                 }
             }
