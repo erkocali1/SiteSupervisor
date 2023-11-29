@@ -25,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
     private val viewModel: DetailFragmentViewModel by viewModels()
@@ -38,8 +37,6 @@ class DetailFragment : Fragment() {
     private var isEnter = true
     private var saveDataJob: Job? = null
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -51,14 +48,12 @@ class DetailFragment : Fragment() {
                 constructionArea = area!!
             }
         }
-
         getFromLocation()
         showDayAndTime()
         clickListener()
         observeData()
         addPhoto()
-
-
+        turnBackFragment()
 
         return binding.root
     }
@@ -71,7 +66,6 @@ class DetailFragment : Fragment() {
 
     private fun takeData(): DataModel {
 
-
         val receivedData = arguments?.getParcelable<DataModel>("dataList")
         val title = binding.etTitle.text.toString()
         val message = binding.etDes.text.toString()
@@ -82,10 +76,9 @@ class DetailFragment : Fragment() {
         postId = receivedData?.id
 
         return DataModel(
-            postId, message, title, photoUrl, day, time, currentUser ?: "", constructionArea
+            postId, message, title, photoUrl, day, time, currentUser, constructionArea
         )
     }
-
 
     private fun observeData() {
 
@@ -107,7 +100,7 @@ class DetailFragment : Fragment() {
 
     private fun saveNewDataEvent() {
         val data = takeData()
-       saveDataJob= lifecycleScope.launch {
+        saveDataJob = lifecycleScope.launch {
             postId = viewModel.saveRoom(data)
             data.id = postId
             addImageToFirebaseStorage(uriList, data.id.toString())
@@ -120,7 +113,7 @@ class DetailFragment : Fragment() {
                     uiState.resultUriList != null -> {
                         val gettingUriList = uiState.resultUriList
                         val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
-                        observeImageUpload(data,stringUriList)
+                        observeImageUpload(data, stringUriList)
                         saveDataJob?.cancel()
                     }
                 }
@@ -145,54 +138,6 @@ class DetailFragment : Fragment() {
             }
         }
     }
-
-//    private fun saveNewxDataEvent() {
-//        val data = takeData()
-//
-//        lifecycleScope.launch {
-//            postId = viewModel.saveRoom(data)
-//            data.id = postId
-//            Log.d("DetailFragment=>", "$uriList")
-//            addImageToFirebaseStorage(uriList, data.id.toString())
-//            viewModel.uiState.collect { uiState ->
-//                when {
-//                    (uiState.loading) -> {
-//                        binding.progressBar.show()
-//                    }
-//
-//                    uiState.resultUriList != null -> {
-//                        val gettingUriList = uiState.resultUriList
-//                        val stringUriList = uriList?.map { it.toString() } ?: emptyList()
-//                        viewModel.addData(data.copy(photoUrl = stringUriList))
-//                        Log.d("uriList =>", gettingUriList.toString())
-//                    }
-//
-//                    uiState.isSuccessful -> {
-//                        binding.progressBar.hide()
-//                        navigateListingFragment()
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
-//            viewModel.uiState.collect { uiState ->
-//                when {
-//                    uiState.isSuccessful -> {
-//                       uriList= uiState.resultUriList
-//                        viewModel.addData(data.copy(photoUrl = uriList))
-//                        binding.progressBar.hide()
-//                        navigateListingFragment()
-//                    }
-//
-//                    uiState.loading -> {
-//                        binding.progressBar.show()
-//                    }
-//
-//                }
-//            }
-
 
     private fun updateEvent() {
         val dataModel = takeData()
@@ -331,6 +276,10 @@ class DetailFragment : Fragment() {
 
     }
 
-
+    private fun turnBackFragment() {
+        binding.back.setOnClickListener {
+            navigateListingFragment()
+        }
+    }
 }
 

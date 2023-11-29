@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.ItemRowBinding
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class ListingAdapter(private val list: List<DataModel>, val onClick: (item: DataModel) -> Unit) :
     RecyclerView.Adapter<ListingAdapter.ViewHolder>() {
@@ -18,7 +21,11 @@ class ListingAdapter(private val list: List<DataModel>, val onClick: (item: Data
             binding.apply {
                 textTitle.text = item.title
                 textDesc.text = item.message
-                textDay.text=item.day
+                textTime.text=item.time
+                textDay.text=item
+                textYear.text
+                dayOfMounth.text
+                textMonth.text
 
 
                 root.setOnClickListener {
@@ -44,5 +51,6 @@ class ListingAdapter(private val list: List<DataModel>, val onClick: (item: Data
     override fun getItemCount(): Int {
         return list.size
     }
+
 
 }

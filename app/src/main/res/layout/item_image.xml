@@ -6,4 +6,4 @@
     android:layout_height="90sp"
     tools:src="@tools:sample/avatars"
     android:scaleType="fitXY"
-    android:padding="6sp" />
+    android:padding="4sp" />
