@@ -7,6 +7,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import java.util.UUID
 import javax.inject.Inject
 
 class FireBaseSourceImpl @Inject constructor(
@@ -61,12 +62,12 @@ class FireBaseSourceImpl @Inject constructor(
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
                 val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf() // PhotoUrl artık liste
-                val day = data?.get("time") as? String ?: ""
-                val time = data?.get("day") as? String ?: ""
+                val day = data?.get("day") as? String ?: ""
+                val time = data?.get("time") as? String ?: ""
                 val id = data?.get("id") as? Long ?: 0
 
                 val retrievedDataModel = DataModel(
-                    id = id, message, title, photoUrl, day, time, currentUser, constructionName
+                    id = id, message, title, photoUrl, time, day, currentUser, constructionName
                 )
                 dataModelList.add(retrievedDataModel)
             }
@@ -142,8 +143,8 @@ class FireBaseSourceImpl @Inject constructor(
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
                 val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf() // PhotoUrl artık liste
-                val day = data?.get("time") as? String ?: ""
-                val time = data?.get("day") as? String ?: ""
+                val day = data?.get("day") as? String ?: ""
+                val time = data?.get("time") as? String ?: ""
                 val id = data?.get("postId") as? Long ?: 0
 
                 val retrievedDataModel = DataModel(
@@ -179,15 +180,14 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-   override suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String): Result<List<Uri>> {
-
+    override suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String): Result<List<Uri>> {
         return kotlin.runCatching {
-            Log.d("addImageToFirebaseStorage","fileUris=> $fileUris postıd=> $postId")
             val uploadedUris = mutableListOf<Uri>()
-            fileUris?.let {
-                for (uri in fileUris) {
+            fileUris?.let { uris ->
+                for (uri in uris) {
+                    val fileName = UUID.randomUUID().toString() // Farklı dosya adları oluşturmak için rastgele bir ad kullanılıyor
+                    val fileRef = storage.reference.child("users").child(postId).child(fileName)
 
-                    val fileRef = storage.reference.child("users").child(postId)
                     fileRef.putFile(uri).await()
 
                     val downloadUrl = fileRef.downloadUrl.await()
@@ -197,6 +197,7 @@ class FireBaseSourceImpl @Inject constructor(
             uploadedUris
         }
     }
+
 
     override suspend fun addImageUrlToFireStore(downloadUrls:List<Uri> , currentUser: String, constructionName: String, postId: String): Result<Unit> {
         return kotlin.runCatching {

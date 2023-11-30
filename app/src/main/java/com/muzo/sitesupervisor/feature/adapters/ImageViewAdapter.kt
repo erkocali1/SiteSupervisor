@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.feature.adapters.base.BaseListAdapter
-import com.muzo.sitesupervisor.feature.adapters.base.ImageViewHolder
 
 class ImageViewAdapter : BaseListAdapter<Uri>(
     itemsSame = { old, new -> old == new },

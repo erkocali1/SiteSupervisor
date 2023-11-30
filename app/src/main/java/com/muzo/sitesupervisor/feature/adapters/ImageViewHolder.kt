@@ -1,4 +1,4 @@
-package com.muzo.sitesupervisor.feature.adapters.base
+package com.muzo.sitesupervisor.feature.adapters
 
 import android.net.Uri
 import android.view.View
