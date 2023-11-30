@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
@@ -21,6 +22,7 @@ import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.ImageViewAdapter
+import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -36,6 +38,7 @@ class DetailFragment : Fragment() {
     private lateinit var constructionArea: String
     private var isEnter = true
     private var saveDataJob: Job? = null
+    private lateinit var adapterImage: ListingImageAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -140,6 +143,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun updateEvent() {
+
         val dataModel = takeData()
 
         lifecycleScope.launch {
@@ -201,10 +205,20 @@ class DetailFragment : Fragment() {
         val day = receivedData?.day
         val time = receivedData?.time
 
+        adapterImage= ListingImageAdapter(photoUrl){
+            navigateToBigPhotoFragment(it)
+        }
+        binding.rvIvPicker.adapter=adapterImage
+
+
+
         binding.etTitle.setText(title)
         binding.etDes.setText(message)
         binding.textDay.text = day
         binding.textTime.text = time
+
+
+
 
     }
 
@@ -280,6 +294,13 @@ class DetailFragment : Fragment() {
         binding.back.setOnClickListener {
             navigateListingFragment()
         }
+    }
+
+    private fun navigateToBigPhotoFragment(uri: String){
+        val bundle = Bundle().apply {
+            putString("bigPhoto", uri)
+        }
+        findNavController().navigate(R.id.action_detailFragment_to_photoFragment,bundle)
     }
 }
 

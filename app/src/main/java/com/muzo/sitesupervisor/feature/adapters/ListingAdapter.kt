@@ -40,7 +40,7 @@ class ListingAdapter(private val list: List<DataModel> ,val onClick: (item: Data
                 val innerRecyclerView: RecyclerView = binding.ivRv
                 val layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
                 innerRecyclerView.layoutManager = layoutManager
-                val adapter = ListingImageAdapter(item.photoUrl)
+                val adapter = ListingImageAdapter(item.photoUrl){}
                 innerRecyclerView.adapter = adapter
 
                 root.setOnClickListener {

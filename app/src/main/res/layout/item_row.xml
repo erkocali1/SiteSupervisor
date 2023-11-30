@@ -141,13 +141,12 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/iv_rv"
                     android:layout_width="match_parent"
-                    android:layout_height="50sp"
+                    android:layout_height="60sp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:itemCount="5"
-                    tools:listitem="@layout/item_image" />
+                    tools:listitem="@layout/item_photo" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

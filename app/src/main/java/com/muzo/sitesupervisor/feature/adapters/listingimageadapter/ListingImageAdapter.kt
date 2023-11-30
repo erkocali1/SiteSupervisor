@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.ItemImageBinding
 
 
-class ListingImageAdapter(private val list: List<String>?) :
+class ListingImageAdapter(private val list: List<String>?,val onClick: (item: String) -> Unit) :
     RecyclerView.Adapter<ListingImageAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemImageBinding) :
@@ -19,7 +20,12 @@ class ListingImageAdapter(private val list: List<String>?) :
             Glide.with(itemView.context)
                 .load(item)
                 .into(binding.ivGalery)
+
+            binding.root.setOnClickListener{
+                onClick(item)
+            }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
