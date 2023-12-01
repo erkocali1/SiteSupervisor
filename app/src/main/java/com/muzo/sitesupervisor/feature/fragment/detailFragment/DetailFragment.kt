@@ -39,6 +39,8 @@ class DetailFragment : Fragment() {
     private var isEnter = true
     private var saveDataJob: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
+    private lateinit var localDataRoom: DataModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -72,14 +74,14 @@ class DetailFragment : Fragment() {
         val receivedData = arguments?.getParcelable<DataModel>("dataList")
         val title = binding.etTitle.text.toString()
         val message = binding.etDes.text.toString()
-        val photoUrl = listOf("first")
+        val photoUrl = listOf(uriList)
+        val stringUriList = photoUrl?.map { it.toString() } ?: emptyList()
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
-
         postId = receivedData?.id
 
         return DataModel(
-            postId, message, title, photoUrl, day, time, currentUser, constructionArea
+            postId, message, title, stringUriList, day, time, currentUser, constructionArea
         )
     }
 
@@ -197,29 +199,36 @@ class DetailFragment : Fragment() {
     }
 
     private fun showData() {
+        val receivedData = arguments?.getLong("id")
+        Log.d("id=>","receivedData=> $receivedData")
 
-        val receivedData = arguments?.getParcelable<DataModel>("dataList")
-        val title = receivedData?.title
-        val message = receivedData?.message
-        val photoUrl = receivedData?.photoUrl
-        val day = receivedData?.day
-        val time = receivedData?.time
+        lifecycleScope.launch {
+            receivedData?.let {
+                viewModel.getDataFromRoom(receivedData)
+            }
+            viewModel.uiState.collect{uiState->
+                when{
+                    uiState.loading->{
+                        binding.progressBar.show()
+                    }
+                    uiState.localData !=null ->{
+                        binding.progressBar.hide()
+                        localDataRoom=uiState.localData
 
-        adapterImage= ListingImageAdapter(photoUrl){
-            navigateToBigPhotoFragment(it)
+                        adapterImage= ListingImageAdapter(localDataRoom.photoUrl){
+                            navigateToBigPhotoFragment(it)
+                        }
+                        binding.rvIvPicker.adapter=adapterImage
+
+                        binding.etTitle.setText(localDataRoom.title)
+                        binding.etDes.setText(localDataRoom.message)
+                        binding.textDay.text = localDataRoom.day
+                        binding.textTime.text = localDataRoom.time
+
+                    }
+                }
+            }
         }
-        binding.rvIvPicker.adapter=adapterImage
-
-
-
-        binding.etTitle.setText(title)
-        binding.etDes.setText(message)
-        binding.textDay.text = day
-        binding.textTime.text = time
-
-
-
-
     }
 
     private fun addPhoto() {

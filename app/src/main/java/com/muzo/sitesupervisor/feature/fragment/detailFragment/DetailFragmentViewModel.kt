@@ -15,6 +15,7 @@ import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.AddImageToFirebaseStorageUseCase
 import com.muzo.sitesupervisor.domain.AddImageUrlToFireStoreUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
+import com.muzo.sitesupervisor.domain.GetDataFromRoomUseCase
 import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +38,8 @@ class DetailFragmentViewModel @Inject constructor(
     private val localPostRepository: LocalPostRepository,
     private val addImageToFirebaseStorageUseCase: AddImageToFirebaseStorageUseCase,
     private val addImageUrlToFireStoreUseCase: AddImageUrlToFireStoreUseCase,
-    private val dataStore: MyDataStore
+    private val dataStore: MyDataStore,
+    private val getDataFromRoomUseCase: GetDataFromRoomUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
@@ -64,9 +66,7 @@ class DetailFragmentViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
-                            loading = false,
-                            message = OK_MESSAGE,
-                            isSuccessful = true
+                            loading = false, message = OK_MESSAGE, isSuccessful = true
                         )
                     }
                 }
@@ -76,35 +76,44 @@ class DetailFragmentViewModel @Inject constructor(
 
     fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String) {
         viewModelScope.launch {
-            addImageToFirebaseStorageUseCase(fileUris,postId).asReSource().onEach { result ->
-                Log.d("hello","fileUris=> $fileUris postıd=> $postId")
+            addImageToFirebaseStorageUseCase(fileUris, postId).asReSource().onEach { result ->
+                Log.d("hello", "fileUris=> $fileUris postıd=> $postId")
                 when (result) {
-                    is Resource.Error ->  {_uiState.value =
-                        _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
+                    is Resource.Error -> {
+                        _uiState.value =
+                            _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
                     }
-                   is Resource.Loading -> {
+
+                    is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
                     }
 
                     is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE,resultUriList=result.data)
+                        _uiState.value = _uiState.value.copy(
+                            loading = false, message = OK_MESSAGE, resultUriList = result.data
+                        )
                     }
                 }
             }.launchIn(this)
         }
     }
 
-    fun addImageUrlToFireStore(downloadUrl:List<Uri>, currentUser: String, constructionName: String, postId: String){
+    fun addImageUrlToFireStore(
+        downloadUrl: List<Uri>, currentUser: String, constructionName: String, postId: String
+    ) {
         viewModelScope.launch {
-            addImageUrlToFireStoreUseCase(downloadUrl, currentUser, constructionName, postId).asReSource().onEach {result->
-                when(result){
+            addImageUrlToFireStoreUseCase(
+                downloadUrl, currentUser, constructionName, postId
+            ).asReSource().onEach { result ->
+                when (result) {
                     is Resource.Error -> _uiState.value =
                         _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
 
                     is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
                     }
-                    is Resource.Success->{
+
+                    is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE)
                     }
                 }
@@ -125,7 +134,7 @@ class DetailFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             getDataUseCase(constructionName, currentUser, postId).asReSource().onEach { result ->
                 when (result) {
-                  is  Resource.Loading -> {
+                    is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
                     }
 
@@ -156,7 +165,7 @@ class DetailFragmentViewModel @Inject constructor(
             addDataUseCase(dataModel).asReSource().onEach { result ->
                 when (result) {
 
-                   is Resource.Loading -> {
+                    is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
                     }
 
@@ -180,7 +189,28 @@ class DetailFragmentViewModel @Inject constructor(
         return dataStore.readDataStore(userKey)
     }
 
+    fun getDataFromRoom(postId: Long) {
+        viewModelScope.launch {
+            getDataFromRoomUseCase(postId).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _uiState.value = _uiState.value.copy(loading = true)
+                    }
 
+                    is Resource.Error -> {
+
+                        _uiState.value =
+                            _uiState.value.copy(message = ERROR_MESSAGE, loading = false)
+                    }
+
+                    is Resource.Success -> {
+                        _uiState.value =
+                            _uiState.value.copy(loading = false, localData = result.data)
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
 }
 
 data class UpdateState(
@@ -188,5 +218,6 @@ data class UpdateState(
     val message: String? = null,
     val isSuccessful: Boolean = false,
     val resultList: List<DataModel>? = null,
-    val resultUriList:List<Uri>?=null
+    val resultUriList: List<Uri>? = null,
+    val localData: DataModel? = null
 )
