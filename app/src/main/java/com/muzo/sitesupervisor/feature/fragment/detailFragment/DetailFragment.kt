@@ -14,14 +14,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
-import com.muzo.sitesupervisor.feature.adapters.ImageViewAdapter
 import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -31,7 +29,6 @@ import kotlinx.coroutines.launch
 class DetailFragment : Fragment() {
     private val viewModel: DetailFragmentViewModel by viewModels()
     private lateinit var binding: FragmentDetailBinding
-    private lateinit var adapter: ImageViewAdapter
     private var uriList: MutableList<Uri> = mutableListOf()
     private var from: String? = null
     private var postId: Long? = null
@@ -106,7 +103,7 @@ class DetailFragment : Fragment() {
     private fun saveNewDataEvent() {
         val data = takeData()
         saveDataJob = lifecycleScope.launch {
-            postId = viewModel.saveRoom(data)
+            postId = viewModel.saveRoom(data.copy(photoUrl =uriList.map { it.toString()}))
             data.id = postId
             addImageToFirebaseStorage(uriList, data.id.toString())
             viewModel.uiState.collect { uiState ->
@@ -125,7 +122,6 @@ class DetailFragment : Fragment() {
             }
         }
     }
-
     private fun observeImageUpload(data: DataModel, photoUrl: List<String>) {
         viewModel.addData(data.copy(photoUrl = photoUrl))
         lifecycleScope.launch {
@@ -164,7 +160,6 @@ class DetailFragment : Fragment() {
                         binding.progressBar.show()
                     }
                 }
-
             }
         }
     }
@@ -213,9 +208,13 @@ class DetailFragment : Fragment() {
                     }
                     uiState.localData !=null ->{
                         binding.progressBar.hide()
+
                         localDataRoom=uiState.localData
 
-                        adapterImage= ListingImageAdapter(localDataRoom.photoUrl){
+                        val list=localDataRoom.photoUrl
+
+
+                        adapterImage= ListingImageAdapter(list){
                             navigateToBigPhotoFragment(it)
                         }
                         binding.rvIvPicker.adapter=adapterImage
@@ -252,9 +251,11 @@ class DetailFragment : Fragment() {
             val resultCode = result.resultCode
             val data = result.data
             if (resultCode == Activity.RESULT_OK) {
-                val imageUri = data?.data ?: return@registerForActivityResult
 
-                setupPhotoAdapter(listOf(imageUri))
+                val imageUri = data?.data ?: return@registerForActivityResult
+                uriList.add(imageUri)
+     //           this.stringList.addAll(stringList)
+                setupPhotoAdapter(uriList.map { it.toString() })
 
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
                 toastMessage("eror")
@@ -263,18 +264,14 @@ class DetailFragment : Fragment() {
             }
         }
 
-    private fun setupPhotoAdapter(uriList: List<Uri>) {
-        this.uriList.addAll(uriList)
-        adapter = ImageViewAdapter().apply {
-            submitList(this@DetailFragment.uriList)
-            Log.d("setupPhotoAdapter=>", "$uriList")
-        }
-        binding.rvIvPicker.adapter = adapter
+    private fun setupPhotoAdapter(stringList: List<String>) {
+        adapterImage = ListingImageAdapter(stringList) {}
+        binding.rvIvPicker.adapter = adapterImage
     }
+
 
     private fun addImageToFirebaseStorage(list: List<Uri>?, postId: String) {
         viewModel.addImageToFirebaseStorage(list, postId)
-        Log.d("addImageToFirebaseStorage=>", "$uriList")
     }
 
 
@@ -304,10 +301,11 @@ class DetailFragment : Fragment() {
             navigateListingFragment()
         }
     }
-
     private fun navigateToBigPhotoFragment(uri: String){
+        val receivedData = arguments?.getLong("id")
         val bundle = Bundle().apply {
             putString("bigPhoto", uri)
+            putLong("id",receivedData!!)
         }
         findNavController().navigate(R.id.action_detailFragment_to_photoFragment,bundle)
     }

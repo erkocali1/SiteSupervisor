@@ -24,6 +24,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/black" />
 
+
+    <ImageView
+        android:id="@+id/delete_ic"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="32sp"
+        android:src="@drawable/ic_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="36dp" />
+
     <TextView
         android:id="@+id/back_text"
         style="@style/montserrat_semi_bold"

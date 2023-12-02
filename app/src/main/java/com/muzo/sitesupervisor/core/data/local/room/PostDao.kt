@@ -16,5 +16,10 @@ interface PostDao {
     @Query("SELECT * FROM post WHERE id = :postId")
     fun getPost(postId: Long): Flow<DataModel>
 
+    @Query("DELETE FROM post WHERE id = :postId AND photoUrl = :urlToDelete")
+    suspend fun deletePhotoUrl(postId: Long, urlToDelete: String): Int
+
+
+
 
 }

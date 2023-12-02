@@ -15,4 +15,9 @@ class LocalPostRepositoryImpl @Inject constructor(private val dao: PostDao) :
     override suspend fun getPost(postId: Long): Flow<DataModel> {
         return dao.getPost(postId)
     }
+
+    override suspend fun deletePhotoUrl(postId: Long, urlToDelete: String) {
+        dao.deletePhotoUrl(postId, urlToDelete)
+
+    }
 }
