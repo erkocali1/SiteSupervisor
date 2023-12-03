@@ -45,7 +45,6 @@ class PhotoFragment : Fragment() {
             }
 
             findNavController().navigate(R.id.action_photoFragment_to_detailFragment,bundle)
-
         }
     }
 

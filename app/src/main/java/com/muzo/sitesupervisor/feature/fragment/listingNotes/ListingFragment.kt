@@ -19,7 +19,6 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentListingBinding
 import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint

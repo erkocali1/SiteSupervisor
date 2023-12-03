@@ -1,7 +1,6 @@
 package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
 import android.net.Uri
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await

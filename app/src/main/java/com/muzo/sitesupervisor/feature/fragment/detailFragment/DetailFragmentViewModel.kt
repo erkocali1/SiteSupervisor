@@ -13,10 +13,8 @@ import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.AddImageToFirebaseStorageUseCase
-import com.muzo.sitesupervisor.domain.AddImageUrlToFireStoreUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import com.muzo.sitesupervisor.domain.GetDataFromRoomUseCase
-import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -33,11 +31,9 @@ import javax.inject.Inject
 class DetailFragmentViewModel @Inject constructor(
     private val updateUseCase: UpdateUseCase,
     authRepository: AuthRepository,
-    private val getDataUseCase: GetDataUseCase,
     private val addDataUseCase: FireBaseSaveDataUseCase,
     private val localPostRepository: LocalPostRepository,
     private val addImageToFirebaseStorageUseCase: AddImageToFirebaseStorageUseCase,
-    private val addImageUrlToFireStoreUseCase: AddImageUrlToFireStoreUseCase,
     private val dataStore: MyDataStore,
     private val getDataFromRoomUseCase: GetDataFromRoomUseCase
 ) : ViewModel() {
@@ -50,7 +46,6 @@ class DetailFragmentViewModel @Inject constructor(
 
 
     fun updateData(dataModel: DataModel) {
-
 
         viewModelScope.launch {
             updateUseCase(dataModel).asReSource().onEach { result ->
@@ -66,7 +61,7 @@ class DetailFragmentViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
-                            loading = false, message = OK_MESSAGE, isSuccessful = true
+                            loading = false, message = OK_MESSAGE, isSuccessfulUpdateData = true
                         )
                     }
                 }
@@ -98,30 +93,6 @@ class DetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun addImageUrlToFireStore(
-        downloadUrl: List<Uri>, currentUser: String, constructionName: String, postId: String
-    ) {
-        viewModelScope.launch {
-            addImageUrlToFireStoreUseCase(
-                downloadUrl, currentUser, constructionName, postId
-            ).asReSource().onEach { result ->
-                when (result) {
-                    is Resource.Error -> _uiState.value =
-                        _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
-
-                    is Resource.Loading -> {
-                        _uiState.value = _uiState.value.copy(loading = true)
-                    }
-
-                    is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(loading = false, message = OK_MESSAGE)
-                    }
-                }
-            }.launchIn(this)
-        }
-    }
-
-
     fun getCurrentDateAndTime(): Pair<String, String> {
         val calendar = Calendar.getInstance()
         val currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.time)
@@ -129,29 +100,6 @@ class DetailFragmentViewModel @Inject constructor(
         return Pair(currentDate, currentTime)
     }
 
-    private fun getData(constructionName: String, currentUser: String, postId: String) {
-
-        viewModelScope.launch {
-            getDataUseCase(constructionName, currentUser, postId).asReSource().onEach { result ->
-                when (result) {
-                    is Resource.Loading -> {
-                        _uiState.value = _uiState.value.copy(loading = true)
-                    }
-
-                    is Resource.Error -> {
-                        _uiState.value =
-                            _uiState.value.copy(message = ERROR_MESSAGE, loading = false)
-                    }
-
-                    is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(
-                            message = OK_MESSAGE, loading = false, resultList = result.data
-                        )
-                    }
-                }
-            }.launchIn(this)
-        }
-    }
 
     suspend fun saveRoom(saveList: DataModel): Long {
         val baba = localPostRepository.savePost(saveList)
@@ -160,7 +108,6 @@ class DetailFragmentViewModel @Inject constructor(
 
 
     fun addData(dataModel: DataModel) {
-
         viewModelScope.launch {
             addDataUseCase(dataModel).asReSource().onEach { result ->
                 when (result) {
@@ -177,7 +124,7 @@ class DetailFragmentViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
-                            message = OK_MESSAGE, loading = false, isSuccessful = true
+                            message = OK_MESSAGE, loading = false, isSuccessfulAddData = true
                         )
                     }
                 }
@@ -216,7 +163,8 @@ class DetailFragmentViewModel @Inject constructor(
 data class UpdateState(
     val loading: Boolean = false,
     val message: String? = null,
-    val isSuccessful: Boolean = false,
+    val isSuccessfulUpdateData: Boolean = false,
+    val isSuccessfulAddData: Boolean = false,
     val resultList: List<DataModel>? = null,
     val resultUriList: List<Uri>? = null,
     val localData: DataModel? = null

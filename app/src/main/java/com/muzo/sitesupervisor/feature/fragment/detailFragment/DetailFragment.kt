@@ -35,8 +35,10 @@ class DetailFragment : Fragment() {
     private lateinit var constructionArea: String
     private var isEnter = true
     private var saveDataJob: Job? = null
+    private var updateData: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
     private lateinit var localDataRoom: DataModel
+    private var stringList: List<String>? = null
 
 
     override fun onCreateView(
@@ -50,10 +52,10 @@ class DetailFragment : Fragment() {
                 constructionArea = area!!
             }
         }
+
         getFromLocation()
         showDayAndTime()
         clickListener()
-        observeData()
         addPhoto()
         turnBackFragment()
 
@@ -71,8 +73,8 @@ class DetailFragment : Fragment() {
         val receivedData = arguments?.getParcelable<DataModel>("dataList")
         val title = binding.etTitle.text.toString()
         val message = binding.etDes.text.toString()
-        val photoUrl = listOf(uriList)
-        val stringUriList = photoUrl?.map { it.toString() } ?: emptyList()
+        val photoUrl = uriList
+        val stringUriList = photoUrl?.map { it.toString() }
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
         postId = receivedData?.id
@@ -82,29 +84,13 @@ class DetailFragment : Fragment() {
         )
     }
 
-    private fun observeData() {
-
-        lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
-                when {
-                    uiState.loading -> {
-                        binding.progressBar.show()
-                    }
-
-                    uiState.isSuccessful -> {
-                        binding.progressBar.hide()
-                        toastMessage(uiState.message!!)
-                    }
-                }
-            }
-        }
-    }
-
     private fun saveNewDataEvent() {
         val data = takeData()
         saveDataJob = lifecycleScope.launch {
-            postId = viewModel.saveRoom(data.copy(photoUrl =uriList.map { it.toString()}))
+            val newList = uriList.map { it.toString() }
+            postId = viewModel.saveRoom(data.copy(photoUrl = newList))
             data.id = postId
+            Log.d("postId=>>>>", postId.toString())
             addImageToFirebaseStorage(uriList, data.id.toString())
             viewModel.uiState.collect { uiState ->
                 when {
@@ -115,6 +101,7 @@ class DetailFragment : Fragment() {
                     uiState.resultUriList != null -> {
                         val gettingUriList = uiState.resultUriList
                         val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
+                        //link add to firebase database
                         observeImageUpload(data, stringUriList)
                         saveDataJob?.cancel()
                     }
@@ -122,62 +109,63 @@ class DetailFragment : Fragment() {
             }
         }
     }
+
     private fun observeImageUpload(data: DataModel, photoUrl: List<String>) {
         viewModel.addData(data.copy(photoUrl = photoUrl))
-        lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
-                when {
-                    (uiState.loading) -> {
-                        binding.progressBar.show()
-                    }
-
-                    uiState.isSuccessful -> {
-                        binding.progressBar.hide()
-                        navigateListingFragment()
-                    }
-                }
-            }
-        }
     }
 
     private fun updateEvent() {
-
-        val dataModel = takeData()
-
+        val dataModel = takeData().copy(photoUrl = stringList?.plus(uriList.map { it.toString() }))
         lifecycleScope.launch {
             viewModel.updateData(dataModel)
             addImageToFirebaseStorage(uriList, dataModel.id.toString())
             //this code can also update room database
             viewModel.saveRoom(dataModel)
-            viewModel.uiState.collect { uiState ->
-                when {
-                    uiState.isSuccessful -> {
-                        binding.progressBar.hide()
-                        navigateListingFragment()
-                    }
-
-                    uiState.loading -> {
-                        binding.progressBar.show()
-                    }
-                }
-            }
         }
     }
 
     private fun clickListener() {
-
         binding.okBtn.setOnClickListener {
             if (isAllFieldsFilled()) {
                 if (getFromLocation()) {
                     saveNewDataEvent()
+                    lifecycleScope.launch {
+                        viewModel.uiState.collect { uiState ->
+                            when {
+                                (uiState.loading) -> {
+                                    binding.progressBar.show()
+                                }
+
+                                uiState.isSuccessfulAddData -> {
+                                    binding.progressBar.hide()
+                                    navigateListingFragment()
+
+                                }
+                            }
+                        }
+                    }
                 } else {
                     updateEvent()
+                    updateData = lifecycleScope.launch {
+                        viewModel.uiState.collect { uiState ->
+                            when {
+                                uiState.isSuccessfulUpdateData -> {
+                                    binding.progressBar.hide()
+                                    navigateListingFragment()
+                                    updateData?.cancel()
+                                }
+
+                                uiState.loading -> {
+                                    binding.progressBar.show()
+                                }
+                            }
+                        }
+                    }
                 }
 
             } else {
                 toastMessage("Lütfen tüm bilgileri düzgün doldurunuz")
             }
-
         }
     }
 
@@ -195,29 +183,33 @@ class DetailFragment : Fragment() {
 
     private fun showData() {
         val receivedData = arguments?.getLong("id")
-        Log.d("id=>","receivedData=> $receivedData")
+        Log.d("id=>", "receivedData=> $receivedData")
 
         lifecycleScope.launch {
             receivedData?.let {
                 viewModel.getDataFromRoom(receivedData)
             }
-            viewModel.uiState.collect{uiState->
-                when{
-                    uiState.loading->{
+            viewModel.uiState.collect { uiState ->
+                when {
+                    uiState.loading -> {
                         binding.progressBar.show()
                     }
-                    uiState.localData !=null ->{
+
+                    uiState.localData != null -> {
                         binding.progressBar.hide()
 
-                        localDataRoom=uiState.localData
+                        localDataRoom = uiState.localData
 
-                        val list=localDataRoom.photoUrl
+                        stringList = localDataRoom.photoUrl
 
+//                        stringList?.forEach { item ->
+//                            Log.d("TAG", item) // Log.d ile her bir öğeyi loglama
+//                        }
 
-                        adapterImage= ListingImageAdapter(list){
+                        adapterImage = ListingImageAdapter(stringList) {
                             navigateToBigPhotoFragment(it)
                         }
-                        binding.rvIvPicker.adapter=adapterImage
+                        binding.rvIvPicker.adapter = adapterImage
 
                         binding.etTitle.setText(localDataRoom.title)
                         binding.etDes.setText(localDataRoom.message)
@@ -243,7 +235,6 @@ class DetailFragment : Fragment() {
                     startForProfileImageResult.launch(intent)
                 }
         }
-
     }
 
     private val startForProfileImageResult =
@@ -254,9 +245,13 @@ class DetailFragment : Fragment() {
 
                 val imageUri = data?.data ?: return@registerForActivityResult
                 uriList.add(imageUri)
-     //           this.stringList.addAll(stringList)
-                setupPhotoAdapter(uriList.map { it.toString() })
 
+                //           this.stringList.addAll(stringList)
+                if (stringList != null) {
+                    setupPhotoAdapter(stringList!! + uriList.map { it.toString() })
+                } else {
+                    setupPhotoAdapter(uriList.map { it.toString() })
+                }
             } else if (resultCode == ImagePicker.RESULT_ERROR) {
                 toastMessage("eror")
             } else {
@@ -264,8 +259,9 @@ class DetailFragment : Fragment() {
             }
         }
 
+
     private fun setupPhotoAdapter(stringList: List<String>) {
-        adapterImage = ListingImageAdapter(stringList) {}
+        adapterImage = ListingImageAdapter(stringList) { navigateToBigPhotoFragment(it) }
         binding.rvIvPicker.adapter = adapterImage
     }
 
@@ -301,13 +297,59 @@ class DetailFragment : Fragment() {
             navigateListingFragment()
         }
     }
-    private fun navigateToBigPhotoFragment(uri: String){
-        val receivedData = arguments?.getLong("id")
-        val bundle = Bundle().apply {
-            putString("bigPhoto", uri)
-            putLong("id",receivedData!!)
+
+    private fun navigateToBigPhotoFragment(uri: String) {
+        if (from == "recyclerview") {
+
+            updateEvent()
+            updateData = lifecycleScope.launch {
+                viewModel.uiState.collect { uiState ->
+                    when {
+                        uiState.isSuccessfulUpdateData -> {
+                            binding.progressBar.hide()
+                            val receivedData = arguments?.getLong("id")
+                            val bundle = Bundle().apply {
+                                putString("bigPhoto", uri)
+                                putLong("id", receivedData!!)
+                            }
+                            findNavController().navigate(
+                                R.id.action_detailFragment_to_photoFragment, bundle
+                            )
+                            updateData?.cancel()
+                        }
+
+                        uiState.loading -> {
+                            binding.progressBar.show()
+                        }
+                    }
+                }
+            }
+
+
+        } else {
+            saveNewDataEvent()
+            saveDataJob = lifecycleScope.launch {
+                viewModel.uiState.collect { uiState ->
+                    when {
+                        (uiState.loading) -> {
+                            binding.progressBar.show()
+                        }
+
+                        uiState.isSuccessfulAddData -> {
+                            binding.progressBar.hide()
+                            val bundle = Bundle().apply {
+                                putString("bigPhoto", uri)
+                                putLong("id", postId!!)
+                            }
+                            findNavController().navigate(
+                                R.id.action_detailFragment_to_photoFragment, bundle
+                            )
+                            saveDataJob?.cancel()
+                        }
+                    }
+                }
+            }
         }
-        findNavController().navigate(R.id.action_detailFragment_to_photoFragment,bundle)
     }
 }
 
