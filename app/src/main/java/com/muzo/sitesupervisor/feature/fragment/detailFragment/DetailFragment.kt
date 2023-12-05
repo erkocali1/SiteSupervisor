@@ -35,7 +35,9 @@ class DetailFragment : Fragment() {
     private lateinit var constructionArea: String
     private var isEnter = true
     private var saveDataJob: Job? = null
+    private var saveDataWithPhotoJob: Job? = null
     private var updateData: Job? = null
+    private var updateDataWithPhoto: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
     private lateinit var localDataRoom: DataModel
     private var stringList: List<String>? = null
@@ -52,7 +54,6 @@ class DetailFragment : Fragment() {
                 constructionArea = area!!
             }
         }
-
         getFromLocation()
         showDayAndTime()
         clickListener()
@@ -77,11 +78,14 @@ class DetailFragment : Fragment() {
         val stringUriList = photoUrl?.map { it.toString() }
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
+
+
         postId = receivedData?.id
 
         return DataModel(
             postId, message, title, stringUriList, day, time, currentUser, constructionArea
         )
+
     }
 
     private fun saveNewDataEvent() {
@@ -202,14 +206,12 @@ class DetailFragment : Fragment() {
 
                         stringList = localDataRoom.photoUrl
 
-//                        stringList?.forEach { item ->
-//                            Log.d("TAG", item) // Log.d ile her bir öğeyi loglama
-//                        }
 
                         adapterImage = ListingImageAdapter(stringList) {
                             navigateToBigPhotoFragment(it)
                         }
                         binding.rvIvPicker.adapter = adapterImage
+
 
                         binding.etTitle.setText(localDataRoom.title)
                         binding.etDes.setText(localDataRoom.message)
@@ -302,7 +304,7 @@ class DetailFragment : Fragment() {
         if (from == "recyclerview") {
 
             updateEvent()
-            updateData = lifecycleScope.launch {
+            updateDataWithPhoto = lifecycleScope.launch {
                 viewModel.uiState.collect { uiState ->
                     when {
                         uiState.isSuccessfulUpdateData -> {
@@ -315,7 +317,7 @@ class DetailFragment : Fragment() {
                             findNavController().navigate(
                                 R.id.action_detailFragment_to_photoFragment, bundle
                             )
-                            updateData?.cancel()
+                            updateDataWithPhoto?.cancel()
                         }
 
                         uiState.loading -> {
@@ -328,7 +330,7 @@ class DetailFragment : Fragment() {
 
         } else {
             saveNewDataEvent()
-            saveDataJob = lifecycleScope.launch {
+            saveDataWithPhotoJob = lifecycleScope.launch {
                 viewModel.uiState.collect { uiState ->
                     when {
                         (uiState.loading) -> {
@@ -344,7 +346,7 @@ class DetailFragment : Fragment() {
                             findNavController().navigate(
                                 R.id.action_detailFragment_to_photoFragment, bundle
                             )
-                            saveDataJob?.cancel()
+                            saveDataWithPhotoJob?.cancel()
                         }
                     }
                 }

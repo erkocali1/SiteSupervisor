@@ -1,6 +1,5 @@
 package com.muzo.sitesupervisor.feature.adapters
 
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater

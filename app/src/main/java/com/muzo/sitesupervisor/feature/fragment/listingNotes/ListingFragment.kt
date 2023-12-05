@@ -27,7 +27,6 @@ class ListingFragment : Fragment() {
     private lateinit var binding: FragmentListingBinding
     private lateinit var adapter: ListingAdapter
     private lateinit var list: List<DataModel>
-    private lateinit var idsList: List<Uri>
 
 
     override fun onCreateView(
