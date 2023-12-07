@@ -33,7 +33,6 @@ class DetailFragment : Fragment() {
     private var from: String? = null
     private var postId: Long? = null
     private lateinit var constructionArea: String
-    private var isEnter = true
     private var saveDataJob: Job? = null
     private var saveDataWithPhotoJob: Job? = null
     private var updateData: Job? = null
@@ -41,6 +40,7 @@ class DetailFragment : Fragment() {
     private lateinit var adapterImage: ListingImageAdapter
     private lateinit var localDataRoom: DataModel
     private var stringList: List<String>? = null
+    private var isEnterInitialized = false
 
 
     override fun onCreateView(
@@ -78,7 +78,6 @@ class DetailFragment : Fragment() {
         val stringUriList = photoUrl?.map { it.toString() }
         val (day, time) = viewModel.getCurrentDateAndTime()
         val currentUser = viewModel.currentUser
-
 
         postId = receivedData?.id
 
@@ -119,7 +118,14 @@ class DetailFragment : Fragment() {
     }
 
     private fun updateEvent() {
-        val dataModel = takeData().copy(photoUrl = stringList?.plus(uriList.map { it.toString() }))
+        val postIdNew = arguments?.getLong("id")
+
+        val updatedPostId = if (postId == null) postIdNew else postId
+
+        val updatedPhotoUrl = stringList?.plus(uriList.map { it.toString() })
+
+        val dataModel = takeData().copy(photoUrl = updatedPhotoUrl, id = updatedPostId)
+
         lifecycleScope.launch {
             viewModel.updateData(dataModel)
             addImageToFirebaseStorage(uriList, dataModel.id.toString())
@@ -128,12 +134,14 @@ class DetailFragment : Fragment() {
         }
     }
 
+
     private fun clickListener() {
         binding.okBtn.setOnClickListener {
             if (isAllFieldsFilled()) {
                 if (getFromLocation()) {
                     saveNewDataEvent()
-                    lifecycleScope.launch {
+                    var clickListener: Job? = null
+                    clickListener = lifecycleScope.launch {
                         viewModel.uiState.collect { uiState ->
                             when {
                                 (uiState.loading) -> {
@@ -143,7 +151,7 @@ class DetailFragment : Fragment() {
                                 uiState.isSuccessfulAddData -> {
                                     binding.progressBar.hide()
                                     navigateListingFragment()
-
+                                    clickListener?.cancel()
                                 }
                             }
                         }
@@ -212,7 +220,6 @@ class DetailFragment : Fragment() {
                         }
                         binding.rvIvPicker.adapter = adapterImage
 
-
                         binding.etTitle.setText(localDataRoom.title)
                         binding.etDes.setText(localDataRoom.message)
                         binding.textDay.text = localDataRoom.day
@@ -278,9 +285,9 @@ class DetailFragment : Fragment() {
         return when (from) {
             "fab" -> true
             "recyclerview" -> {
-                if (isEnter) {
+                if (!isEnterInitialized) { // Kontrol etme işlemi eklendi
                     showData()
-                    isEnter = false
+                    isEnterInitialized = true // Bir kere yapıldıktan sonra artık false olmayacak
                 }
                 false
             }
@@ -301,8 +308,9 @@ class DetailFragment : Fragment() {
     }
 
     private fun navigateToBigPhotoFragment(uri: String) {
-        if (from == "recyclerview") {
 
+
+        if (from == "recyclerview") {
             updateEvent()
             updateDataWithPhoto = lifecycleScope.launch {
                 viewModel.uiState.collect { uiState ->
@@ -315,8 +323,7 @@ class DetailFragment : Fragment() {
                                 putLong("id", receivedData!!)
                             }
                             findNavController().navigate(
-                                R.id.action_detailFragment_to_photoFragment, bundle
-                            )
+                                R.id.action_detailFragment_to_photoFragment, bundle)
                             updateDataWithPhoto?.cancel()
                         }
 

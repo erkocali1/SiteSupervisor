@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import kotlinx.coroutines.flow.Flow
 
@@ -16,8 +17,8 @@ interface PostDao {
     @Query("SELECT * FROM post WHERE id = :postId")
     fun getPost(postId: Long): Flow<DataModel>
 
-    @Query("DELETE FROM post WHERE id = :postId AND photoUrl = :urlToDelete")
-    suspend fun deletePhotoUrl(postId: Long, urlToDelete: String): Int
+    @Update
+    suspend fun updatePost(post: DataModel)
 
 
 

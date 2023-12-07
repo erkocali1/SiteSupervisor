@@ -10,7 +10,7 @@ class PhotoFragmentViewModel @Inject constructor(private val repository: LocalPo
 
 
     suspend fun deletePhotoUrl(postId: Long, urlToDelete: String){
-        repository.deletePhotoUrl(postId,urlToDelete)
+        repository.updatePost(postId,urlToDelete)
     }
 
 }

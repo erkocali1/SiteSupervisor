@@ -9,7 +9,7 @@ interface LocalPostRepository {
 
     suspend fun getPost(postId:Long) : Flow<DataModel>
 
-    suspend fun deletePhotoUrl(postId: Long, urlToDelete: String)
+    suspend fun updatePost(postId: Long, urlToDelete: String)
 
 
 

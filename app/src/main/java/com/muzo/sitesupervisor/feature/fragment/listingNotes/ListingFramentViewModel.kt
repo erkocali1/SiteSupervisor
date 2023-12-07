@@ -23,7 +23,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListingFramentViewModel @Inject constructor(
-    private val getDataUseCase: GetDataUseCase,
     private val getAllPostUseCase: GetAllPostUseCase,
     private val authRepository: AuthRepository,
     private val dataStore: MyDataStore,

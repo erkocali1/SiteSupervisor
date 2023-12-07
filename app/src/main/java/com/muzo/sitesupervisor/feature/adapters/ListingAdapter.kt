@@ -13,10 +13,11 @@ import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImage
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class ListingAdapter(private val list: List<DataModel> ,val onClick: (item: DataModel) -> Unit) :
+class ListingAdapter(private val list: List<DataModel>, val onClick: (item: DataModel) -> Unit) :
     RecyclerView.Adapter<ListingAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemRowBinding) :
@@ -28,7 +29,7 @@ class ListingAdapter(private val list: List<DataModel> ,val onClick: (item: Data
                 textTitle.text = item.title
                 textDesc.text = item.message
                 textTime.text = item.time
-
+                Log.d("item.day", item.day)
                 val allDay = separateToDay(item.day)
                 Log.d("DAy=>", allDay.toString())
                 textDay.text = allDay?.dayOfMonth
@@ -37,9 +38,10 @@ class ListingAdapter(private val list: List<DataModel> ,val onClick: (item: Data
                 textMonth.text = allDay?.month
 
                 val innerRecyclerView: RecyclerView = binding.ivRv
-                val layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+                val layoutManager =
+                    LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
                 innerRecyclerView.layoutManager = layoutManager
-                val adapter = ListingImageAdapter(item.photoUrl){}
+                val adapter = ListingImageAdapter(item.photoUrl) {}
                 innerRecyclerView.adapter = adapter
 
                 root.setOnClickListener {
@@ -47,7 +49,6 @@ class ListingAdapter(private val list: List<DataModel> ,val onClick: (item: Data
                 }
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -67,35 +68,24 @@ class ListingAdapter(private val list: List<DataModel> ,val onClick: (item: Data
     }
 
     fun separateToDay(day: String): DateTimeDetails? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val formatter = DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy")
-            try {
-                val date = LocalDate.parse(day, formatter)
-                val dayOfWeek = date.dayOfWeek.toString()
-                val month = date.month.toString()
-                val dayOfMonth = date.dayOfMonth.toString()
-                val year = date.year.toString()
+        return try {
+            val formatter = SimpleDateFormat("dd MMMM yyyy EEEE", Locale("tr", "TR"))
+            val date = formatter.parse(day)
 
-                Log.d("date=>", "$dayOfWeek,$year,$month,$dayOfMonth")
+            val calendar = Calendar.getInstance()
+            calendar.time = date ?: Date()
 
-                DateTimeDetails(dayOfWeek, year, month, dayOfMonth)
-            } catch (e: Exception) {
-                Log.e("Error", "Date parsing failed", e)
-                null
-            }
-        } else {
-            try {
-                val date = SimpleDateFormat("MMM dd yyyy", Locale.getDefault()).parse(day)
-                val formatter = SimpleDateFormat("EEEE, yyyy, MMMM dd", Locale.getDefault())
-                val formattedDate = formatter.format(date ?: Date())
-                Log.d("answer", formattedDate)
+            val dayOfWeek = SimpleDateFormat("EEEE", Locale("tr", "TR")).format(date)
+            val month = SimpleDateFormat("MMMM", Locale("tr", "TR")).format(date)
+            val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH).toString()
+            val year = calendar.get(Calendar.YEAR).toString()
 
-                null // return null for pre-Oreo versions
-            } catch (e: Exception) {
-                Log.e("Error", "Date parsing failed", e)
-                null
-            }
+            DateTimeDetails(dayOfWeek, year, month, dayOfMonth)
+        } catch (e: Exception) {
+            Log.e("Error", "Date parsing failed", e)
+            null
         }
     }
+
 
 }

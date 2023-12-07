@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.databinding.FragmentPhotoBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -20,6 +21,8 @@ class PhotoFragment : Fragment() {
     private lateinit var binding: FragmentPhotoBinding
     private val viewModel: PhotoFragmentViewModel by viewModels()
     private  var postId: Long? =null
+    private var deleteDataJob: Job? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -55,9 +58,10 @@ class PhotoFragment : Fragment() {
                 putString("from", "recyclerview")
                 putLong("id",receivedData!!)
             }
-            lifecycleScope.launch {
+           lifecycleScope.launch {
                 viewModel.deletePhotoUrl(postId, urlToDelete)
-                findNavController().navigate(R.id.action_photoFragment_to_detailFragment,bundle)
+               findNavController().navigate(R.id.action_photoFragment_to_detailFragment,bundle)
+
             }
         }
     }
