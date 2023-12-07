@@ -303,12 +303,17 @@ class DetailFragment : Fragment() {
 
     private fun turnBackFragment() {
         binding.back.setOnClickListener {
-            navigateListingFragment()
+            if (from == "recyclerview") {
+                updateEvent()
+                navigateListingFragment()
+            } else {
+                navigateListingFragment()
+            }
+
         }
     }
 
     private fun navigateToBigPhotoFragment(uri: String) {
-
 
         if (from == "recyclerview") {
             updateEvent()
@@ -323,7 +328,8 @@ class DetailFragment : Fragment() {
                                 putLong("id", receivedData!!)
                             }
                             findNavController().navigate(
-                                R.id.action_detailFragment_to_photoFragment, bundle)
+                                R.id.action_detailFragment_to_photoFragment, bundle
+                            )
                             updateDataWithPhoto?.cancel()
                         }
 

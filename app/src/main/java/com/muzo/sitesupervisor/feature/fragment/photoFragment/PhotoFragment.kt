@@ -58,11 +58,11 @@ class PhotoFragment : Fragment() {
                 putString("from", "recyclerview")
                 putLong("id",receivedData!!)
             }
-           lifecycleScope.launch {
+           deleteDataJob= lifecycleScope.launch {
                 viewModel.deletePhotoUrl(postId, urlToDelete)
-               findNavController().navigate(R.id.action_photoFragment_to_detailFragment,bundle)
-
+               deleteDataJob?.cancel()
             }
+            findNavController().navigate(R.id.action_photoFragment_to_detailFragment,bundle)
         }
     }
 
