@@ -10,8 +10,7 @@ import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetAllPostUseCase
-import com.muzo.sitesupervisor.domain.GetDataUseCase
-import com.muzo.sitesupervisor.domain.GetPostIdsUseCase
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +25,6 @@ class ListingFramentViewModel @Inject constructor(
     private val getAllPostUseCase: GetAllPostUseCase,
     private val authRepository: AuthRepository,
     private val dataStore: MyDataStore,
-    private val getPostIdsUseCase: GetPostIdsUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<GetDataState> = MutableStateFlow(GetDataState())
@@ -61,33 +59,6 @@ class ListingFramentViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
-
-
-    fun getIds(userId: String, constructionName: String) {
-        viewModelScope.launch {
-            getPostIdsUseCase(userId, constructionName).asReSource().onEach { result ->
-
-                when (result) {
-                    is Resource.Error -> {
-                        _uiState.value = _uiState.value.copy(
-                            loading = false, message = result.exception?.message
-                        )
-                    }
-
-                    Resource.Loading -> {
-                        _uiState.value = _uiState.value.copy(loading = true)
-                    }
-
-                    is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(
-                            loading = false, idsList = result.data
-                        )
-                    }
-                }
-            }.launchIn(this)
-        }
-    }
-
 
     fun readDataStore(userKey: String): Flow<String?> {
         return dataStore.readDataStore(userKey)

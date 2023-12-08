@@ -18,8 +18,6 @@ interface FireBaseRepository {
 
     suspend fun getAllPost(currentUser: String, constructionName: String):Result<List<DataModel>>
 
-     suspend fun getConstructionSitePostIds(userId: String, constructionName: String): Result<List<String>>
-
     suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?,postId: String): Result<List<Uri>>
 
     suspend fun addImageUrlToFireStore(downloadUrl: List<Uri>,currentUser: String,constructionName: String,postId: String):Result<Unit>

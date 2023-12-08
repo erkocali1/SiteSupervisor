@@ -38,7 +38,9 @@ class FireBaseSourceImpl @Inject constructor(
                 "photoUrl" to dataModel.photoUrl,
                 "day" to dataModel.day,
                 "time" to dataModel.time,
-                "postId" to dataModel.id
+                "postId" to dataModel.id,
+                "modificationDate" to dataModel.modificationDate,
+                "modificationTime" to dataModel.modificationTime,
             )
 
             postsRef.set(post).await()
@@ -64,9 +66,12 @@ class FireBaseSourceImpl @Inject constructor(
                 val day = data?.get("day") as? String ?: ""
                 val time = data?.get("time") as? String ?: ""
                 val id = data?.get("id") as? Long ?: 0
+                val modificationDate = data?.get("time") as? String ?: ""
+                val modificationTime = data?.get("time") as? String ?: ""
+
 
                 val retrievedDataModel = DataModel(
-                    id = id, message, title, photoUrl, time, day, currentUser, constructionName
+                    id = id, message, title, photoUrl, time, day, currentUser, constructionName,modificationDate,modificationTime
                 )
                 dataModelList.add(retrievedDataModel)
             }
@@ -116,7 +121,9 @@ class FireBaseSourceImpl @Inject constructor(
                 "photoUrl" to dataModel.photoUrl,
                 "day" to dataModel.day,
                 "time" to dataModel.time,
-                "postId" to dataModel.id
+                "postId" to dataModel.id,
+                "modificationDate" to dataModel.modificationDate,
+                "modificationTime" to dataModel.modificationTime,
             )
 
             postsRef.set(post).await()
@@ -145,6 +152,8 @@ class FireBaseSourceImpl @Inject constructor(
                 val day = data?.get("day") as? String ?: ""
                 val time = data?.get("time") as? String ?: ""
                 val id = data?.get("postId") as? Long ?: 0
+                val modificationDate = data?.get("time") as? String ?: ""
+                val modificationTime = data?.get("time") as? String ?: ""
 
                 val retrievedDataModel = DataModel(
                     id = id,
@@ -154,7 +163,9 @@ class FireBaseSourceImpl @Inject constructor(
                     day = day,
                     time = time,
                     currentUser = currentUser,
-                    constructionArea = constructionName
+                    constructionArea = constructionName,
+                    modificationDate=modificationDate,
+                    modificationTime=modificationTime
                 )
                 dataModelList.add(retrievedDataModel)
             }
@@ -162,22 +173,7 @@ class FireBaseSourceImpl @Inject constructor(
             dataModelList.toList()
         }
     }
-    override suspend fun getConstructionSitePostIds(userId: String, constructionName: String): Result<List<String>> {
-        return kotlin.runCatching {
-            val currentUserRef = database.collection("Users").document(userId)
-            val postIds = mutableListOf<String>()
 
-            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
-            val postsSnapshot = constructionSiteRef.collection("posts").get().await()
-
-            for (postDoc in postsSnapshot.documents) {
-                val postId = postDoc.id
-                // postId'leri listeye ekle
-                postIds.add(postId)
-            }
-            postIds // tüm postId'leri içeren liste döndürülür
-        }
-    }
 
     override suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String): Result<List<Uri>> {
         return kotlin.runCatching {

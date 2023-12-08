@@ -3,7 +3,6 @@ package com.muzo.sitesupervisor.feature.fragment.detailFragment
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +38,7 @@ class DetailFragment : Fragment() {
     private var updateDataWithPhoto: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
     private lateinit var localDataRoom: DataModel
+    private lateinit var photoList: List<String>
     private var stringList: List<String>? = null
     private var isEnterInitialized = false
 
@@ -54,6 +54,7 @@ class DetailFragment : Fragment() {
                 constructionArea = area!!
             }
         }
+
         getFromLocation()
         showDayAndTime()
         clickListener()
@@ -64,9 +65,15 @@ class DetailFragment : Fragment() {
     }
 
     private fun showDayAndTime() {
-        val (currentDate, currentTime) = viewModel.getCurrentDateAndTime()
-        binding.textDay.text = currentDate
-        binding.textTime.text = currentTime
+        if (from == "fab") {
+            binding.cvModificationConstant.hide()
+            binding.modificationTime.hide()
+            binding.modificationDay.hide()
+            val (currentDate, currentTime) = viewModel.getCurrentDateAndTime()
+            binding.textDay.text = currentDate
+            binding.textTime.text = currentTime
+        }
+
     }
 
     private fun takeData(): DataModel {
@@ -76,11 +83,10 @@ class DetailFragment : Fragment() {
         val message = binding.etDes.text.toString()
         val photoUrl = uriList
         val stringUriList = photoUrl?.map { it.toString() }
-        val (day, time) = viewModel.getCurrentDateAndTime()
+        val day = binding.textDay.text.toString()
+        val time = binding.textTime.text.toString()
         val currentUser = viewModel.currentUser
-
         postId = receivedData?.id
-
         return DataModel(
             postId, message, title, stringUriList, day, time, currentUser, constructionArea
         )
@@ -88,13 +94,18 @@ class DetailFragment : Fragment() {
     }
 
     private fun saveNewDataEvent() {
+
         val data = takeData()
+
         saveDataJob = lifecycleScope.launch {
+
             val newList = uriList.map { it.toString() }
+
             postId = viewModel.saveRoom(data.copy(photoUrl = newList))
             data.id = postId
-            Log.d("postId=>>>>", postId.toString())
+
             addImageToFirebaseStorage(uriList, data.id.toString())
+
             viewModel.uiState.collect { uiState ->
                 when {
                     uiState.loading -> {
@@ -124,7 +135,15 @@ class DetailFragment : Fragment() {
 
         val updatedPhotoUrl = stringList?.plus(uriList.map { it.toString() })
 
-        val dataModel = takeData().copy(photoUrl = updatedPhotoUrl, id = updatedPostId)
+
+        val (modificationDate, modificationTime) = viewModel.getCurrentDateAndTime()
+
+        val dataModel = takeData().copy(
+            photoUrl = updatedPhotoUrl,
+            id = updatedPostId,
+            modificationDate = modificationDate,
+            modificationTime = modificationTime
+        )
 
         lifecycleScope.launch {
             viewModel.updateData(dataModel)
@@ -133,7 +152,6 @@ class DetailFragment : Fragment() {
             viewModel.saveRoom(dataModel)
         }
     }
-
 
     private fun clickListener() {
         binding.okBtn.setOnClickListener {
@@ -195,7 +213,6 @@ class DetailFragment : Fragment() {
 
     private fun showData() {
         val receivedData = arguments?.getLong("id")
-        Log.d("id=>", "receivedData=> $receivedData")
 
         lifecycleScope.launch {
             receivedData?.let {
@@ -224,6 +241,15 @@ class DetailFragment : Fragment() {
                         binding.etDes.setText(localDataRoom.message)
                         binding.textDay.text = localDataRoom.day
                         binding.textTime.text = localDataRoom.time
+
+                        if (localDataRoom.modificationDate?.isNotEmpty() == true) {
+                            binding.modificationTime.text = localDataRoom.modificationTime
+                            binding.modificationDay.text = localDataRoom.modificationDate
+                        } else {
+                            binding.cvModificationConstant.hide()
+                            binding.modificationTime.hide()
+                            binding.modificationDay.hide()
+                        }
 
                     }
                 }
@@ -285,9 +311,9 @@ class DetailFragment : Fragment() {
         return when (from) {
             "fab" -> true
             "recyclerview" -> {
-                if (!isEnterInitialized) { // Kontrol etme işlemi eklendi
+                if (!isEnterInitialized) {
                     showData()
-                    isEnterInitialized = true // Bir kere yapıldıktan sonra artık false olmayacak
+                    isEnterInitialized = true
                 }
                 false
             }
@@ -304,17 +330,20 @@ class DetailFragment : Fragment() {
     private fun turnBackFragment() {
         binding.back.setOnClickListener {
             if (from == "recyclerview") {
-                updateEvent()
-                navigateListingFragment()
+                if (changeDataListener()) {
+                    updateEvent()
+                    navigateListingFragment()
+                } else {
+                    navigateListingFragment()
+                }
+
             } else {
                 navigateListingFragment()
             }
-
         }
     }
 
     private fun navigateToBigPhotoFragment(uri: String) {
-
         if (from == "recyclerview") {
             updateEvent()
             updateDataWithPhoto = lifecycleScope.launch {
@@ -339,7 +368,6 @@ class DetailFragment : Fragment() {
                     }
                 }
             }
-
 
         } else {
             saveNewDataEvent()
@@ -366,5 +394,33 @@ class DetailFragment : Fragment() {
             }
         }
     }
+
+    private fun changeDataListener(): Boolean {
+        val currentUser = viewModel.currentUser
+
+        viewModel.getAllPhoto(currentUser, constructionArea, postId.toString())
+
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                when {
+                    uiState.loading -> {
+                        binding.progressBar.show()
+                    }
+
+                    uiState.photoList != null -> {
+                        photoList = uiState.photoList
+                    }
+                }
+            }
+        }
+
+
+        if (binding.etTitle.text.toString() != localDataRoom.title || binding.etDes.text.toString() != localDataRoom.message || photoList != localDataRoom.photoUrl) {
+            return true
+        }
+        return false
+    }
+
+
 }
 

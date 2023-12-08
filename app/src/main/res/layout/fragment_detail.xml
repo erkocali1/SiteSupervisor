@@ -82,13 +82,35 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_divider">
 
+
         <androidx.cardview.widget.CardView
-            android:id="@+id/cv_date_picker"
+            android:id="@+id/cv_createConstant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4sp"
             app:cardCornerRadius="8sp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                style="@style/montserrat_semi_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8sp"
+                android:text="Oluşturma tarihi:"
+                android:textSize="10sp" />
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_date_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4sp"
+            android:layout_marginTop="4sp"
+            app:cardCornerRadius="8sp"
+            app:layout_constraintStart_toEndOf="@id/cv_createConstant"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -98,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:padding="8sp"
                 android:text="hello"
-                android:textSize="14sp" />
+                android:textSize="10sp" />
 
         </androidx.cardview.widget.CardView>
 
@@ -119,21 +141,82 @@
                 android:layout_height="wrap_content"
                 android:padding="8sp"
                 android:text="hello"
-                android:textSize="14sp" />
+                android:textSize="10sp" />
         </androidx.cardview.widget.CardView>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_modificationConstant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="4sp"
+            app:cardCornerRadius="8sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cv_createConstant">
+
+            <TextView
+                style="@style/montserrat_semi_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8sp"
+                android:text="Düzenlenme Tarihi:"
+                android:textSize="10sp" />
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_modificationDate_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4sp"
+            app:cardCornerRadius="8sp"
+            app:layout_constraintStart_toEndOf="@id/cv_modificationConstant"
+            app:layout_constraintTop_toTopOf="@id/cv_modificationConstant">
+
+            <TextView
+                android:id="@+id/modification_day"
+                style="@style/montserrat_semi_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8sp"
+                android:text="hello"
+                android:textSize="10sp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_modificationTime_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4sp"
+
+            app:cardCornerRadius="8sp"
+            app:layout_constraintStart_toEndOf="@id/cv_modificationDate_picker"
+            app:layout_constraintTop_toTopOf="@id/cv_modificationDate_picker">
+
+            <TextView
+                android:id="@+id/modification_time"
+                style="@style/montserrat_semi_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8sp"
+                android:text="hello"
+                android:textSize="10sp" />
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_ivPicker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="4sp"
             android:orientation="horizontal"
-            tools:listitem="@layout/item_image"
-            tools:itemCount="5"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cv_time_picker" />
+            app:layout_constraintTop_toBottomOf="@id/cv_modificationTime_picker"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_image" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_add_photo"
@@ -144,6 +227,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

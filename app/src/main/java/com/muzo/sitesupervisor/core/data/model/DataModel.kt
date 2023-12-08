@@ -18,7 +18,9 @@ data class DataModel(
     val day: String,
     val time: String,
     val currentUser: String,
-    val constructionArea: String
+    val constructionArea: String,
+    val modificationDate:String?=null,
+    val modificationTime:String?=null,
 
 ) : Parcelable
 

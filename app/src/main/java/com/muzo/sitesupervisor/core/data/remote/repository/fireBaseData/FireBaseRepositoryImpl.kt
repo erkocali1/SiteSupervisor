@@ -34,10 +34,6 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.getAllPost(currentUser, constructionName)
     }
 
-    override suspend fun getConstructionSitePostIds(userId: String, constructionName: String): Result<List<String>> {
-        return fireBaseSource.getConstructionSitePostIds(userId, constructionName)
-    }
-
     override suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String): Result<List<Uri>> {
         return fireBaseSource.addImageToFirebaseStorage(fileUris, postId)
     }

@@ -14,7 +14,9 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.AddImageToFirebaseStorageUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
+import com.muzo.sitesupervisor.domain.GetAllPostUseCase
 import com.muzo.sitesupervisor.domain.GetDataFromRoomUseCase
+import com.muzo.sitesupervisor.domain.GetImageUrlFromFireStoreUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +38,9 @@ class DetailFragmentViewModel @Inject constructor(
     private val localPostRepository: LocalPostRepository,
     private val addImageToFirebaseStorageUseCase: AddImageToFirebaseStorageUseCase,
     private val dataStore: MyDataStore,
-    private val getDataFromRoomUseCase: GetDataFromRoomUseCase
+    private val getDataFromRoomUseCase: GetDataFromRoomUseCase,
+    private val getAllPostUseCase: GetAllPostUseCase,
+    private val getImageUrlFromFireStoreUseCase: GetImageUrlFromFireStoreUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
@@ -97,11 +101,11 @@ class DetailFragmentViewModel @Inject constructor(
     fun getCurrentDateAndTime(): Pair<String, String> {
         val calendar = Calendar.getInstance()
         val turkishLocale = Locale("tr", "TR")
-        val currentDate = DateFormat.getDateInstance(DateFormat.FULL, turkishLocale).format(calendar.time)
+        val currentDate =
+            DateFormat.getDateInstance(DateFormat.FULL, turkishLocale).format(calendar.time)
         val currentTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
         return Pair(currentDate, currentTime)
     }
-
 
 
     suspend fun saveRoom(saveList: DataModel): Long {
@@ -161,6 +165,27 @@ class DetailFragmentViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
+
+    fun getAllPhoto(currentUser: String, constructionName: String, postId: String) {
+
+        viewModelScope.launch {
+            getImageUrlFromFireStoreUseCase(currentUser, constructionName, postId).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        _uiState.value = UpdateState(loading = false)
+                    }
+
+                    Resource.Loading -> {
+                        _uiState.value =UpdateState(loading = true)
+                    }
+
+                    is Resource.Success -> {
+                        _uiState.value = UpdateState(loading = false, photoList = result.data)
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
 }
 
 data class UpdateState(
@@ -170,5 +195,6 @@ data class UpdateState(
     val isSuccessfulAddData: Boolean = false,
     val resultList: List<DataModel>? = null,
     val resultUriList: List<Uri>? = null,
-    val localData: DataModel? = null
+    val localData: DataModel? = null,
+    val photoList: List<String>? = null,
 )

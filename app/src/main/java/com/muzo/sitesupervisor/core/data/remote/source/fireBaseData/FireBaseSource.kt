@@ -16,10 +16,7 @@ interface FireBaseSource {
 
     suspend fun updateArea(dataModel: DataModel): Result<Unit>
 
-
     suspend fun getAllPost(currentUser: String, constructionName: String):Result<List<DataModel>>
-
-     suspend fun getConstructionSitePostIds(userId: String, constructionName: String): Result<List<String>>
 
     suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?,postId: String): Result<List<Uri>>
 
