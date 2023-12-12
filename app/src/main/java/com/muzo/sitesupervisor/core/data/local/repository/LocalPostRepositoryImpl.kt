@@ -27,4 +27,8 @@ class LocalPostRepositoryImpl @Inject constructor(private val dao: PostDao) :
             dao.updatePost(it)
         }
     }
+
+    override suspend fun updatePhoto(postId: Long, newPhotoUrl: List<String>) {
+        return dao.updatePhotoUrl(postId,newPhotoUrl)
+    }
 }

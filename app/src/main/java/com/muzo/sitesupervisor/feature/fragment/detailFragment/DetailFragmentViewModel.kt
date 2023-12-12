@@ -109,8 +109,12 @@ class DetailFragmentViewModel @Inject constructor(
 
 
     suspend fun saveRoom(saveList: DataModel): Long {
-        val baba = localPostRepository.savePost(saveList)
-        return baba
+        val result = localPostRepository.savePost(saveList)
+        return result
+    }
+
+    suspend fun updatePhoto(postId: Long, newPhotoUrl: List<String>){
+        localPostRepository.updatePhoto(postId, newPhotoUrl)
     }
 
 

@@ -22,6 +22,7 @@ import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -36,11 +37,14 @@ class DetailFragment : Fragment() {
     private var saveDataWithPhotoJob: Job? = null
     private var updateData: Job? = null
     private var updateDataWithPhoto: Job? = null
+    private var updateItJob: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
     private lateinit var localDataRoom: DataModel
     private lateinit var photoList: List<String>
     private var stringList: List<String>? = null
     private var isEnterInitialized = false
+    private var changedFlag: Boolean = false
+    private var newDataJob: Job? = null
 
 
     override fun onCreateView(
@@ -113,10 +117,12 @@ class DetailFragment : Fragment() {
                     }
 
                     uiState.resultUriList != null -> {
+                        binding.progressBar.hide()
                         val gettingUriList = uiState.resultUriList
                         val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
                         //link add to firebase database
                         observeImageUpload(data, stringUriList)
+                        viewModel.updatePhoto(postId!!, stringUriList)
                         saveDataJob?.cancel()
                     }
                 }
@@ -129,6 +135,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun updateEvent() {
+
         val postIdNew = arguments?.getLong("id")
 
         val updatedPostId = if (postId == null) postIdNew else postId
@@ -145,11 +152,28 @@ class DetailFragment : Fragment() {
             modificationTime = modificationTime
         )
 
-        lifecycleScope.launch {
-            viewModel.updateData(dataModel)
+        updateItJob = lifecycleScope.launch {
+
             addImageToFirebaseStorage(uriList, dataModel.id.toString())
-            //this code can also update room database
-            viewModel.saveRoom(dataModel)
+
+            viewModel.uiState.collect { uiState ->
+                when {
+                    uiState.loading -> {
+                        binding.progressBar.show()
+                    }
+
+                    uiState.resultUriList != null -> {
+                        binding.progressBar.hide()
+                        val gettingUriList = uiState.resultUriList
+                        val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
+
+                        observeImageUpload(dataModel, stringUriList)
+                        //    viewModel.updatePhoto(postId!!,stringUriList)
+                        viewModel.updatePhoto(postId!!, stringUriList)
+                        updateItJob?.cancel()
+                    }
+                }
+            }
         }
     }
 
@@ -179,12 +203,11 @@ class DetailFragment : Fragment() {
                     updateData = lifecycleScope.launch {
                         viewModel.uiState.collect { uiState ->
                             when {
-                                uiState.isSuccessfulUpdateData -> {
+                                uiState.isSuccessfulAddData -> {
                                     binding.progressBar.hide()
                                     navigateListingFragment()
                                     updateData?.cancel()
                                 }
-
                                 uiState.loading -> {
                                     binding.progressBar.show()
                                 }
@@ -330,13 +353,7 @@ class DetailFragment : Fragment() {
     private fun turnBackFragment() {
         binding.back.setOnClickListener {
             if (from == "recyclerview") {
-                if (changeDataListener()) {
-                    updateEvent()
-                    navigateListingFragment()
-                } else {
-                    navigateListingFragment()
-                }
-
+                changeDataListener()
             } else {
                 navigateListingFragment()
             }
@@ -395,12 +412,13 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun changeDataListener(): Boolean {
+    private fun changeDataListener() {
         val currentUser = viewModel.currentUser
-
+        val receivedData = arguments?.getLong("id")
+        postId = receivedData
         viewModel.getAllPhoto(currentUser, constructionArea, postId.toString())
 
-        lifecycleScope.launch {
+        newDataJob = lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
                 when {
                     uiState.loading -> {
@@ -409,18 +427,32 @@ class DetailFragment : Fragment() {
 
                     uiState.photoList != null -> {
                         photoList = uiState.photoList
+                        val result = correctText(photoList)
+                        newDataJob?.cancel()
+
+                        if (result) {
+                            updateEvent()
+                            navigateListingFragment()
+                        } else {
+                            navigateListingFragment()
+                        }
+
                     }
                 }
             }
         }
-
-
-        if (binding.etTitle.text.toString() != localDataRoom.title || binding.etDes.text.toString() != localDataRoom.message || photoList != localDataRoom.photoUrl) {
-            return true
-        }
-        return false
     }
 
+    private fun correctText(photoList: List<String>): Boolean {
+        val title = binding.etTitle.text.toString()
+        val desc = binding.etDes.text.toString()
+        val photoList = photoList
 
+        if (title != localDataRoom.title || desc != localDataRoom.message || photoList != localDataRoom.photoUrl) {
+            changedFlag = true
+        }
+
+        return changedFlag
+    }
 }
 

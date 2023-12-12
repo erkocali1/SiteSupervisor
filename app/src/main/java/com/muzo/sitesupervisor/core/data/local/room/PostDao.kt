@@ -20,6 +20,9 @@ interface PostDao {
     @Update
     suspend fun updatePost(post: DataModel)
 
+    @Query("UPDATE post SET photoUrl = :newPhotoUrl WHERE id = :postId")
+    suspend fun updatePhotoUrl(postId: Long, newPhotoUrl: List<String>)
+
 
 
 

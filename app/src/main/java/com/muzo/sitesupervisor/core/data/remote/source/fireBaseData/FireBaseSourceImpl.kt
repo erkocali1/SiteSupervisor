@@ -211,22 +211,28 @@ class FireBaseSourceImpl @Inject constructor(
 
     override suspend fun getImageUrlFromFireStore(currentUser: String, constructionName: String, postId: String): Result<List<String>> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("Users").document(currentUser)
-            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
-            val postsRef = constructionSiteRef.collection("posts").document(postId).get().await()
+
+            val postsSnapshot = database.collection("Users")
+                .document(currentUser)
+                .collection("construcitonName")
+                .document(constructionName)
+                .collection("posts")
+                .document(postId).get()
+                .await()
 
             val imageUrlList = mutableListOf<String>()
 
-            if (postsRef.exists()) {
-                val data = postsRef.data
-                val photoUrl = data?.get("photoUrl") as? String
-                if (!photoUrl.isNullOrBlank()) {
-                    imageUrlList.add(photoUrl)
-                }
+            if (postsSnapshot.exists()){
+                val data = postsSnapshot.data
+                val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf()
+                imageUrlList.addAll(photoUrl)
             }
 
-            imageUrlList.toList()
+            imageUrlList
         }
     }
+
+
+
 
 }

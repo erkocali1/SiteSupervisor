@@ -5,15 +5,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalPostRepository {
 
-    suspend fun savePost(postList:DataModel):Long
+    suspend fun savePost(postList: DataModel): Long
 
-    suspend fun getPost(postId:Long) : Flow<DataModel>
+    suspend fun getPost(postId: Long): Flow<DataModel>
 
     suspend fun updatePost(postId: Long, urlToDelete: String)
-
-
-
-
+    suspend fun updatePhoto(postId: Long, newPhotoUrl: List<String>)
 
 
 }

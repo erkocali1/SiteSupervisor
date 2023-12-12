@@ -96,26 +96,29 @@ class ListingFragment : Fragment() {
 
 
     private fun getConstruction() {
-
         lifecycleScope.launch {
             val supervisorUserFlow = viewModel.readDataStore("user_key")
             val constructionAreaFlow = viewModel.readDataStore("construction_key")
-
             val currentUser = viewModel.currentUser
 
             supervisorUserFlow.collect { supervisorUser ->
                 constructionAreaFlow.collect { constructionArea ->
+                    Log.d("DataStore super", supervisorUser ?: "null")
+                    Log.d("DataStore", constructionArea ?: "null")
 
                     // Check User or Guest
                     validationUser(currentUser, supervisorUser)
 
                     if (supervisorUser != null && constructionArea != null) {
                         viewModel.getAllData(currentUser, constructionArea)
+                        Log.d("bakacaz", "$supervisorUser and $constructionArea")
+
                     }
                 }
             }
         }
     }
+
 
     private fun validationUser(currentUser: String, superVisorUser: String?) {
         if (currentUser == superVisorUser) {

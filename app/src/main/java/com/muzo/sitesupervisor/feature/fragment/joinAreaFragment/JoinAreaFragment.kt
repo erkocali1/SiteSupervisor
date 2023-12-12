@@ -110,13 +110,15 @@ class JoinAreaFragment : Fragment() {
 
         val userConstructionData = UserConstructionData(currentUser, listOf(constructionName))
 
-        val bundle = Bundle().apply {
-            putParcelable("userConstructionData", userConstructionData)
+
+        lifecycleScope.launch {
+            viewModel.saveDataStore(currentUser, constructionName)
         }
+
 
         binding.btnJoin.setOnClickListener {
             Log.d("kontrol",userConstructionData.currentUser)
-            findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment, bundle)
+            findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment)
         }
     }
 
