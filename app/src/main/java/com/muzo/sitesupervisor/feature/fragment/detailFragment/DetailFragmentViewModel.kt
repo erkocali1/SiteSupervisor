@@ -56,16 +56,15 @@ class DetailFragmentViewModel @Inject constructor(
             updateUseCase(dataModel).asReSource().onEach { result ->
                 when (result) {
                     Resource.Loading -> {
-                        _uiState.value = _uiState.value.copy(loading = true)
+                        _uiState.value = UpdateState(loading = true)
                     }
 
                     is Resource.Error -> {
-                        _uiState.value =
-                            _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
+                        _uiState.value = UpdateState(loading = false, message = ERROR_MESSAGE)
                     }
 
                     is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(
+                        _uiState.value = UpdateState(
                             loading = false, message = OK_MESSAGE, isSuccessfulUpdateData = true
                         )
                     }
@@ -80,16 +79,15 @@ class DetailFragmentViewModel @Inject constructor(
                 Log.d("hello", "fileUris=> $fileUris postıd=> $postId")
                 when (result) {
                     is Resource.Error -> {
-                        _uiState.value =
-                            _uiState.value.copy(loading = false, message = ERROR_MESSAGE)
+                        _uiState.value = UpdateState(loading = false, message = ERROR_MESSAGE)
                     }
 
                     is Resource.Loading -> {
-                        _uiState.value = _uiState.value.copy(loading = true)
+                        _uiState.value = UpdateState(loading = true)
                     }
 
                     is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(
+                        _uiState.value = UpdateState(
                             loading = false, message = OK_MESSAGE, resultUriList = result.data
                         )
                     }
@@ -113,8 +111,12 @@ class DetailFragmentViewModel @Inject constructor(
         return result
     }
 
-    suspend fun updatePhoto(postId: Long, newPhotoUrl: List<String>){
+    suspend fun updatePhoto(postId: Long, newPhotoUrl: List<String>) {
         localPostRepository.updatePhoto(postId, newPhotoUrl)
+    }
+
+    suspend fun updateAllPost(postId: Long, dataModel: DataModel) {
+        localPostRepository.updatePostData(postId, dataModel)
     }
 
 
@@ -124,17 +126,16 @@ class DetailFragmentViewModel @Inject constructor(
                 when (result) {
 
                     is Resource.Loading -> {
-                        _uiState.value = _uiState.value.copy(loading = true)
+                        _uiState.value = UpdateState(loading = true)
                     }
 
                     is Resource.Error -> {
 
-                        _uiState.value =
-                            _uiState.value.copy(message = ERROR_MESSAGE, loading = false)
+                        _uiState.value = UpdateState(message = ERROR_MESSAGE, loading = false)
                     }
 
                     is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(
+                        _uiState.value = UpdateState(
                             message = OK_MESSAGE, loading = false, isSuccessfulAddData = true
                         )
                     }
@@ -173,21 +174,22 @@ class DetailFragmentViewModel @Inject constructor(
     fun getAllPhoto(currentUser: String, constructionName: String, postId: String) {
 
         viewModelScope.launch {
-            getImageUrlFromFireStoreUseCase(currentUser, constructionName, postId).asReSource().onEach { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        _uiState.value = UpdateState(loading = false)
-                    }
+            getImageUrlFromFireStoreUseCase(currentUser, constructionName, postId).asReSource()
+                .onEach { result ->
+                    when (result) {
+                        is Resource.Error -> {
+                            _uiState.value = UpdateState(loading = false)
+                        }
 
-                    Resource.Loading -> {
-                        _uiState.value =UpdateState(loading = true)
-                    }
+                        Resource.Loading -> {
+                            _uiState.value = UpdateState(loading = true)
+                        }
 
-                    is Resource.Success -> {
-                        _uiState.value = UpdateState(loading = false, photoList = result.data)
+                        is Resource.Success -> {
+                            _uiState.value = UpdateState(loading = false, photoList = result.data)
+                        }
                     }
-                }
-            }.launchIn(this)
+                }.launchIn(this)
         }
     }
 }

@@ -12,17 +12,17 @@ import kotlinx.parcelize.Parcelize
 
 data class DataModel(
     @PrimaryKey(autoGenerate = true) var id: Long?=null,
-    val message: String,
-    val title: String,
+    var message: String,
+    var title: String,
     var photoUrl: List<String>?=null,
-    val day: String,
-    val time: String,
-    val currentUser: String,
-    val constructionArea: String,
-    val modificationDate:String?=null,
-    val modificationTime:String?=null,
+    var day: String,
+    var time: String,
+    var currentUser: String,
+    var constructionArea: String,
+    var modificationDate:String?=null,
+    var modificationTime:String?=null,
 
-) : Parcelable
+    ) : Parcelable
 
 
 

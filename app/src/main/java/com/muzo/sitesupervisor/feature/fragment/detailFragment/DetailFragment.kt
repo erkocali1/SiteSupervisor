@@ -22,6 +22,7 @@ import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -40,7 +41,7 @@ class DetailFragment : Fragment() {
     private var updateItJob: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
     private lateinit var localDataRoom: DataModel
-    private lateinit var photoList: List<String>
+    private var photoList: List<String>? = null
     private var stringList: List<String>? = null
     private var isEnterInitialized = false
     private var changedFlag: Boolean = false
@@ -64,6 +65,7 @@ class DetailFragment : Fragment() {
         clickListener()
         addPhoto()
         turnBackFragment()
+        getAllPhoto()
 
         return binding.root
     }
@@ -121,8 +123,9 @@ class DetailFragment : Fragment() {
                         val gettingUriList = uiState.resultUriList
                         val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
                         //link add to firebase database
-                        observeImageUpload(data, stringUriList)
                         viewModel.updatePhoto(postId!!, stringUriList)
+
+                        observeImageUpload(data, stringUriList)
                         saveDataJob?.cancel()
                     }
                 }
@@ -130,7 +133,7 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun observeImageUpload(data: DataModel, photoUrl: List<String>) {
+    private fun observeImageUpload(data: DataModel, photoUrl: List<String>?) {
         viewModel.addData(data.copy(photoUrl = photoUrl))
     }
 
@@ -140,22 +143,17 @@ class DetailFragment : Fragment() {
 
         val updatedPostId = if (postId == null) postIdNew else postId
 
-        val updatedPhotoUrl = stringList?.plus(uriList.map { it.toString() })
-
-
         val (modificationDate, modificationTime) = viewModel.getCurrentDateAndTime()
 
         val dataModel = takeData().copy(
-            photoUrl = updatedPhotoUrl,
             id = updatedPostId,
             modificationDate = modificationDate,
             modificationTime = modificationTime
         )
 
+        addImageToFirebaseStorage(uriList, dataModel.id.toString())
+
         updateItJob = lifecycleScope.launch {
-
-            addImageToFirebaseStorage(uriList, dataModel.id.toString())
-
             viewModel.uiState.collect { uiState ->
                 when {
                     uiState.loading -> {
@@ -165,11 +163,10 @@ class DetailFragment : Fragment() {
                     uiState.resultUriList != null -> {
                         binding.progressBar.hide()
                         val gettingUriList = uiState.resultUriList
-                        val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
-
-                        observeImageUpload(dataModel, stringUriList)
-                        //    viewModel.updatePhoto(postId!!,stringUriList)
-                        viewModel.updatePhoto(postId!!, stringUriList)
+                        val stringUriList =  gettingUriList?.map { it.toString() } ?: emptyList()
+                        val allList = stringList?.plus(stringUriList)
+                        viewModel.updateAllPost(postId!!, dataModel.copy(photoUrl = allList))
+                        observeImageUpload(dataModel, allList)
                         updateItJob?.cancel()
                     }
                 }
@@ -199,21 +196,27 @@ class DetailFragment : Fragment() {
                         }
                     }
                 } else {
-                    updateEvent()
-                    updateData = lifecycleScope.launch {
-                        viewModel.uiState.collect { uiState ->
-                            when {
-                                uiState.isSuccessfulAddData -> {
-                                    binding.progressBar.hide()
-                                    navigateListingFragment()
-                                    updateData?.cancel()
-                                }
-                                uiState.loading -> {
-                                    binding.progressBar.show()
+                    if (correctText(photoList)) {
+                        updateEvent()
+                        updateData = lifecycleScope.launch {
+                            viewModel.uiState.collect { uiState ->
+                                when {
+                                    uiState.isSuccessfulAddData -> {
+                                        binding.progressBar.hide()
+                                        navigateListingFragment()
+                                        updateData?.cancel()
+                                    }
+
+                                    uiState.loading -> {
+                                        binding.progressBar.show()
+                                    }
                                 }
                             }
                         }
+                    } else {
+                        navigateListingFragment()
                     }
+
                 }
 
             } else {
@@ -353,7 +356,26 @@ class DetailFragment : Fragment() {
     private fun turnBackFragment() {
         binding.back.setOnClickListener {
             if (from == "recyclerview") {
-                changeDataListener()
+                if (correctText(photoList)) {
+                    updateEvent()
+                    updateDataWithPhoto = lifecycleScope.launch {
+                        viewModel.uiState.collect { uiState ->
+                            when {
+                                uiState.isSuccessfulAddData -> {
+                                    binding.progressBar.hide()
+                                    updateDataWithPhoto?.cancel()
+                                    navigateListingFragment()
+                                }
+
+                                uiState.loading -> {
+                                    binding.progressBar.show()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    navigateListingFragment()
+                }
             } else {
                 navigateListingFragment()
             }
@@ -362,30 +384,40 @@ class DetailFragment : Fragment() {
 
     private fun navigateToBigPhotoFragment(uri: String) {
         if (from == "recyclerview") {
-            updateEvent()
-            updateDataWithPhoto = lifecycleScope.launch {
-                viewModel.uiState.collect { uiState ->
-                    when {
-                        uiState.isSuccessfulUpdateData -> {
-                            binding.progressBar.hide()
-                            val receivedData = arguments?.getLong("id")
-                            val bundle = Bundle().apply {
-                                putString("bigPhoto", uri)
-                                putLong("id", receivedData!!)
+            if (correctText(photoList)) {
+                updateEvent()
+                updateDataWithPhoto = lifecycleScope.launch {
+                    viewModel.uiState.collect { uiState ->
+                        when {
+                            uiState.isSuccessfulAddData -> {
+                                binding.progressBar.hide()
+                                val receivedData = arguments?.getLong("id")
+                                val bundle = Bundle().apply {
+                                    putString("bigPhoto", uri)
+                                    putLong("id", receivedData!!)
+                                }
+                                findNavController().navigate(
+                                    R.id.action_detailFragment_to_photoFragment, bundle
+                                )
+                                updateDataWithPhoto?.cancel()
                             }
-                            findNavController().navigate(
-                                R.id.action_detailFragment_to_photoFragment, bundle
-                            )
-                            updateDataWithPhoto?.cancel()
-                        }
 
-                        uiState.loading -> {
-                            binding.progressBar.show()
+                            uiState.loading -> {
+                                binding.progressBar.show()
+                            }
                         }
                     }
                 }
+            } else {
+                val receivedData = arguments?.getLong("id")
+                val bundle = Bundle().apply {
+                    putString("bigPhoto", uri)
+                    putLong("id", receivedData!!)
+                }
+                findNavController().navigate(
+                    R.id.action_detailFragment_to_photoFragment, bundle
+                )
             }
-
         } else {
             saveNewDataEvent()
             saveDataWithPhotoJob = lifecycleScope.launch {
@@ -412,13 +444,26 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun changeDataListener() {
+    private fun correctText(photoList: List<String>?): Boolean {
+
+        val title = binding.etTitle.text.toString()
+        val desc = binding.etDes.text.toString()
+        val newPhotoList = photoList
+        val localList = localDataRoom.photoUrl?.plus(uriList.map { it.toString() })
+
+        if (title != localDataRoom.title || desc != localDataRoom.message || newPhotoList != localList) {
+            changedFlag = true
+        }
+        return changedFlag
+    }
+
+    private fun getAllPhoto() {
         val currentUser = viewModel.currentUser
         val receivedData = arguments?.getLong("id")
         postId = receivedData
         viewModel.getAllPhoto(currentUser, constructionArea, postId.toString())
-
-        newDataJob = lifecycleScope.launch {
+        var ff: Job? = null
+        ff = lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
                 when {
                     uiState.loading -> {
@@ -426,33 +471,13 @@ class DetailFragment : Fragment() {
                     }
 
                     uiState.photoList != null -> {
+                        binding.progressBar.hide()
                         photoList = uiState.photoList
-                        val result = correctText(photoList)
-                        newDataJob?.cancel()
-
-                        if (result) {
-                            updateEvent()
-                            navigateListingFragment()
-                        } else {
-                            navigateListingFragment()
-                        }
-
+                        ff?.cancel()
                     }
                 }
             }
         }
-    }
-
-    private fun correctText(photoList: List<String>): Boolean {
-        val title = binding.etTitle.text.toString()
-        val desc = binding.etDes.text.toString()
-        val photoList = photoList
-
-        if (title != localDataRoom.title || desc != localDataRoom.message || photoList != localDataRoom.photoUrl) {
-            changedFlag = true
-        }
-
-        return changedFlag
     }
 }
 
