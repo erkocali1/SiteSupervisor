@@ -45,7 +45,7 @@ class DetailFragment : Fragment() {
     private var stringList: List<String>? = null
     private var isEnterInitialized = false
     private var changedFlag: Boolean = false
-    private var newDataJob: Job? = null
+    private var getRoomDataJob: Job? = null
 
 
     override fun onCreateView(
@@ -163,7 +163,7 @@ class DetailFragment : Fragment() {
                     uiState.resultUriList != null -> {
                         binding.progressBar.hide()
                         val gettingUriList = uiState.resultUriList
-                        val stringUriList =  gettingUriList?.map { it.toString() } ?: emptyList()
+                        val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
                         val allList = stringList?.plus(stringUriList)
                         viewModel.updateAllPost(updatedPostId!!, dataModel.copy(photoUrl = allList))
                         observeImageUpload(dataModel, allList)
@@ -240,7 +240,7 @@ class DetailFragment : Fragment() {
     private fun showData() {
         val receivedData = arguments?.getLong("id")
 
-        lifecycleScope.launch {
+        getRoomDataJob = lifecycleScope.launch {
             receivedData?.let {
                 viewModel.getDataFromRoom(receivedData)
             }
@@ -268,6 +268,8 @@ class DetailFragment : Fragment() {
                         binding.textDay.text = localDataRoom.day
                         binding.textTime.text = localDataRoom.time
 
+
+
                         if (localDataRoom.modificationDate?.isNotEmpty() == true) {
                             binding.modificationTime.text = localDataRoom.modificationTime
                             binding.modificationDay.text = localDataRoom.modificationDate
@@ -276,6 +278,7 @@ class DetailFragment : Fragment() {
                             binding.modificationTime.hide()
                             binding.modificationDay.hide()
                         }
+                        getRoomDataJob?.cancel()
 
                     }
                 }
