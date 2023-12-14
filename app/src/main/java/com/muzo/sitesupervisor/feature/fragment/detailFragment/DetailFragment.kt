@@ -39,6 +39,7 @@ class DetailFragment : Fragment() {
     private var updateData: Job? = null
     private var updateDataWithPhoto: Job? = null
     private var updateItJob: Job? = null
+    private var checkout: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
     private var stringList: List<String>? = null
     private var isEnterInitialized = false
@@ -126,7 +127,6 @@ class DetailFragment : Fragment() {
                         val stringUriList = gettingUriList?.map { it.toString() } ?: emptyList()
                         //link add to firebase database
                         viewModel.updatePhoto(postId!!, stringUriList)
-
                         observeImageUpload(data, stringUriList)
                         saveDataJob?.cancel()
                     }
@@ -241,7 +241,7 @@ class DetailFragment : Fragment() {
 
     private fun getData() {
         val receivedData = arguments?.getLong("id")
-        lifecycleScope.launch {
+        checkout= lifecycleScope.launch {
             viewModel.getData(siteSupervisor, constructionArea, receivedData.toString())
             Log.d("control", "$siteSupervisor $constructionArea ${receivedData.toString()}")
 
@@ -251,12 +251,12 @@ class DetailFragment : Fragment() {
                         binding.progressBar.show()
                         hideViews(true)
                     }
-
                     uiState.getDataFireBase != null -> {
                         binding.progressBar.hide()
                         getData = uiState.getDataFireBase
                         bind(getData)
                         hideViews(false)
+                        checkout?.cancel()
                     }
                 }
             }
