@@ -18,7 +18,7 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         currentUser: String,
         constructionName: String,
         postId: String
-    ): Result<List<DataModel>> {
+    ): Result<DataModel> {
         return fireBaseSource.fetchData(currentUser, constructionName, postId)
     }
 
@@ -44,6 +44,10 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
 
     override suspend fun getImageUrlFromFireStore(currentUser: String, constructionName: String, postId: String): Result<List<String>> {
         return fireBaseSource.getImageUrlFromFireStore(currentUser, constructionName, postId)
+    }
+
+    override suspend fun deletePhotoUrlFromFireStore(currentUser: String, constructionName: String, postId: String, photoUrlToDelete: String): Result<Unit> {
+        return fireBaseSource.deletePhotoUrlFromFireStore(currentUser, constructionName, postId, photoUrlToDelete)
     }
 
 

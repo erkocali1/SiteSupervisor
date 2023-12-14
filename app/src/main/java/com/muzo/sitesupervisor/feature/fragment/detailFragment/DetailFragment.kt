@@ -3,6 +3,7 @@ package com.muzo.sitesupervisor.feature.fragment.detailFragment
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,8 +23,6 @@ import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -34,18 +33,18 @@ class DetailFragment : Fragment() {
     private var from: String? = null
     private var postId: Long? = null
     private lateinit var constructionArea: String
+    private lateinit var siteSupervisor: String
     private var saveDataJob: Job? = null
     private var saveDataWithPhotoJob: Job? = null
     private var updateData: Job? = null
     private var updateDataWithPhoto: Job? = null
     private var updateItJob: Job? = null
     private lateinit var adapterImage: ListingImageAdapter
-    private lateinit var localDataRoom: DataModel
-    private var photoList: List<String>? = null
     private var stringList: List<String>? = null
     private var isEnterInitialized = false
     private var changedFlag: Boolean = false
-    private var getRoomDataJob: Job? = null
+    private lateinit var getData: DataModel
+    private  var isDeletePhoto=false
 
 
     override fun onCreateView(
@@ -57,15 +56,18 @@ class DetailFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.readDataStore("construction_key").collect { area ->
                 constructionArea = area!!
+                viewModel.readDataStore("user_key").collect { Supervisor ->
+                    siteSupervisor = Supervisor!!
+                }
             }
         }
-
+        isDeleteChange()
         getFromLocation()
         showDayAndTime()
         clickListener()
         addPhoto()
         turnBackFragment()
-        getAllPhoto()
+//        getAllPhoto()
 
         return binding.root
     }
@@ -196,7 +198,7 @@ class DetailFragment : Fragment() {
                         }
                     }
                 } else {
-                    if (correctText(photoList)) {
+                    if (correctText() || isDeletePhoto) {
                         updateEvent()
                         updateData = lifecycleScope.launch {
                             viewModel.uiState.collect { uiState ->
@@ -237,54 +239,64 @@ class DetailFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showData() {
+    private fun getData() {
         val receivedData = arguments?.getLong("id")
+        lifecycleScope.launch {
+            viewModel.getData(siteSupervisor, constructionArea, receivedData.toString())
+            Log.d("control", "$siteSupervisor $constructionArea ${receivedData.toString()}")
 
-        getRoomDataJob = lifecycleScope.launch {
-            receivedData?.let {
-                viewModel.getDataFromRoom(receivedData)
-            }
             viewModel.uiState.collect { uiState ->
                 when {
                     uiState.loading -> {
                         binding.progressBar.show()
+                        hideViews(true)
                     }
 
-                    uiState.localData != null -> {
+                    uiState.getDataFireBase != null -> {
                         binding.progressBar.hide()
-
-                        localDataRoom = uiState.localData
-
-                        stringList = localDataRoom.photoUrl
-
-
-                        adapterImage = ListingImageAdapter(stringList) {
-                            navigateToBigPhotoFragment(it)
-                        }
-                        binding.rvIvPicker.adapter = adapterImage
-
-                        binding.etTitle.setText(localDataRoom.title)
-                        binding.etDes.setText(localDataRoom.message)
-                        binding.textDay.text = localDataRoom.day
-                        binding.textTime.text = localDataRoom.time
-
-
-
-                        if (localDataRoom.modificationDate?.isNotEmpty() == true) {
-                            binding.modificationTime.text = localDataRoom.modificationTime
-                            binding.modificationDay.text = localDataRoom.modificationDate
-                        } else {
-                            binding.cvModificationConstant.hide()
-                            binding.modificationTime.hide()
-                            binding.modificationDay.hide()
-                        }
-                        getRoomDataJob?.cancel()
-
+                        getData = uiState.getDataFireBase
+                        bind(getData)
+                        hideViews(false)
                     }
                 }
             }
         }
     }
+
+    private fun bind(item: DataModel) {
+
+        stringList = item.photoUrl
+        adapterImage = ListingImageAdapter(stringList) {
+            navigateToBigPhotoFragment(it)
+        }
+        binding.rvIvPicker.adapter = adapterImage
+
+        binding.etTitle.setText(item.title)
+        binding.etDes.setText(item.message)
+        binding.textDay.text = item.day
+        binding.textTime.text = item.time
+
+        if (item.modificationDate?.isNotEmpty() == true) {
+            binding.modificationTime.text = item.modificationTime
+            binding.modificationDay.text = item.modificationDate
+        } else {
+            binding.cvModificationConstant.hide()
+            binding.modificationTime.hide()
+            binding.modificationDay.hide()
+        }
+    }
+
+    private fun hideViews(showItem: Boolean) {
+        if (showItem) {
+            binding.gruopItem.hide()
+
+        } else {
+            binding.gruopItem.show()
+
+        }
+
+    }
+
 
     private fun addPhoto() {
         binding.cvAddPhoto.setOnClickListener {
@@ -341,7 +353,7 @@ class DetailFragment : Fragment() {
             "fab" -> true
             "recyclerview" -> {
                 if (!isEnterInitialized) {
-                    showData()
+                    getData()
                     isEnterInitialized = true
                 }
                 false
@@ -358,8 +370,8 @@ class DetailFragment : Fragment() {
 
     private fun turnBackFragment() {
         binding.back.setOnClickListener {
-            if (from == "recyclerview") {
-                if (correctText(photoList)) {
+            if (from == "recyclerview" || isDeletePhoto ) {
+                if (correctText()) {
                     updateEvent()
                     updateDataWithPhoto = lifecycleScope.launch {
                         viewModel.uiState.collect { uiState ->
@@ -379,7 +391,8 @@ class DetailFragment : Fragment() {
                 } else {
                     navigateListingFragment()
                 }
-            } else {
+            }
+            else {
                 navigateListingFragment()
             }
         }
@@ -387,7 +400,7 @@ class DetailFragment : Fragment() {
 
     private fun navigateToBigPhotoFragment(uri: String) {
         if (from == "recyclerview") {
-            if (correctText(photoList)) {
+            if (correctText()) {
                 updateEvent()
                 updateDataWithPhoto = lifecycleScope.launch {
                     viewModel.uiState.collect { uiState ->
@@ -413,9 +426,10 @@ class DetailFragment : Fragment() {
                 }
             } else {
                 val receivedData = arguments?.getLong("id")
+                postId = receivedData!!
                 val bundle = Bundle().apply {
                     putString("bigPhoto", uri)
-                    putLong("id", receivedData!!)
+                    putLong("id", postId!!)
                 }
                 findNavController().navigate(
                     R.id.action_detailFragment_to_photoFragment, bundle
@@ -447,40 +461,20 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun correctText(photoList: List<String>?): Boolean {
+    private fun correctText(): Boolean {
 
         val title = binding.etTitle.text.toString()
         val desc = binding.etDes.text.toString()
-        val newPhotoList = photoList
-        val localList = localDataRoom.photoUrl?.plus(uriList.map { it.toString() })
+        val changeList = stringList?.plus(uriList.map { it.toString() })
 
-        if (title != localDataRoom.title || desc != localDataRoom.message || newPhotoList != localList) {
+        if (title != getData.title || desc != getData.message || stringList != changeList) {
             changedFlag = true
         }
         return changedFlag
     }
 
-    private fun getAllPhoto() {
-        val currentUser = viewModel.currentUser
-        val receivedData = arguments?.getLong("id")
-        postId = receivedData
-        viewModel.getAllPhoto(currentUser, constructionArea, postId.toString())
-        var ff: Job? = null
-        ff = lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
-                when {
-                    uiState.loading -> {
-                        binding.progressBar.show()
-                    }
-
-                    uiState.photoList != null -> {
-                        binding.progressBar.hide()
-                        photoList = uiState.photoList
-                        ff?.cancel()
-                    }
-                }
-            }
-        }
+    private fun isDeleteChange() {
+        isDeletePhoto = arguments?.getBoolean("isDelete") ?: false
     }
-}
 
+}

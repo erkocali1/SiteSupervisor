@@ -16,6 +16,7 @@ import com.muzo.sitesupervisor.domain.AddImageToFirebaseStorageUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import com.muzo.sitesupervisor.domain.GetAllPostUseCase
 import com.muzo.sitesupervisor.domain.GetDataFromRoomUseCase
+import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.GetImageUrlFromFireStoreUseCase
 import com.muzo.sitesupervisor.domain.UpdateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,8 +40,8 @@ class DetailFragmentViewModel @Inject constructor(
     private val addImageToFirebaseStorageUseCase: AddImageToFirebaseStorageUseCase,
     private val dataStore: MyDataStore,
     private val getDataFromRoomUseCase: GetDataFromRoomUseCase,
-    private val getAllPostUseCase: GetAllPostUseCase,
-    private val getImageUrlFromFireStoreUseCase: GetImageUrlFromFireStoreUseCase
+    private val getImageUrlFromFireStoreUseCase: GetImageUrlFromFireStoreUseCase,
+    private val getDataUseCase: GetDataUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
@@ -48,6 +49,31 @@ class DetailFragmentViewModel @Inject constructor(
 
 
     val currentUser = authRepository.currentUser?.uid.toString()
+
+
+    fun getData(currentUser: String, constructionName: String, postId: String) {
+        viewModelScope.launch {
+            getDataUseCase(currentUser, constructionName, postId).asReSource().onEach { result ->
+
+                when (result) {
+                    Resource.Loading -> {
+                        _uiState.value = UpdateState(loading = true)
+                    }
+
+                    is Resource.Error -> {
+                        _uiState.value = UpdateState(loading = false, message = ERROR_MESSAGE)
+                    }
+
+                    is Resource.Success -> {
+                        _uiState.value = UpdateState(
+                            loading = false, message = OK_MESSAGE, getDataFireBase = result.data
+                        )
+                    }
+                }
+            }.launchIn(this)
+
+        }
+    }
 
 
     fun updateData(dataModel: DataModel) {
@@ -203,4 +229,6 @@ data class UpdateState(
     val resultUriList: List<Uri>? = null,
     val localData: DataModel? = null,
     val photoList: List<String>? = null,
+    val getDataFireBase: DataModel? = null,
+
 )

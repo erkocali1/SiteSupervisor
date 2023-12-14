@@ -10,7 +10,7 @@ interface FireBaseRepository {
 
     suspend fun saveArea(data: DataModel): Result<Unit>
 
-    suspend fun fetchData(currentUser: String, constructionName: String,postId:String):Result<List<DataModel>>
+    suspend fun fetchData(currentUser: String, constructionName: String,postId:String):Result<DataModel>
 
     suspend fun fetchArea():Result<List<UserConstructionData>>
 
@@ -23,6 +23,9 @@ interface FireBaseRepository {
     suspend fun addImageUrlToFireStore(downloadUrl: List<Uri>,currentUser: String,constructionName: String,postId: String):Result<Unit>
 
     suspend fun getImageUrlFromFireStore(currentUser: String,constructionName: String,postId: String):Result<List<String>>
+
+    suspend fun deletePhotoUrlFromFireStore(currentUser: String, constructionName: String, postId: String, photoUrlToDelete: String): Result<Unit>
+
 
 
 }

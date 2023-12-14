@@ -47,12 +47,11 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+
     override suspend fun fetchData(
         currentUser: String, constructionName: String, postId: String
-    ): Result<List<DataModel>> {
+    ): Result<DataModel> {
         return kotlin.runCatching {
-            val dataModelList = mutableListOf<DataModel>()
-
             val documentSnapshot =
                 database.collection("Users").document(currentUser).collection("construcitonName")
                     .document(constructionName).collection("posts").document(postId).get()
@@ -62,22 +61,31 @@ class FireBaseSourceImpl @Inject constructor(
                 val data = documentSnapshot.data
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
-                val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf() // PhotoUrl artık liste
+                val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf()
                 val day = data?.get("day") as? String ?: ""
                 val time = data?.get("time") as? String ?: ""
                 val id = data?.get("id") as? Long ?: 0
-                val modificationDate = data?.get("time") as? String ?: ""
-                val modificationTime = data?.get("time") as? String ?: ""
+                val modificationDate = data?.get("modificationDate") as? String ?: ""
+                val modificationTime = data?.get("modificationTime") as? String ?: ""
 
-
-                val retrievedDataModel = DataModel(
-                    id = id, message, title, photoUrl, time, day, currentUser, constructionName,modificationDate,modificationTime
+                DataModel(
+                    id = id,
+                    message = message,
+                    title = title,
+                    photoUrl = photoUrl,
+                    time = time,
+                    day = day,
+                    currentUser = currentUser,
+                    constructionArea = constructionName,
+                    modificationDate = modificationDate,
+                    modificationTime = modificationTime
                 )
-                dataModelList.add(retrievedDataModel)
+            } else {
+                throw NoSuchElementException("Document not found")
             }
-            dataModelList.toList()
         }
     }
+
 
     override suspend fun fetchArea(): Result<List<UserConstructionData>> {
         return kotlin.runCatching {
@@ -105,7 +113,6 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-
     override suspend fun updateArea(dataModel: DataModel): Result<Unit> {
         return kotlin.runCatching {
 
@@ -131,8 +138,10 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-
-    override suspend fun getAllPost(currentUser: String, constructionName: String): Result<List<DataModel>> {
+    override suspend fun getAllPost(
+        currentUser: String,
+        constructionName: String
+    ): Result<List<DataModel>> {
         return kotlin.runCatching {
             val dataModelList = mutableListOf<DataModel>()
 
@@ -148,7 +157,8 @@ class FireBaseSourceImpl @Inject constructor(
                 val data = postDocument.data
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
-                val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf() // PhotoUrl artık liste
+                val photoUrl =
+                    data?.get("photoUrl") as? List<String> ?: listOf() // PhotoUrl artık liste
                 val day = data?.get("day") as? String ?: ""
                 val time = data?.get("time") as? String ?: ""
                 val id = data?.get("postId") as? Long ?: 0
@@ -164,8 +174,8 @@ class FireBaseSourceImpl @Inject constructor(
                     time = time,
                     currentUser = currentUser,
                     constructionArea = constructionName,
-                    modificationDate=modificationDate,
-                    modificationTime=modificationTime
+                    modificationDate = modificationDate,
+                    modificationTime = modificationTime
                 )
                 dataModelList.add(retrievedDataModel)
             }
@@ -175,12 +185,16 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String): Result<List<Uri>> {
+    override suspend fun addImageToFirebaseStorage(
+        fileUris: List<Uri>?,
+        postId: String
+    ): Result<List<Uri>> {
         return kotlin.runCatching {
             val uploadedUris = mutableListOf<Uri>()
             fileUris?.let { uris ->
                 for (uri in uris) {
-                    val fileName = UUID.randomUUID().toString() // Farklı dosya adları oluşturmak için rastgele bir ad kullanılıyor
+                    val fileName = UUID.randomUUID()
+                        .toString() // Farklı dosya adları oluşturmak için rastgele bir ad kullanılıyor
                     val fileRef = storage.reference.child("users").child(postId).child(fileName)
 
                     fileRef.putFile(uri).await()
@@ -194,10 +208,16 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun addImageUrlToFireStore(downloadUrls:List<Uri> , currentUser: String, constructionName: String, postId: String): Result<Unit> {
+    override suspend fun addImageUrlToFireStore(
+        downloadUrls: List<Uri>,
+        currentUser: String,
+        constructionName: String,
+        postId: String
+    ): Result<Unit> {
         return kotlin.runCatching {
             val currentUserRef = database.collection("Users").document(currentUser)
-            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(constructionName)
             val postsRef = constructionSiteRef.collection("posts").document(postId)
 
             val dataList = downloadUrls.map { downloadUrl ->
@@ -209,7 +229,11 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getImageUrlFromFireStore(currentUser: String, constructionName: String, postId: String): Result<List<String>> {
+    override suspend fun getImageUrlFromFireStore(
+        currentUser: String,
+        constructionName: String,
+        postId: String
+    ): Result<List<String>> {
         return kotlin.runCatching {
 
             val postsSnapshot = database.collection("Users")
@@ -222,7 +246,7 @@ class FireBaseSourceImpl @Inject constructor(
 
             val imageUrlList = mutableListOf<String>()
 
-            if (postsSnapshot.exists()){
+            if (postsSnapshot.exists()) {
                 val data = postsSnapshot.data
                 val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf()
                 imageUrlList.addAll(photoUrl)
@@ -232,6 +256,38 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun deletePhotoUrlFromFireStore(
+        currentUser: String,
+        constructionName: String,
+        postId: String,
+        photoUrlToDelete: String
+    ): Result<Unit> {
+        return kotlin.runCatching {
+            // Belirli URL'yi içeren dokümanı bul
+            val postDocRef = database.collection("Users")
+                .document(currentUser)
+                .collection("construcitonName")
+                .document(constructionName)
+                .collection("posts")
+                .document(postId)
+
+            val postSnapshot = postDocRef.get().await()
+
+            if (postSnapshot.exists()) {
+                val data = postSnapshot.data
+                val photoUrlList = data?.get("photoUrl") as? List<String> ?: listOf()
+
+                // Silinecek URL'yi içeren listeyi güncelle
+                val updatedPhotoUrlList = photoUrlList.toMutableList()
+                updatedPhotoUrlList.remove(photoUrlToDelete)
+
+                // Firestore'daki belirli URL'yi kaldır
+                postDocRef.update("photoUrl", updatedPhotoUrlList).await()
+            } else {
+                throw NoSuchElementException("Post not found")
+            }
+        }
+    }
 
 
 

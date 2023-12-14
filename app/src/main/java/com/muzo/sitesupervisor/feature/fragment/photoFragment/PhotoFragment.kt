@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
+import com.muzo.sitesupervisor.core.common.hide
+import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.databinding.FragmentPhotoBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -20,8 +22,11 @@ import kotlinx.coroutines.launch
 class PhotoFragment : Fragment() {
     private lateinit var binding: FragmentPhotoBinding
     private val viewModel: PhotoFragmentViewModel by viewModels()
-    private  var postId: Long? =null
+    private var postId: Long? = null
     private var deleteDataJob: Job? = null
+    private lateinit var constructionArea: String
+    private lateinit var siteSupervisor: String
+    private var uri: String? = null
 
 
     override fun onCreateView(
@@ -30,8 +35,17 @@ class PhotoFragment : Fragment() {
 
         binding = FragmentPhotoBinding.inflate(layoutInflater, container, false)
         turnBackFragment()
-        val uri = arguments?.getString("bigPhoto")
+        uri = arguments?.getString("bigPhoto")
         postId = arguments?.getLong("id")
+
+        lifecycleScope.launch {
+            viewModel.readDataStore("construction_key").collect { area ->
+                constructionArea = area!!
+                viewModel.readDataStore("user_key").collect { Supervisor ->
+                    siteSupervisor = Supervisor!!
+                }
+            }
+        }
 
         deleteThisPhoto(postId!!, uri!!)
         binding.mBigImage.showImage(Uri.parse(uri))
@@ -41,30 +55,54 @@ class PhotoFragment : Fragment() {
 
     private fun turnBackFragment() {
         binding.back.setOnClickListener {
-            val receivedData = arguments?.getLong("id")
-            val bundle=Bundle().apply {
-                putString("from", "recyclerview")
-                putLong("id",receivedData!!)
-            }
-
-            findNavController().navigate(R.id.action_photoFragment_to_detailFragment,bundle)
+            sendData()
         }
     }
 
     private fun deleteThisPhoto(postId: Long, urlToDelete: String) {
         binding.deleteIc.setOnClickListener {
-            val receivedData = arguments?.getLong("id")
-            val bundle=Bundle().apply {
-                putString("from", "recyclerview")
-                putLong("id",receivedData!!)
-            }
-           deleteDataJob= lifecycleScope.launch {
+            viewModel.deletePhotoFromFireBase(
+                siteSupervisor,
+                constructionArea,
+                postId.toString(),
+                uri!!
+            )
+            deleteDataJob = lifecycleScope.launch {
                 viewModel.deletePhotoUrl(postId, urlToDelete)
-               findNavController().navigate(R.id.action_photoFragment_to_detailFragment,bundle)
-               deleteDataJob?.cancel()
+                deleteDataJob?.cancel()
+                observeData()
             }
 
         }
     }
 
+    private fun sendData(isDelete: Boolean = false) {
+        val receivedData = arguments?.getLong("id")
+        val bundle = Bundle().apply {
+            putString("from", "recyclerview")
+            putLong("id", receivedData!!)
+            putBoolean("isDelete", isDelete)
+
+        }
+        findNavController().navigate(R.id.action_photoFragment_to_detailFragment, bundle)
+    }
+
+    private fun observeData() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                when {
+                    uiState.loading -> {
+                        binding.progressBar.show()
+
+                    }
+
+                    uiState.result -> {
+                        binding.progressBar.hide()
+                        sendData(true)
+                    }
+                }
+            }
+        }
+
+    }
 }
