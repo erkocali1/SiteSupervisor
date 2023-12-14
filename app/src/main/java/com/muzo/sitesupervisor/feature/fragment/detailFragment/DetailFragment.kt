@@ -165,7 +165,7 @@ class DetailFragment : Fragment() {
                         val gettingUriList = uiState.resultUriList
                         val stringUriList =  gettingUriList?.map { it.toString() } ?: emptyList()
                         val allList = stringList?.plus(stringUriList)
-                        viewModel.updateAllPost(postId!!, dataModel.copy(photoUrl = allList))
+                        viewModel.updateAllPost(updatedPostId!!, dataModel.copy(photoUrl = allList))
                         observeImageUpload(dataModel, allList)
                         updateItJob?.cancel()
                     }
