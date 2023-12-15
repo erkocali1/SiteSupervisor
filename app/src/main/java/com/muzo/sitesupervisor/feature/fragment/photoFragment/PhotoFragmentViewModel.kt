@@ -1,15 +1,12 @@
 package com.muzo.sitesupervisor.feature.fragment.photoFragment
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
-import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.domain.DeletePhotoUseCase
-import com.muzo.sitesupervisor.feature.fragment.detailFragment.UpdateState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

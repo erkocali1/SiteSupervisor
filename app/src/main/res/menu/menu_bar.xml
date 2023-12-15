@@ -4,10 +4,21 @@
 
     <item
         android:id="@+id/listingFragment"
-        android:icon="@drawable/ic_cancel"
+        android:icon="@drawable/ic_list"
         android:menuCategory="secondary"
-        android:title="POST" />
+        android:title="LİSTE" />
 
+    <item
+        android:id="@+id/taskFragment"
+        android:icon="@drawable/ic_task"
+        android:menuCategory="secondary"
+        android:title="ATÖLYE" />
+
+    <item
+        android:id="@+id/statisticsFragment"
+        android:icon="@drawable/ic_chart"
+        android:menuCategory="secondary"
+        android:title="ANALİZ" />
 
 
 </menu>

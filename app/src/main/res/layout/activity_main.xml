@@ -30,8 +30,9 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:itemIconTint="@color/button"
-        android:background="@color/login"
+        app:itemIconTint="@color/brownDark"
+        android:background="@color/cardBackground"
+        app:itemTextColor="@color/brownDark"
         app:menu="@menu/menu_bar"/>
 
 

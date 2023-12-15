@@ -45,13 +45,13 @@
                     style="@style/titillium_web_bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4sp"
                     android:text="Tue"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:layout_marginTop="4sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/text_day"/>
+                    app:layout_constraintTop_toBottomOf="@+id/text_day" />
 
                 <TextView
                     android:id="@+id/text_month"
@@ -61,9 +61,9 @@
                     android:layout_marginStart="20sp"
                     android:layout_marginTop="6sp"
                     android:gravity="center"
+                    android:maxLength="3"
                     android:text="June"
                     android:textColor="@color/white"
-                    android:maxLength="3"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dayOfMounth" />
@@ -83,6 +83,15 @@
                     app:layout_constraintStart_toEndOf="@id/text_month"
                     app:layout_constraintTop_toBottomOf="@+id/dayOfMounth" />
 
+                <ImageView
+                    android:id="@+id/iv_time"
+                    android:layout_width="18sp"
+                    android:layout_height="18sp"
+                    android:layout_marginStart="4sp"
+                    android:src="@drawable/ic_time"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/text_time" />
+
                 <TextView
                     android:id="@+id/text_time"
                     style="@style/titillium_web_bold"
@@ -94,8 +103,8 @@
                     android:text="22:44"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_year" />
 
 
@@ -135,7 +144,6 @@
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text_Title" />
-
 
 
                 <androidx.recyclerview.widget.RecyclerView

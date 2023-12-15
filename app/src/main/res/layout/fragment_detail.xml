@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundWhite"
     android:padding="16dp"
-    tools:context=".feature.fragment.detailFragment.DetailFragment">
+    tools:context=".feature.fragment.detail.DetailFragment">
 
     <ImageView
         android:id="@+id/back"
@@ -250,7 +250,7 @@
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Type Your Construction Site"
+                android:hint="Konu Başlığı Giriniz"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -269,7 +269,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top|left"
-                android:hint="Type Your Construction Site"
+                android:hint="Açıklama Giriniz"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 

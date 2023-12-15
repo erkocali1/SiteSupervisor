@@ -1,4 +1,4 @@
-package com.muzo.sitesupervisor.feature.fragment.detailFragment
+package com.muzo.sitesupervisor.feature.fragment.detail
 
 import android.net.Uri
 import android.util.Log
