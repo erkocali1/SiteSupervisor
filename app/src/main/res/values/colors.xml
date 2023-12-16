@@ -16,4 +16,12 @@
     <color name="brownLight">#C38154</color>
     <color name="brownExtraLight">#F9E0BB</color>
     <color name="backgroundWhite">#F5F7F8</color>
+    <color name="example_3_blue">#1973E8</color>
+    <color name="example_3_blue_light">#D2E3FC</color>
+    <color name="example_3_black">#D9000000</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="example_3_white">#D9FFFFFF</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+
+
 </resources>
