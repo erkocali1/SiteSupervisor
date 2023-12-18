@@ -2,6 +2,7 @@ package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
 import android.net.Uri
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 
 interface FireBaseSource {
@@ -26,8 +27,8 @@ interface FireBaseSource {
 
     suspend fun deletePhotoUrlFromFireStore(currentUser: String, constructionName: String, postId: String, photoUrlToDelete: String): Result<Unit>
 
-
-
+    //-----------------Task
+    suspend fun saveTask(taskModel: TaskModel): Result<Unit>
 
 
 }

@@ -16,7 +16,6 @@ class ListingImageAdapter(private val list: List<String>?,val onClick: (item: St
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: String) {
-            Log.d("itemLOW=>", item)
             Glide.with(itemView.context)
                 .load(item)
                 .into(binding.ivGalery)

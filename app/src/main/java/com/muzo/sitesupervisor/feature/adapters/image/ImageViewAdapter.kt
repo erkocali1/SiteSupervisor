@@ -1,4 +1,4 @@
-package com.muzo.sitesupervisor.feature.adapters
+package com.muzo.sitesupervisor.feature.adapters.image
 
 import android.net.Uri
 import android.view.LayoutInflater

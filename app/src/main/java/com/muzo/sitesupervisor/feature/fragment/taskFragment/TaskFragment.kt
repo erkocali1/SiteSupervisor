@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,9 +51,9 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private val today = LocalDate.now()
     private val turkishLocale = Locale("tr", "TR")
 
-    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM",turkishLocale)
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy",turkishLocale)
-    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy",turkishLocale)
+    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM", turkishLocale)
+    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy", turkishLocale)
+    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
     private val events = mutableMapOf<LocalDate, List<Event>>()
 
 
@@ -70,6 +71,10 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     ): View? {
 
         binding = FragmentTaskBinding.inflate(layoutInflater, container, false)
+
+        binding.exThreeAddButton.setOnClickListener {
+            findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail)
+        }
 
         addStatusBarColorUpdate(R.color.example_3_statusbar_color)
 
@@ -102,7 +107,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             // Show today's events initially.
             binding.exThreeCalendar.post { selectDate(today) }
         }
-        binding.exThreeAddButton.setOnClickListener { }
+//        binding.exThreeAddButton.setOnClickListener { }
 
         return binding.root
 
@@ -206,7 +211,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                 }
             }
     }
-   private fun daysOfWeek(firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY): List<DayOfWeek> {
+
+    private fun daysOfWeek(firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY): List<DayOfWeek> {
         val pivot = 7 - firstDayOfWeek.ordinal
         val daysOfWeek = DayOfWeek.values()
         return (daysOfWeek.drop(pivot) + daysOfWeek.take(pivot))

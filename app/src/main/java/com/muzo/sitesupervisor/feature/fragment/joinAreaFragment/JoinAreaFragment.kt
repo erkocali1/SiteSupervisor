@@ -54,6 +54,7 @@ class JoinAreaFragment : Fragment() {
                         binding.progressBar.show()
 
                     }
+
                     uiState.resultList != null -> {
                         binding.progressBar.hide()
                         list = uiState.resultList
@@ -117,11 +118,10 @@ class JoinAreaFragment : Fragment() {
 
 
         binding.btnJoin.setOnClickListener {
-            Log.d("kontrol",userConstructionData.currentUser)
+            Log.d("kontrol", userConstructionData.currentUser)
             findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment)
         }
     }
-
 
 
 }

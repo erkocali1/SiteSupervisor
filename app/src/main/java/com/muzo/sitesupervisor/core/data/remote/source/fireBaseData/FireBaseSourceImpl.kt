@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import java.util.UUID
 import javax.inject.Inject
@@ -54,8 +55,7 @@ class FireBaseSourceImpl @Inject constructor(
         return kotlin.runCatching {
             val documentSnapshot =
                 database.collection("Users").document(currentUser).collection("construcitonName")
-                    .document(constructionName).collection("posts").document(postId).get()
-                    .await()
+                    .document(constructionName).collection("posts").document(postId).get().await()
 
             if (documentSnapshot.exists()) {
                 val data = documentSnapshot.data
@@ -139,19 +139,14 @@ class FireBaseSourceImpl @Inject constructor(
 
 
     override suspend fun getAllPost(
-        currentUser: String,
-        constructionName: String
+        currentUser: String, constructionName: String
     ): Result<List<DataModel>> {
         return kotlin.runCatching {
             val dataModelList = mutableListOf<DataModel>()
 
-            val postsSnapshot = database.collection("Users")
-                .document(currentUser)
-                .collection("construcitonName")
-                .document(constructionName)
-                .collection("posts")
-                .get()
-                .await()
+            val postsSnapshot =
+                database.collection("Users").document(currentUser).collection("construcitonName")
+                    .document(constructionName).collection("posts").get().await()
 
             for (postDocument in postsSnapshot.documents) {
                 val data = postDocument.data
@@ -186,8 +181,7 @@ class FireBaseSourceImpl @Inject constructor(
 
 
     override suspend fun addImageToFirebaseStorage(
-        fileUris: List<Uri>?,
-        postId: String
+        fileUris: List<Uri>?, postId: String
     ): Result<List<Uri>> {
         return kotlin.runCatching {
             val uploadedUris = mutableListOf<Uri>()
@@ -209,10 +203,7 @@ class FireBaseSourceImpl @Inject constructor(
 
 
     override suspend fun addImageUrlToFireStore(
-        downloadUrls: List<Uri>,
-        currentUser: String,
-        constructionName: String,
-        postId: String
+        downloadUrls: List<Uri>, currentUser: String, constructionName: String, postId: String
     ): Result<Unit> {
         return kotlin.runCatching {
             val currentUserRef = database.collection("Users").document(currentUser)
@@ -230,19 +221,13 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
     override suspend fun getImageUrlFromFireStore(
-        currentUser: String,
-        constructionName: String,
-        postId: String
+        currentUser: String, constructionName: String, postId: String
     ): Result<List<String>> {
         return kotlin.runCatching {
 
-            val postsSnapshot = database.collection("Users")
-                .document(currentUser)
-                .collection("construcitonName")
-                .document(constructionName)
-                .collection("posts")
-                .document(postId).get()
-                .await()
+            val postsSnapshot =
+                database.collection("Users").document(currentUser).collection("construcitonName")
+                    .document(constructionName).collection("posts").document(postId).get().await()
 
             val imageUrlList = mutableListOf<String>()
 
@@ -257,19 +242,13 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
     override suspend fun deletePhotoUrlFromFireStore(
-        currentUser: String,
-        constructionName: String,
-        postId: String,
-        photoUrlToDelete: String
+        currentUser: String, constructionName: String, postId: String, photoUrlToDelete: String
     ): Result<Unit> {
         return kotlin.runCatching {
             // Belirli URL'yi içeren dokümanı bul
-            val postDocRef = database.collection("Users")
-                .document(currentUser)
-                .collection("construcitonName")
-                .document(constructionName)
-                .collection("posts")
-                .document(postId)
+            val postDocRef =
+                database.collection("Users").document(currentUser).collection("construcitonName")
+                    .document(constructionName).collection("posts").document(postId)
 
             val postSnapshot = postDocRef.get().await()
 
@@ -289,6 +268,32 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+    //-----------------Task
+    override suspend fun saveTask(taskModel: TaskModel): Result<Unit> {
+
+        return kotlin.runCatching {
+
+
+            val currentUserRef = database.collection("Users").document(taskModel.currentUser)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(taskModel.constructionArea)
+
+            currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+            constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+
+            val postsRef = constructionSiteRef.collection("task").document(taskModel.id.toString())
+
+            val post = hashMapOf(
+                "message" to taskModel.message,
+                "title" to taskModel.title,
+                "day" to taskModel.day,
+                "time" to taskModel.time,
+                "postId" to taskModel.id,
+            )
+
+            postsRef.set(post).await()
+        }
+    }
 
 
 }

@@ -120,7 +120,16 @@
         android:id="@+id/taskFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.taskFragment.TaskFragment"
         android:label="fragment_task"
-        tools:layout="@layout/fragment_task" />
+        tools:layout="@layout/fragment_task" >
+        <action
+            android:id="@+id/action_taskFragment_to_taskFragmentDetail"
+            app:destination="@id/taskFragmentDetail" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskFragmentDetail"
+        android:name="com.muzo.sitesupervisor.feature.fragment.taskFragmentDetail.TaskFragmentDetail"
+        android:label="fragment_task_detail"
+        tools:layout="@layout/fragment_task_detail" />
 
 
 </navigation>

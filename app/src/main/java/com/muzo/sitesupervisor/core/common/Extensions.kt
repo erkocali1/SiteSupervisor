@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -42,4 +43,7 @@ fun Fragment.addStatusBarColorUpdate(@ColorRes colorRes: Int) {
             requireContext().getColorCompat(colorRes),
         ),
     )
+}
+ fun toastMessage(message: String,context: Context) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

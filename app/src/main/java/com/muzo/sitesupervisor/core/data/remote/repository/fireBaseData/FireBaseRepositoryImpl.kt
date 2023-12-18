@@ -2,6 +2,7 @@ package com.muzo.sitesupervisor.core.data.remote.repository.fireBaseData
 
 import android.net.Uri
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.core.data.remote.source.fireBaseData.FireBaseSource
 import javax.inject.Inject
@@ -48,6 +49,11 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
 
     override suspend fun deletePhotoUrlFromFireStore(currentUser: String, constructionName: String, postId: String, photoUrlToDelete: String): Result<Unit> {
         return fireBaseSource.deletePhotoUrlFromFireStore(currentUser, constructionName, postId, photoUrlToDelete)
+    }
+
+    //-----------------Task
+    override suspend fun saveTask(taskModel: TaskModel): Result<Unit> {
+    return fireBaseSource.saveTask(taskModel)
     }
 
 

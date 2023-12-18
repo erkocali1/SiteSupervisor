@@ -68,7 +68,6 @@ class DetailFragment : Fragment() {
         clickListener()
         addPhoto()
         turnBackFragment()
-//        getAllPhoto()
 
         return binding.root
     }

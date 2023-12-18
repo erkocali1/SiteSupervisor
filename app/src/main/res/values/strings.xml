@@ -7,7 +7,8 @@
     <string name="close">Close</string>
     <string name="example_3_title">Example 3</string>
     <string name="activity_title_view">Calendar View Sample</string>
-
+    <string name="_date">17 Jun 2023</string>
+    <string name="workerName">Kalıpçı</string>
 
 
 </resources>
