@@ -22,6 +22,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="example_3_white">#D9FFFFFF</color>
     <color name="colorPrimaryDark">#303F9F</color>
-
+    <color name="example_3_statusbar_color">#607D8B</color>
+    <color name="example_3_toolbar_color">#607D8B</color>
 
 </resources>

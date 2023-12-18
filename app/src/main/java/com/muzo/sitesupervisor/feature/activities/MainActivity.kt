@@ -13,12 +13,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupBottomBar()
+        setupAppBar()
 
     }
 
@@ -29,11 +30,25 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
             when (destination.id) {
-                R.id.listingFragment,R.id.statisticsFragment,R.id.taskFragment ->
-                    binding.bottomMenu.show()
+                R.id.listingFragment, R.id.statisticsFragment, R.id.taskFragment -> binding.bottomMenu.show()
+
                 else -> binding.bottomMenu.hide()
             }
         }
 
     }
+
+    private fun setupAppBar() {
+        val navController = findNavController(R.id.fragmentContainerView)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            when (destination.id) {
+                R.id.taskFragment -> binding.activityToolbar.show()
+
+                else -> binding.activityToolbar.hide()
+            }
+        }
+
+    }
+
 }
