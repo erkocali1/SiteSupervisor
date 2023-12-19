@@ -44,6 +44,7 @@ class TaskFragmentDetail : Fragment() {
             val selectedConstruction = TEAMS[position]
             val selectedList = listOf(selectedConstruction)
             stringList?.addAll(selectedList)
+            addItemFromEditText()
             setupAdapter()
             toastMessage(
                 "$selectedConstruction listeye eklendi", requireContext()
@@ -67,6 +68,16 @@ class TaskFragmentDetail : Fragment() {
         stringList?.remove(item)
         toastMessage("$item kaldırıldı", requireContext())
         adapter.notifyDataSetChanged()
+    }
+
+    private fun addItemFromEditText() {
+
+        binding.imageButton.setOnClickListener {
+            val workerString = binding.etWorker.text.toString()
+            val workerStringList = listOf(workerString)
+            stringList?.addAll(workerStringList)
+            binding.etWorker.text?.clear()
+        }
     }
 
 }
