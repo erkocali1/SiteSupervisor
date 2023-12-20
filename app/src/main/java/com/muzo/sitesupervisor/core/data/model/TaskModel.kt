@@ -7,14 +7,14 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(
-    tableName = "post"
+    tableName = "task"
 )
 data class TaskModel(
-    @PrimaryKey(autoGenerate = true) var id: Long? = null,
+    @PrimaryKey(autoGenerate = true) var taskId: Long? = null,
     var message: String,
     var title: String,
     var day: String,
-    var time: String,
+    var workerList: List<String>?=null,
     var currentUser: String,
     var constructionArea: String,
     ) : Parcelable

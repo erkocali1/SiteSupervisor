@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.core.data.local.repository
 
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.TaskModel
 import kotlinx.coroutines.flow.Flow
 
 interface LocalPostRepository {
@@ -13,6 +14,10 @@ interface LocalPostRepository {
 
     suspend fun updatePost(postId: Long, urlToDelete: String)
     suspend fun updatePhoto(postId: Long, newPhotoUrl: List<String>)
+
+    //------------Save Task
+
+    suspend fun saveTask(taskModel: TaskModel): Long
 
 
 }

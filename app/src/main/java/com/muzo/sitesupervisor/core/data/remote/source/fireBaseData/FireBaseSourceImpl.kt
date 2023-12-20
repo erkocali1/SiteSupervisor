@@ -281,14 +281,13 @@ class FireBaseSourceImpl @Inject constructor(
             currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
             constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
 
-            val postsRef = constructionSiteRef.collection("task").document(taskModel.id.toString())
+            val postsRef = constructionSiteRef.collection("task").document(taskModel.taskId.toString())
 
             val post = hashMapOf(
                 "message" to taskModel.message,
                 "title" to taskModel.title,
                 "day" to taskModel.day,
-                "time" to taskModel.time,
-                "postId" to taskModel.id,
+                "postId" to taskModel.taskId,
             )
 
             postsRef.set(post).await()

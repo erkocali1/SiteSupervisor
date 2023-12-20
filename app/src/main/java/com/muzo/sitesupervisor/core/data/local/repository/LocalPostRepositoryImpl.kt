@@ -2,6 +2,7 @@ package com.muzo.sitesupervisor.core.data.local.repository
 
 import com.muzo.sitesupervisor.core.data.local.room.PostDao
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.TaskModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -48,6 +49,14 @@ class LocalPostRepositoryImpl @Inject constructor(private val dao: PostDao) :
             dao.updatePost(it)
         }
     }
+
+
+    //--------------SaveTask
+
+    override suspend fun saveTask(taskModel: TaskModel): Long {
+        return dao.saveTask(taskModel)
+    }
+
 
 
 }
