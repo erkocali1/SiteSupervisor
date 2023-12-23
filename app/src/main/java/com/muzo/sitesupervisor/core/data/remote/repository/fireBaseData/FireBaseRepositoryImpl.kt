@@ -51,9 +51,13 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.deletePhotoUrlFromFireStore(currentUser, constructionName, postId, photoUrlToDelete)
     }
 
-    //-----------------Task
+    //-----------------Task------------------------\\
     override suspend fun saveTask(taskModel: TaskModel): Result<Unit> {
     return fireBaseSource.saveTask(taskModel)
+    }
+
+    override suspend fun getAllTask(currentUser: String, constructionName: String,date:String ): Result<List<TaskModel>> {
+        return fireBaseSource.getAllTask(currentUser, constructionName,date)
     }
 
 

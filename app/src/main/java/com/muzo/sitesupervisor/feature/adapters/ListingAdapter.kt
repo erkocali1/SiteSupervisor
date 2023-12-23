@@ -29,9 +29,8 @@ class ListingAdapter(private val list: List<DataModel>, val onClick: (item: Data
                 textTitle.text = item.title
                 textDesc.text = item.message
                 textTime.text = item.time
-                Log.d("item.day", item.day)
+
                 val allDay = separateToDay(item.day)
-                Log.d("DAy=>", allDay.toString())
                 textDay.text = allDay?.dayOfMonth
                 textYear.text = allDay?.year
                 dayOfMounth.text = allDay?.day

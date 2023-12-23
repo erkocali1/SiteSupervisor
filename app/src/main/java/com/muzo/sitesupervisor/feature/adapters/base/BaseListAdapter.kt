@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
+/*
 abstract class BaseListAdapter<T>(
     itemsSame: (T, T) -> Boolean,
     contentsSame: (T, T) -> Boolean
@@ -26,3 +27,5 @@ abstract class BaseListAdapter<T>(
             viewType = viewType
         )
 }
+
+ */

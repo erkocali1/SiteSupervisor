@@ -287,10 +287,43 @@ class FireBaseSourceImpl @Inject constructor(
                 "message" to taskModel.message,
                 "title" to taskModel.title,
                 "day" to taskModel.day,
-                "postId" to taskModel.taskId,
+                "taskId" to taskModel.taskId,
             )
 
             postsRef.set(post).await()
+        }
+    }
+
+    override suspend fun getAllTask(currentUser: String, constructionName: String ,date:String ): Result<List<TaskModel>> {
+        return kotlin.runCatching {
+            val dataModelList = mutableListOf<TaskModel>()
+
+            val postsSnapshot =
+                database.collection("Users").document(currentUser).collection("construcitonName")
+                    .document(constructionName).collection("task").document(date).collection("taskId")
+                    .get().await()
+
+            for (postDocument in postsSnapshot.documents) {
+                val data = postDocument.data
+                val message = data?.get("message") as? String ?: ""
+                val title = data?.get("title") as? String ?: ""
+                val workerList = data?.get("workerList") as? List<String> ?: listOf() // PhotoUrl artık liste
+                val day = data?.get("day") as? String ?: ""
+                val taskId = data?.get("taskId") as? Long ?: 0
+
+                val retrievedTaskModel = TaskModel(
+                    taskId = taskId,
+                    message = message,
+                    title = title,
+                    workerList = workerList,
+                    day = day,
+                    currentUser = currentUser,
+                    constructionArea = constructionName,
+                )
+                dataModelList.add(retrievedTaskModel)
+            }
+
+            dataModelList.toList()
         }
     }
 

@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="4sp"
+    android:layout_margin="2sp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -10,7 +10,7 @@
         android:id="@+id/cv_createConstant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4sp"
+        android:layout_marginTop="2sp"
         android:backgroundTint="@color/example_3_blue_light"
         app:cardCornerRadius="8sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:padding="8sp"
             android:text="@string/workerName"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
     </androidx.cardview.widget.CardView>
 

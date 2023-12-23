@@ -2,6 +2,7 @@ package com.muzo.sitesupervisor.feature.fragment.taskFragment
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,14 +31,20 @@ import com.muzo.sitesupervisor.core.common.getColorCompat
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.setTextColorRes
 import com.muzo.sitesupervisor.core.common.show
+import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.Event
+import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.databinding.Example3CalendarDayBinding
 import com.muzo.sitesupervisor.databinding.Example3CalendarHeaderBinding
 import com.muzo.sitesupervisor.databinding.FragmentTaskBinding
+import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
 import com.muzo.sitesupervisor.feature.adapters.events.Example3EventsAdapter
+import com.muzo.sitesupervisor.feature.adapters.task.TaskAdapter
 import com.muzo.sitesupervisor.feature.fragment.baseFragment.BaseFragment
 import com.muzo.sitesupervisor.feature.fragment.baseFragment.HasBackButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -45,25 +54,36 @@ import java.util.Locale
 @AndroidEntryPoint
 class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private lateinit var binding: FragmentTaskBinding
+    private val viewModel: TaskFragmentViewModel by viewModels()
     override val titleRes: Int = R.string.example_3_title
 
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
     private val turkishLocale = Locale("tr", "TR")
+    private lateinit var constructionArea: String
+    private lateinit var siteSupervisor: String
 
     private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM", turkishLocale)
     private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy", turkishLocale)
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
     private val events = mutableMapOf<LocalDate, List<Event>>()
+    private var list: List<TaskModel>? = null
+    private lateinit var adapter: TaskAdapter
 
 
-    private val eventsAdapter = Example3EventsAdapter {
-        AlertDialog.Builder(requireContext())
-            .setMessage(R.string.example_3_dialog_delete_confirmation)
-            .setPositiveButton(R.string.delete) { _, _ ->
-                deleteEvent(it)
-            }.setNegativeButton(R.string.close, null).show()
-    }
+    private val daysOfWeek = daysOfWeek()
+    private val currentMonth = YearMonth.now()
+    private val startMonth = currentMonth.minusMonths(50)
+    private val endMonth = currentMonth.plusMonths(50)
+
+
+//    private val eventsAdapter = Example3EventsAdapter {
+//        AlertDialog.Builder(requireContext())
+//            .setMessage(R.string.example_3_dialog_delete_confirmation)
+//            .setPositiveButton(R.string.delete) { _, _ ->
+//                deleteEvent(it)
+//            }.setNegativeButton(R.string.close, null).show()
+//    }
 
 
     override fun onCreateView(
@@ -71,6 +91,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     ): View? {
 
         binding = FragmentTaskBinding.inflate(layoutInflater, container, false)
+        getSiteInfo()
+
 
         binding.exThreeAddButton.setOnClickListener {
             findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail)
@@ -78,11 +100,12 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
 
         addStatusBarColorUpdate(R.color.example_3_statusbar_color)
 
-        binding.exThreeRv.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            adapter = eventsAdapter
-            addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
-        }
+//        binding.exThreeRv.apply {
+//            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+//            adapter = eventsAdapter
+//            addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
+//        }
+
         binding.exThreeCalendar.monthScrollListener = {
             activityToolbar.title = if (it.yearMonth.year == today.year) {
                 titleSameYearFormatter.format(it.yearMonth)
@@ -93,11 +116,9 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             selectDate(it.yearMonth.atDay(1))
         }
 
-        val daysOfWeek = daysOfWeek()
-        val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusMonths(50)
-        val endMonth = currentMonth.plusMonths(50)
+
         configureBinders(daysOfWeek)
+
         binding.exThreeCalendar.apply {
             setup(startMonth, endMonth, daysOfWeek.first())
             scrollToMonth(currentMonth)
@@ -120,21 +141,27 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             selectedDate = date
             oldDate?.let { binding.exThreeCalendar.notifyDateChanged(it) }
             binding.exThreeCalendar.notifyDateChanged(date)
-            updateAdapterForDate(date)
+            //      updateAdapterForDate(date)
+
+            val selectedDateString = selectedDate?.toString()
+            selectedDateString?.let {
+                Log.d("getAllTask", selectedDateString)
+                viewModel.getAllTask(siteSupervisor, constructionArea, selectedDateString)
+                observe()
+            }
+
         }
     }
 
-    private fun deleteEvent(event: Event) {
-        val date = event.date
-        events[date] = events[date].orEmpty().minus(event)
-        updateAdapterForDate(date)
-    }
+//    private fun deleteEvent(event: Event) {
+//        val date = event.date
+//        events[date] = events[date].orEmpty().minus(event)
+//        updateAdapterForDate(date)
+//    }
 
     private fun updateAdapterForDate(date: LocalDate) {
 
-        eventsAdapter.apply {
-            events.clear()
-            events.addAll(this@TaskFragment.events[date].orEmpty())
+        adapter.apply {
             notifyDataSetChanged()
         }
         binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
@@ -164,7 +191,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                 textView.text = data.date.dayOfMonth.toString()
 
                 if (data.position == DayPosition.MonthDate) {
-                    textView.show()
+                    textView.isVisible = true
                     when (data.date) {
                         today -> {
                             textView.setTextColorRes(R.color.example_3_white)
@@ -223,6 +250,51 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         activityToolbar.setBackgroundColor(
             requireContext().getColorCompat(R.color.example_3_toolbar_color),
         )
+    }
+
+    private fun getSiteInfo() {
+        lifecycleScope.launch {
+            viewModel.readDataStore("construction_key").collect { area ->
+                constructionArea = area!!
+                viewModel.readDataStore("user_key").collect { supervisor ->
+                    siteSupervisor = supervisor!!
+                }
+            }
+        }
+
+    }
+
+    private fun observe() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                when {
+                    uiState.loading -> {
+
+                        binding.progressBar.show()
+                    }
+
+                    uiState.resultList != null -> {
+                        binding.progressBar.hide()
+                        list = uiState.resultList
+                        setupAdapter()
+                    }
+                }
+
+            }
+        }
+    }
+
+    private fun setupAdapter() {
+
+        adapter = TaskAdapter(list) {}
+        binding.exThreeRv.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.exThreeRv.adapter = adapter
+
+    }
+    private fun getTaskDay(){
+
+
     }
 
 

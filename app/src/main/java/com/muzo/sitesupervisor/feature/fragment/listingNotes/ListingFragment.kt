@@ -53,7 +53,6 @@ class ListingFragment : Fragment() {
                     }
 
                     uiState.resultList != null -> {
-                        toastMessage(uiState.message.toString())
                         binding.progressBar.hide()
                         list = uiState.resultList
                         setupAdapter()
@@ -78,10 +77,6 @@ class ListingFragment : Fragment() {
         binding.rv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rv.adapter = adapter
-    }
-
-    private fun toastMessage(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun navigateDetailFragment() {

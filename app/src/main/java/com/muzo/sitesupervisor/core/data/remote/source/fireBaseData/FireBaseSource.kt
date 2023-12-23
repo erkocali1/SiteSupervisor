@@ -30,5 +30,7 @@ interface FireBaseSource {
     //-----------------Task
     suspend fun saveTask(taskModel: TaskModel): Result<Unit>
 
+    suspend fun getAllTask(currentUser: String, constructionName: String,date:String ): Result<List<TaskModel>>
+
 
 }
