@@ -32,4 +32,6 @@ interface FireBaseRepository {
 
     suspend fun getAllTask(currentUser: String, constructionName: String,date:String ): Result<List<TaskModel>>
 
+    suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>>
+
 }

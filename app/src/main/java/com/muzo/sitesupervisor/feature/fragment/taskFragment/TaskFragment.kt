@@ -1,27 +1,20 @@
 package com.muzo.sitesupervisor.feature.fragment.taskFragment
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
-import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
@@ -31,19 +24,15 @@ import com.muzo.sitesupervisor.core.common.getColorCompat
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.setTextColorRes
 import com.muzo.sitesupervisor.core.common.show
-import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.Event
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.databinding.Example3CalendarDayBinding
 import com.muzo.sitesupervisor.databinding.Example3CalendarHeaderBinding
 import com.muzo.sitesupervisor.databinding.FragmentTaskBinding
-import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
-import com.muzo.sitesupervisor.feature.adapters.events.Example3EventsAdapter
 import com.muzo.sitesupervisor.feature.adapters.task.TaskAdapter
 import com.muzo.sitesupervisor.feature.fragment.baseFragment.BaseFragment
 import com.muzo.sitesupervisor.feature.fragment.baseFragment.HasBackButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -148,6 +137,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                 Log.d("getAllTask", selectedDateString)
                 viewModel.getAllTask(siteSupervisor, constructionArea, selectedDateString)
                 observe()
+                binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
             }
 
         }
@@ -164,7 +154,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         adapter.apply {
             notifyDataSetChanged()
         }
-        binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
+
     }
 
 
@@ -192,6 +182,9 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
 
                 if (data.position == DayPosition.MonthDate) {
                     textView.isVisible = true
+
+
+
                     when (data.date) {
                         today -> {
                             textView.setTextColorRes(R.color.example_3_white)
@@ -292,7 +285,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         binding.exThreeRv.adapter = adapter
 
     }
-    private fun getTaskDay(){
+
+    private fun getTaskDay() {
 
 
     }

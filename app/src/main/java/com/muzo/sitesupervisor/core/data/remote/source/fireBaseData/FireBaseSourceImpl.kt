@@ -281,7 +281,8 @@ class FireBaseSourceImpl @Inject constructor(
             currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
             constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
 
-            val postsRef = constructionSiteRef.collection("task").document(taskModel.taskId.toString())
+            val postsRef =
+                constructionSiteRef.collection("task").document(taskModel.taskId.toString())
 
             val post = hashMapOf(
                 "message" to taskModel.message,
@@ -294,20 +295,26 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllTask(currentUser: String, constructionName: String ,date:String ): Result<List<TaskModel>> {
+    override suspend fun getAllTask(
+        currentUser: String,
+        constructionName: String,
+        date: String
+    ): Result<List<TaskModel>> {
         return kotlin.runCatching {
             val dataModelList = mutableListOf<TaskModel>()
 
             val postsSnapshot =
                 database.collection("Users").document(currentUser).collection("construcitonName")
-                    .document(constructionName).collection("task").document(date).collection("taskId")
+                    .document(constructionName).collection("task").document(date)
+                    .collection("taskId")
                     .get().await()
 
             for (postDocument in postsSnapshot.documents) {
                 val data = postDocument.data
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
-                val workerList = data?.get("workerList") as? List<String> ?: listOf() // PhotoUrl artık liste
+                val workerList =
+                    data?.get("workerList") as? List<String> ?: listOf() // PhotoUrl artık liste
                 val day = data?.get("day") as? String ?: ""
                 val taskId = data?.get("taskId") as? Long ?: 0
 
@@ -324,6 +331,23 @@ class FireBaseSourceImpl @Inject constructor(
             }
 
             dataModelList.toList()
+        }
+    }
+
+    override suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>> {
+        return kotlin.runCatching {
+
+            val taskDate = mutableListOf<String>()
+            val dataSnapshot =
+                database.collection("Users").document(currentUser).collection("construcitonName")
+                    .document(constructionName).collection("task").get().await()
+
+            for (dataDocument in dataSnapshot.documents) {
+                val date = dataDocument.id
+                taskDate.add(date)
+            }
+            taskDate.toList()
+
         }
     }
 
