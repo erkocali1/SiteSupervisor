@@ -9,6 +9,7 @@ import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.domain.GetAllTaskUseCase
+import com.muzo.sitesupervisor.domain.GetTaskDateUseCase
 import com.muzo.sitesupervisor.feature.fragment.detail.UpdateState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -21,18 +22,20 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskFragmentViewModel @Inject constructor(
     private val getAllTaskUseCase: GetAllTaskUseCase,
+    private val getTaskDateUseCase: GetTaskDateUseCase,
     private val dataStore: MyDataStore
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<TaskState> = MutableStateFlow(TaskState())
     val uiState = _uiState
 
+    private val _dateState: MutableStateFlow<TaskDateState> = MutableStateFlow(TaskDateState())
+    val dateState = _dateState
 
 
-
-    fun getAllTask(currentUser: String, constructionName: String,date:String ) {
+    fun getAllTask(currentUser: String, constructionName: String, date: String) {
         viewModelScope.launch {
-            getAllTaskUseCase(currentUser, constructionName,date).asReSource().onEach { result ->
+            getAllTaskUseCase(currentUser, constructionName, date).asReSource().onEach { result ->
 
                 when (result) {
                     is Resource.Error -> {
@@ -44,10 +47,32 @@ class TaskFragmentViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        _uiState.value = _uiState.value.copy(loading = false, resultList = result.data)
+                        _uiState.value =
+                            _uiState.value.copy(loading = false, resultList = result.data)
                     }
                 }
 
+            }.launchIn(this)
+        }
+    }
+
+    fun getTaskDate(currentUser: String, constructionName: String) {
+        viewModelScope.launch {
+            getTaskDateUseCase(currentUser, constructionName).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        _dateState.value = _dateState.value.copy(loading = false)
+                    }
+
+                    Resource.Loading -> {
+                        _dateState.value = _dateState.value.copy(loading = true)
+                    }
+
+                    is Resource.Success -> {
+                        _dateState.value =
+                            _dateState.value.copy(loading = false, dateList = result.data)
+                    }
+                }
             }.launchIn(this)
         }
     }
@@ -65,3 +90,12 @@ data class TaskState(
     val resultList: List<TaskModel>? = null,
     val isSuccessful: Boolean = false,
 )
+
+data class TaskDateState(
+    val loading: Boolean = false,
+    val message: String? = null,
+    val dateList: List<String>? = null,
+    val isSuccessful: Boolean = false,
+)
+
+

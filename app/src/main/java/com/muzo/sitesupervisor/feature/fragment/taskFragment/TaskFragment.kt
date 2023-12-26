@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kizitonwose.calendar.core.CalendarDay
@@ -24,7 +27,6 @@ import com.muzo.sitesupervisor.core.common.getColorCompat
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.setTextColorRes
 import com.muzo.sitesupervisor.core.common.show
-import com.muzo.sitesupervisor.core.data.model.Event
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.databinding.Example3CalendarDayBinding
 import com.muzo.sitesupervisor.databinding.Example3CalendarHeaderBinding
@@ -55,8 +57,10 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM", turkishLocale)
     private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy", turkishLocale)
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
-    private val events = mutableMapOf<LocalDate, List<Event>>()
+
+    // private val events = mutableMapOf<LocalDate, List<Event>>()
     private var list: List<TaskModel>? = null
+    private var localDateList: List<LocalDate>? = null
     private lateinit var adapter: TaskAdapter
 
 
@@ -66,97 +70,69 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private val endMonth = currentMonth.plusMonths(50)
 
 
-//    private val eventsAdapter = Example3EventsAdapter {
-//        AlertDialog.Builder(requireContext())
-//            .setMessage(R.string.example_3_dialog_delete_confirmation)
-//            .setPositiveButton(R.string.delete) { _, _ ->
-//                deleteEvent(it)
-//            }.setNegativeButton(R.string.close, null).show()
+//    override fun onCreateView(
+//        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+//    ): View? {
+//        binding = FragmentTaskBinding.inflate(layoutInflater, container, false)
+//        getSiteInfo()
+//        viewModel.getTaskDate(siteSupervisor, constructionArea)
+//        observe(ObservedState.DATE_STATE)
+//
+//
+//        binding.exThreeAddButton.setOnClickListener {
+//            findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail)
+//        }
+//
+//        addStatusBarColorUpdate(R.color.example_3_statusbar_color)
+//
+//        if (savedInstanceState == null) {
+//            // Show today's events initially.
+//            binding.exThreeCalendar.post { selectDate(today) }
+//        }
+//        return binding.root
 //    }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-
-        binding = FragmentTaskBinding.inflate(layoutInflater, container, false)
-        getSiteInfo()
-
-
-        binding.exThreeAddButton.setOnClickListener {
-            findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail)
-        }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         addStatusBarColorUpdate(R.color.example_3_statusbar_color)
+        binding = FragmentTaskBinding.bind(view)
 
-//        binding.exThreeRv.apply {
-//            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-//            adapter = eventsAdapter
-//            addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
-//        }
-
-        binding.exThreeCalendar.monthScrollListener = {
-            activityToolbar.title = if (it.yearMonth.year == today.year) {
-                titleSameYearFormatter.format(it.yearMonth)
-            } else {
-                titleFormatter.format(it.yearMonth)
+        getSiteInfo()
+        viewModel.getTaskDate(siteSupervisor, constructionArea)
+        observe(ObservedState.DATE_STATE)
+        when {
+            savedInstanceState == null && localDateList != null -> {
+                binding.exThreeCalendar.post { selectDate(today) }
             }
-            // Select the first day of the visible month.
-            selectDate(it.yearMonth.atDay(1))
         }
-
-
-        configureBinders(daysOfWeek)
-
-        binding.exThreeCalendar.apply {
-            setup(startMonth, endMonth, daysOfWeek.first())
-            scrollToMonth(currentMonth)
-        }
-
-        if (savedInstanceState == null) {
-            // Show today's events initially.
-            binding.exThreeCalendar.post { selectDate(today) }
-        }
-//        binding.exThreeAddButton.setOnClickListener { }
-
-        return binding.root
 
     }
 
-
     private fun selectDate(date: LocalDate) {
+        binding.exThreeCalendar.post {
+            if (!binding.exThreeCalendar.isComputingLayout && !binding.exThreeCalendar.isAnimating) {
+                performDateSelection(date)
+            } else {
+                binding.exThreeCalendar.post { selectDate(date) }
+            }
+        }
+    }
+
+    private fun performDateSelection(date: LocalDate) {
         if (selectedDate != date) {
             val oldDate = selectedDate
             selectedDate = date
             oldDate?.let { binding.exThreeCalendar.notifyDateChanged(it) }
             binding.exThreeCalendar.notifyDateChanged(date)
-            //      updateAdapterForDate(date)
-
             val selectedDateString = selectedDate?.toString()
             selectedDateString?.let {
                 Log.d("getAllTask", selectedDateString)
                 viewModel.getAllTask(siteSupervisor, constructionArea, selectedDateString)
-                observe()
+                observe(ObservedState.UI_STATE)
                 binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
             }
-
         }
     }
-
-//    private fun deleteEvent(event: Event) {
-//        val date = event.date
-//        events[date] = events[date].orEmpty().minus(event)
-//        updateAdapterForDate(date)
-//    }
-
-    private fun updateAdapterForDate(date: LocalDate) {
-
-        adapter.apply {
-            notifyDataSetChanged()
-        }
-
-    }
-
 
     private fun configureBinders(daysOfWeek: List<DayOfWeek>) {
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -183,8 +159,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                 if (data.position == DayPosition.MonthDate) {
                     textView.isVisible = true
 
-
-
                     when (data.date) {
                         today -> {
                             textView.setTextColorRes(R.color.example_3_white)
@@ -201,9 +175,10 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                         else -> {
                             textView.setTextColorRes(R.color.example_3_black)
                             textView.background = null
-                            dotView.isVisible = events[data.date].orEmpty().isNotEmpty()
+                            dotView.isVisible = isDateInList(data.date)
                         }
                     }
+
                 } else {
                     textView.hide()
                     dotView.hide()
@@ -254,31 +229,61 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                 }
             }
         }
-
     }
 
-    private fun observe() {
-        lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
-                when {
-                    uiState.loading -> {
 
-                        binding.progressBar.show()
+    private fun observe(observedState: ObservedState) {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                when (observedState) {
+                    ObservedState.UI_STATE -> {
+                        launch {
+                            viewModel.uiState.collect { uiState ->
+                                // UI_STATE izleniyor
+                                when {
+                                    uiState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    uiState.resultList != null -> {
+                                        binding.progressBar.hide()
+                                        list = uiState.resultList
+                                        setupAdapter()
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    uiState.resultList != null -> {
-                        binding.progressBar.hide()
-                        list = uiState.resultList
-                        setupAdapter()
+                    ObservedState.DATE_STATE -> {
+                        launch {
+                            viewModel.dateState.collect { dateState ->
+                                // DATE_STATE izleniyor
+                                when {
+                                    dateState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    dateState.dateList != null || dateState.isSuccessful -> {
+                                        config()
+                                        binding.progressBar.hide()
+                                        dateState.dateList?.let { stringDates ->
+                                            localDateList = stringDates.map { dateString ->
+                                                convertStringToLocalDate(dateString)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-
             }
         }
     }
 
-    private fun setupAdapter() {
 
+    private fun setupAdapter() {
         adapter = TaskAdapter(list) {}
         binding.exThreeRv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -286,12 +291,40 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
 
     }
 
-    private fun getTaskDay() {
+    private fun convertStringToLocalDate(dateString: String): LocalDate {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
+        return LocalDate.parse(dateString, formatter)
+    }
 
+    private fun isDateInList(date: LocalDate): Boolean {
+        return localDateList?.contains(date) ?: false
+    }
 
+    private fun config() {
+        binding.exThreeCalendar.monthScrollListener = {
+            activityToolbar.title = if (it.yearMonth.year == today.year) {
+                titleSameYearFormatter.format(it.yearMonth)
+            } else {
+                titleFormatter.format(it.yearMonth)
+            }
+            // Select the first day of the visible month.
+            selectDate(it.yearMonth.atDay(1))
+        }
+        configureBinders(daysOfWeek)
+
+        binding.exThreeCalendar.apply {
+            setup(startMonth, endMonth, daysOfWeek.first())
+            scrollToMonth(currentMonth)
+        }
+         binding.exThreeCalendar.post{ selectDate(today) }
+        //   binding.exThreeCalendar.postDelayed({ selectDate(today)},250)
     }
 
 
+}
+
+enum class ObservedState {
+    UI_STATE, DATE_STATE
 }
 
 
