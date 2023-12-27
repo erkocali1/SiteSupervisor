@@ -14,7 +14,6 @@ class FireBaseSourceImpl @Inject constructor(
     private val database: FirebaseFirestore, private val storage: FirebaseStorage
 ) : FireBaseSource {
 
-
     init {
         FirebaseFirestore.setLoggingEnabled(true)
     }
@@ -277,21 +276,24 @@ class FireBaseSourceImpl @Inject constructor(
             val currentUserRef = database.collection("Users").document(taskModel.currentUser)
             val constructionSiteRef =
                 currentUserRef.collection("construcitonName").document(taskModel.constructionArea)
+            val postsRef =
+                constructionSiteRef.collection("task").document(taskModel.day)
 
             currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
             constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+            postsRef.set(hashMapOf("dummyField" to "dummyValue")).await()
 
-            val postsRef =
-                constructionSiteRef.collection("task").document(taskModel.taskId.toString())
+            val taskRef = postsRef.collection("taskId").document(taskModel.taskId.toString())
 
             val post = hashMapOf(
                 "message" to taskModel.message,
                 "title" to taskModel.title,
                 "day" to taskModel.day,
                 "taskId" to taskModel.taskId,
+                "workerList" to taskModel.workerList,
             )
 
-            postsRef.set(post).await()
+            taskRef.set(post).await()
         }
     }
 
@@ -334,7 +336,10 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>> {
+    override suspend fun getTaskDate(
+        currentUser: String,
+        constructionName: String
+    ): Result<List<String>> {
         return kotlin.runCatching {
 
             val taskDate = mutableListOf<String>()
@@ -347,7 +352,24 @@ class FireBaseSourceImpl @Inject constructor(
                 taskDate.add(date)
             }
             taskDate.toList()
+        }
+    }
 
+    override suspend fun getTasksWithWorker(worker: String): Result<List<TaskModel>> {
+        return kotlin.runCatching {
+            val tasks = mutableListOf<TaskModel>()
+
+            val querySnapshot = database.collectionGroup("task")
+                .whereArrayContains("workerList", worker) // WorkerList içinde verilen çalışanı içeren görevleri filtrele
+                .get()
+                .await()
+
+            for (document in querySnapshot.documents) {
+                val task = document.toObject(TaskModel::class.java)
+                task?.let { tasks.add(it) }
+            }
+
+            tasks // Sorgudan elde edilen görev listesini döndür
         }
     }
 

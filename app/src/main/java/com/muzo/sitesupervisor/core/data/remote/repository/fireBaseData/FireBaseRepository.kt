@@ -34,4 +34,6 @@ interface FireBaseRepository {
 
     suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>>
 
+    suspend fun getTasksWithWorker(worker: String):Result<List<TaskModel>>
+
 }

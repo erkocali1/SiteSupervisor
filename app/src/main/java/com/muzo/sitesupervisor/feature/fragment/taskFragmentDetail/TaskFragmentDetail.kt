@@ -1,11 +1,12 @@
 package com.muzo.sitesupervisor.feature.fragment.taskFragmentDetail
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,10 +21,11 @@ import com.muzo.sitesupervisor.core.constans.Constants.Companion.ConstructionTea
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.databinding.FragmentTaskDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.textAdapter.TextAdapter
-import com.muzo.sitesupervisor.feature.fragment.registerfragment.RegisterFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -33,11 +35,15 @@ class TaskFragmentDetail : Fragment() {
     private val viewModel: TaskFragmentDetailViewModel by viewModels()
     private var stringList: MutableList<String>? = mutableListOf()
     private lateinit var adapter: TextAdapter
-    private var postId: Long? = null
+    private var taskIdNumber: Long? = null
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
+    private var specifiedDay: String? = null
+    private val turkishLocale = Locale("tr", "TR")
     private var dataEmpty: Boolean = false
     private var sendData: Boolean = false
+    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -49,6 +55,7 @@ class TaskFragmentDetail : Fragment() {
         setList()
         addItemFromEditText()
         sendData()
+        showDate()
 
         return binding.root
     }
@@ -122,14 +129,20 @@ class TaskFragmentDetail : Fragment() {
 
     private fun getData(): TaskModel? {
         val title = binding.etTitle.text.toString()
-        val desc = binding.etWorker.text.toString()
+        val desc = binding.etDes.text.toString()
         val workerList = stringList
-        val date = binding.time.toString()
+        val date = specifiedDay
 
         return if (title.isNotEmpty() && desc.isNotEmpty()) {
-            TaskModel(postId, desc, title, date, workerList, siteSupervisor, constructionArea)
+            Log.d("safasfasfa", "burayı döndü")
+            TaskModel(
+                taskIdNumber, desc, title, date!!, workerList, siteSupervisor, constructionArea
+            )
+
+
         } else {
             dataEmpty = true
+            Log.d("safasfasfa", "şrayı döndü")
             null
         }
     }
@@ -140,11 +153,12 @@ class TaskFragmentDetail : Fragment() {
             if (dataEmpty) {
                 toastMessage("Lütfen bilgilerinizi Doldurunuz", requireContext())
             } else {
-                getData()
+                val data = getData()
                 lifecycleScope.launch {
-                    val postId = viewModel.saveRoom(getData()!!)
-                    getData()?.taskId = postId
-                    viewModel.saveTask(getData()!!)
+                    taskIdNumber = viewModel.saveRoom(data!!)
+                    Log.d("safasfasfa", taskIdNumber.toString())
+                    data.taskId = taskIdNumber
+                    viewModel.saveTask(data.copy(taskId = taskIdNumber))
                     sendData = true
                     observeData()
                 }
@@ -165,7 +179,12 @@ class TaskFragmentDetail : Fragment() {
     }
 
     private fun navigateFragment() {
-        findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail)
+        findNavController().navigate(R.id.action_taskFragmentDetail_to_taskFragment)
     }
 
+    private fun showDate() {
+        specifiedDay = arguments?.getString("selectedDate")
+        val convertStringToLocalDate = LocalDate.parse(specifiedDay, DateTimeFormatter.ISO_DATE)
+        binding.time.text = convertStringToLocalDate.format(selectionFormatter)
+    }
 }

@@ -101,10 +101,6 @@
         android:name="com.muzo.sitesupervisor.feature.fragment.photoFragment.PhotoFragment"
         android:label="fragment_photo"
         tools:layout="@layout/fragment_photo">
-        <argument
-            android:name="imagePath"
-            app:argType="string"
-            app:nullable="false"/>
         <action
             android:id="@+id/action_photoFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
@@ -129,7 +125,11 @@
         android:id="@+id/taskFragmentDetail"
         android:name="com.muzo.sitesupervisor.feature.fragment.taskFragmentDetail.TaskFragmentDetail"
         android:label="fragment_task_detail"
-        tools:layout="@layout/fragment_task_detail" />
+        tools:layout="@layout/fragment_task_detail" >
+        <action
+            android:id="@+id/action_taskFragmentDetail_to_taskFragment"
+            app:destination="@id/taskFragment" />
+    </fragment>
 
 
 </navigation>

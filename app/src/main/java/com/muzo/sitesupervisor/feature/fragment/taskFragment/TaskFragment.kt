@@ -46,13 +46,11 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private lateinit var binding: FragmentTaskBinding
     private val viewModel: TaskFragmentViewModel by viewModels()
     override val titleRes: Int = R.string.example_3_title
-
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
     private val turkishLocale = Locale("tr", "TR")
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
-
     private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM", turkishLocale)
     private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy", turkishLocale)
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
@@ -61,31 +59,12 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private var list: List<TaskModel>? = null
     private var localDateList: List<LocalDate>? = null
     private lateinit var adapter: TaskAdapter
-    private val savedInstanceState: Bundle? = null
 
 
     private val daysOfWeek = daysOfWeek()
     private val currentMonth = YearMonth.now()
     private val startMonth = currentMonth.minusMonths(50)
     private val endMonth = currentMonth.plusMonths(50)
-
-
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-//    ): View? {
-//        binding = FragmentTaskBinding.inflate(layoutInflater, container, false)
-//        getSiteInfo()
-//        viewModel.getTaskDate(siteSupervisor, constructionArea)
-//        observe(ObservedState.DATE_STATE)
-//
-//
-//
-//        addStatusBarColorUpdate(R.color.example_3_statusbar_color)
-//
-
-//        return binding.root
-//    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -96,12 +75,12 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         viewModel.getTaskDate(siteSupervisor, constructionArea)
         observe(ObservedState.DATE_STATE)
         config()
+        navigateAddTask()
+        viewModel.getWorker("Mermer Ekibi")
         if (savedInstanceState == null) {
             // Show today's events initially.
             binding.exThreeCalendar.post { selectDate(today) }
         }
-        //       navigateAddTask()
-
     }
 
     private fun selectDate(date: LocalDate) {
@@ -170,7 +149,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                 }
             }
         }
-
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val legendLayout = Example3CalendarHeaderBinding.bind(view).legendLayout.root
         }
@@ -211,7 +189,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             requireContext().getColorCompat(R.color.colorPrimary),
         )
     }
-
     private fun getSiteInfo() {
         lifecycleScope.launch {
             viewModel.readDataStore("construction_key").collect { area ->
@@ -222,8 +199,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             }
         }
     }
-
-
     private fun observe(observedState: ObservedState) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -231,7 +206,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                     ObservedState.UI_STATE -> {
                         launch {
                             viewModel.uiState.collect { uiState ->
-                                // UI_STATE izleniyor
                                 when {
                                     uiState.loading -> {
                                         binding.progressBar.show()
@@ -255,6 +229,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                                         binding.progressBar.show()
                                         binding.exThreeCalendar.hide()
                                     }
+
                                     dateState.dateList != null || dateState.isSuccessful -> {
                                         //       config()
                                         binding.progressBar.hide()
@@ -274,8 +249,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             }
         }
     }
-
-
     private fun setupAdapter() {
         adapter = TaskAdapter(list) {}
         binding.exThreeRv.layoutManager =
@@ -310,21 +283,21 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             scrollToMonth(currentMonth)
         }
 
-
-    //  binding.exThreeCalendar.postDelayed({ selectDate(today) }, 250)
-    //    binding.exThreeCalendar.post { selectDate(today) }
+        //  binding.exThreeCalendar.postDelayed({ selectDate(today) }, 250)
+        //    binding.exThreeCalendar.post { selectDate(today) }
 
     }
 
     private fun navigateAddTask() {
         binding.exThreeAddButton.setOnClickListener {
             val bundle = Bundle().apply {
-                val selectedDateString = selectedDate.toString()
+                val selectedDateString = selectedDate?.format(DateTimeFormatter.ISO_DATE) // Ya da uygun bir format
                 putString("selectedDate", selectedDateString)
             }
             findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail, bundle)
         }
     }
+
 
 
 }
