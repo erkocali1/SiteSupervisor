@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -62,6 +61,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private var list: List<TaskModel>? = null
     private var localDateList: List<LocalDate>? = null
     private lateinit var adapter: TaskAdapter
+    private val savedInstanceState: Bundle? = null
 
 
     private val daysOfWeek = daysOfWeek()
@@ -79,18 +79,13 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
 //        observe(ObservedState.DATE_STATE)
 //
 //
-//        binding.exThreeAddButton.setOnClickListener {
-//            findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail)
-//        }
 //
 //        addStatusBarColorUpdate(R.color.example_3_statusbar_color)
 //
-//        if (savedInstanceState == null) {
-//            // Show today's events initially.
-//            binding.exThreeCalendar.post { selectDate(today) }
-//        }
+
 //        return binding.root
 //    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -100,25 +95,16 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         getSiteInfo()
         viewModel.getTaskDate(siteSupervisor, constructionArea)
         observe(ObservedState.DATE_STATE)
-        when {
-            savedInstanceState == null && localDateList != null -> {
-                binding.exThreeCalendar.post { selectDate(today) }
-            }
+        config()
+        if (savedInstanceState == null) {
+            // Show today's events initially.
+            binding.exThreeCalendar.post { selectDate(today) }
         }
+        //       navigateAddTask()
 
     }
 
     private fun selectDate(date: LocalDate) {
-        binding.exThreeCalendar.post {
-            if (!binding.exThreeCalendar.isComputingLayout && !binding.exThreeCalendar.isAnimating) {
-                performDateSelection(date)
-            } else {
-                binding.exThreeCalendar.post { selectDate(date) }
-            }
-        }
-    }
-
-    private fun performDateSelection(date: LocalDate) {
         if (selectedDate != date) {
             val oldDate = selectedDate
             selectedDate = date
@@ -126,7 +112,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             binding.exThreeCalendar.notifyDateChanged(date)
             val selectedDateString = selectedDate?.toString()
             selectedDateString?.let {
-                Log.d("getAllTask", selectedDateString)
                 viewModel.getAllTask(siteSupervisor, constructionArea, selectedDateString)
                 observe(ObservedState.UI_STATE)
                 binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
@@ -220,6 +205,13 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         )
     }
 
+    override fun onStop() {
+        super.onStop()
+        activityToolbar.setBackgroundColor(
+            requireContext().getColorCompat(R.color.colorPrimary),
+        )
+    }
+
     private fun getSiteInfo() {
         lifecycleScope.launch {
             viewModel.readDataStore("construction_key").collect { area ->
@@ -258,20 +250,21 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                     ObservedState.DATE_STATE -> {
                         launch {
                             viewModel.dateState.collect { dateState ->
-                                // DATE_STATE izleniyor
                                 when {
                                     dateState.loading -> {
                                         binding.progressBar.show()
+                                        binding.exThreeCalendar.hide()
                                     }
-
                                     dateState.dateList != null || dateState.isSuccessful -> {
-                                        config()
+                                        //       config()
                                         binding.progressBar.hide()
                                         dateState.dateList?.let { stringDates ->
                                             localDateList = stringDates.map { dateString ->
                                                 convertStringToLocalDate(dateString)
                                             }
                                         }
+                                        binding.exThreeCalendar.notifyCalendarChanged()
+                                        binding.exThreeCalendar.show()
                                     }
                                 }
                             }
@@ -316,8 +309,21 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             setup(startMonth, endMonth, daysOfWeek.first())
             scrollToMonth(currentMonth)
         }
-         binding.exThreeCalendar.post{ selectDate(today) }
-        //   binding.exThreeCalendar.postDelayed({ selectDate(today)},250)
+
+
+    //  binding.exThreeCalendar.postDelayed({ selectDate(today) }, 250)
+    //    binding.exThreeCalendar.post { selectDate(today) }
+
+    }
+
+    private fun navigateAddTask() {
+        binding.exThreeAddButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                val selectedDateString = selectedDate.toString()
+                putString("selectedDate", selectedDateString)
+            }
+            findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail, bundle)
+        }
     }
 
 
@@ -326,5 +332,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
 enum class ObservedState {
     UI_STATE, DATE_STATE
 }
+
 
 

@@ -444,11 +444,11 @@ class DetailFragment : Fragment() {
                         }
 
                         uiState.isSuccessfulAddData -> {
-                            binding.progressBar.hide()
                             val bundle = Bundle().apply {
                                 putString("bigPhoto", uri)
                                 putLong("id", postId!!)
                             }
+                            binding.progressBar.hide()
                             findNavController().navigate(
                                 R.id.action_detailFragment_to_photoFragment, bundle
                             )

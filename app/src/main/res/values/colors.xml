@@ -24,5 +24,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="example_3_statusbar_color">#607D8B</color>
     <color name="example_3_toolbar_color">#607D8B</color>
+    <color name="colorPrimary">#3F51B5</color>
+
 
 </resources>
