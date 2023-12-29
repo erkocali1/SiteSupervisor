@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await
@@ -11,7 +12,8 @@ import java.util.UUID
 import javax.inject.Inject
 
 class FireBaseSourceImpl @Inject constructor(
-    private val database: FirebaseFirestore, private val storage: FirebaseStorage
+    private val database: FirebaseFirestore,
+    private val storage: FirebaseStorage
 ) : FireBaseSource {
 
     init {
@@ -291,6 +293,8 @@ class FireBaseSourceImpl @Inject constructor(
                 "day" to taskModel.day,
                 "taskId" to taskModel.taskId,
                 "workerList" to taskModel.workerList,
+                "currentUser" to taskModel.currentUser,
+                "constructionArea" to taskModel.constructionArea,
             )
 
             taskRef.set(post).await()
@@ -359,19 +363,18 @@ class FireBaseSourceImpl @Inject constructor(
         return kotlin.runCatching {
             val tasks = mutableListOf<TaskModel>()
 
-            val querySnapshot = database.collectionGroup("task")
-                .whereArrayContains("workerList", worker) // WorkerList içinde verilen çalışanı içeren görevleri filtrele
+            val querySnapshot = database.collection("task")
+                .whereArrayContains("workerList", worker)
                 .get()
                 .await()
 
             for (document in querySnapshot.documents) {
                 val task = document.toObject(TaskModel::class.java)
-                task?.let { tasks.add(it) }
+                task?.let {
+                    tasks.add(it)
+                }
             }
-
-            tasks // Sorgudan elde edilen görev listesini döndür
+            tasks
         }
     }
-
-
 }

@@ -37,6 +37,7 @@ class TaskFragmentDetail : Fragment() {
     private lateinit var adapter: TextAdapter
     private var taskIdNumber: Long? = null
     private lateinit var constructionArea: String
+    private  var location: String? = null
     private lateinit var siteSupervisor: String
     private var specifiedDay: String? = null
     private val turkishLocale = Locale("tr", "TR")
@@ -51,11 +52,12 @@ class TaskFragmentDetail : Fragment() {
 
         binding = FragmentTaskDetailBinding.inflate(layoutInflater, container, false)
 
+        defineToLocate()
         getSiteInfo()
         setList()
         addItemFromEditText()
         sendData()
-        showDate()
+
 
         return binding.root
     }
@@ -78,6 +80,28 @@ class TaskFragmentDetail : Fragment() {
             }
         }
 
+    }
+
+    private fun defineToLocate() {
+         location = arguments?.getString("location")
+        if (location == "addButton") {
+            showDate()
+        } else {
+            showData()
+        }
+    }
+
+    private fun showData() {
+        val receivedData = arguments?.getParcelable<TaskModel>("sendData")
+        val day = receivedData?.day
+        val convertStringToLocalDate = LocalDate.parse(day, DateTimeFormatter.ISO_DATE)
+        binding.time.text = convertStringToLocalDate.format(selectionFormatter)
+        binding.etDes.setText(receivedData?.message)
+        binding.etTitle.setText(receivedData?.title)
+        stringList = receivedData?.workerList?.toMutableList()
+        if (stringList?.isNotEmpty() == true) {
+            setupAdapter()
+        }
     }
 
     private fun setList() {
@@ -153,6 +177,9 @@ class TaskFragmentDetail : Fragment() {
             if (dataEmpty) {
                 toastMessage("Lütfen bilgilerinizi Doldurunuz", requireContext())
             } else {
+                if (location =="rv"){
+               //     updateData()
+                }
                 val data = getData()
                 lifecycleScope.launch {
                     taskIdNumber = viewModel.saveRoom(data!!)
@@ -186,5 +213,15 @@ class TaskFragmentDetail : Fragment() {
         specifiedDay = arguments?.getString("selectedDate")
         val convertStringToLocalDate = LocalDate.parse(specifiedDay, DateTimeFormatter.ISO_DATE)
         binding.time.text = convertStringToLocalDate.format(selectionFormatter)
+    }
+
+    private fun changeListener(): Boolean {
+
+        val oldItem = arguments?.getParcelable<TaskModel>("sendData")
+        val currentStringList = stringList
+        val currentDesc = binding.etDes.text.toString()
+        val currentTitle = binding.etTitle.text.toString()
+
+        return oldItem?.title != currentTitle || oldItem.message != currentDesc || oldItem.workerList != currentStringList
     }
 }

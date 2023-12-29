@@ -76,7 +76,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         observe(ObservedState.DATE_STATE)
         config()
         navigateAddTask()
-        viewModel.getWorker("Mermer Ekibi")
+        viewModel.getWorker("Kalıpçılar")
         if (savedInstanceState == null) {
             // Show today's events initially.
             binding.exThreeCalendar.post { selectDate(today) }
@@ -189,6 +189,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             requireContext().getColorCompat(R.color.colorPrimary),
         )
     }
+
     private fun getSiteInfo() {
         lifecycleScope.launch {
             viewModel.readDataStore("construction_key").collect { area ->
@@ -199,6 +200,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             }
         }
     }
+
     private fun observe(observedState: ObservedState) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -249,8 +251,11 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             }
         }
     }
+
     private fun setupAdapter() {
-        adapter = TaskAdapter(list) {}
+        adapter = TaskAdapter(list) {
+            navigateByRv(it)
+        }
         binding.exThreeRv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.exThreeRv.adapter = adapter
@@ -291,14 +296,23 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private fun navigateAddTask() {
         binding.exThreeAddButton.setOnClickListener {
             val bundle = Bundle().apply {
-                val selectedDateString = selectedDate?.format(DateTimeFormatter.ISO_DATE) // Ya da uygun bir format
+                val selectedDateString =
+                    selectedDate?.format(DateTimeFormatter.ISO_DATE) // Ya da uygun bir format
                 putString("selectedDate", selectedDateString)
+                putString("location", "addButton")
             }
             findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail, bundle)
         }
     }
 
+    private fun navigateByRv(taskModel: TaskModel) {
+        val bundle = Bundle().apply {
+            putParcelable("sendData", taskModel)
+            putString("location", "rv")
+        }
+        findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail,bundle)
 
+    }
 
 }
 

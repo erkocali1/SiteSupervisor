@@ -62,6 +62,7 @@ class DetailFragment : Fragment() {
                 }
             }
         }
+
         isDeleteChange()
         getFromLocation()
         showDayAndTime()
@@ -475,5 +476,6 @@ class DetailFragment : Fragment() {
     private fun isDeleteChange() {
         isDeletePhoto = arguments?.getBoolean("isDelete") ?: false
     }
+
 
 }
