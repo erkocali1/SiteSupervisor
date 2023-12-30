@@ -1,7 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.taskFragmentDetail
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +45,7 @@ class TaskFragmentDetail : Fragment() {
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -57,7 +57,7 @@ class TaskFragmentDetail : Fragment() {
         setList()
         addItemFromEditText()
         sendData()
-
+        backButtonEvent()
 
         return binding.root
     }
@@ -79,8 +79,8 @@ class TaskFragmentDetail : Fragment() {
                 }
             }
         }
-
     }
+
     private fun defineToLocate() {
         location = arguments?.getString("location")
         if (location == "addButton") {
@@ -160,7 +160,6 @@ class TaskFragmentDetail : Fragment() {
 
 
         return if (title.isNotEmpty() && desc.isNotEmpty()) {
-            Log.d("safasfasfa", "burayı döndü")
             TaskModel(
                 taskIdNumber, desc, title, date!!, workerList, siteSupervisor, constructionArea
             )
@@ -210,9 +209,7 @@ class TaskFragmentDetail : Fragment() {
                 }
             }
         }
-
     }
-
     private fun navigateFragment() {
         findNavController().navigate(R.id.action_taskFragmentDetail_to_taskFragment)
     }
@@ -224,12 +221,17 @@ class TaskFragmentDetail : Fragment() {
     }
 
     private fun changeListener(): Boolean {
-
         val oldItem = arguments?.getParcelable<TaskModel>("sendData")
         val currentStringList = stringList
         val currentDesc = binding.etDes.text.toString()
         val currentTitle = binding.etTitle.text.toString()
-
         return oldItem?.title != currentTitle || oldItem.message != currentDesc || oldItem.workerList != currentStringList
     }
+
+    private fun backButtonEvent() {
+        binding.back.setOnClickListener {
+            navigateFragment()
+        }
+    }
+
 }

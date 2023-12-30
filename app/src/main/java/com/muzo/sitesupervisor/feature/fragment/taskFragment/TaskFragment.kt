@@ -55,27 +55,24 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM", turkishLocale)
     private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy", turkishLocale)
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
-
-    // private val events = mutableMapOf<LocalDate, List<Event>>()
     private var list: List<TaskModel>? = null
     private var localDateList: List<LocalDate>? = null
     private lateinit var adapter: TaskAdapter
-
-
     private val daysOfWeek = daysOfWeek()
     private val currentMonth = YearMonth.now()
     private val startMonth = currentMonth.minusMonths(50)
     private val endMonth = currentMonth.plusMonths(50)
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addStatusBarColorUpdate(R.color.example_3_statusbar_color)
         binding = FragmentTaskBinding.bind(view)
-
         getSiteInfo()
         viewModel.getTaskDate(siteSupervisor, constructionArea)
         observe(ObservedState.DATE_STATE)
         config()
+        configureToolbarTitle()
         navigateAddTask()
         viewModel.getWorker("Boyacılar")
         if (savedInstanceState == null) {
@@ -273,6 +270,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     }
 
     private fun config() {
+
         binding.exThreeCalendar.monthScrollListener = {
             activityToolbar.title = if (it.yearMonth.year == today.year) {
                 titleSameYearFormatter.format(it.yearMonth)
@@ -290,7 +288,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         }
 
         //  binding.exThreeCalendar.postDelayed({ selectDate(today) }, 250)
-        //    binding.exThreeCalendar.post { selectDate(today) }
+        //  binding.exThreeCalendar.post { selectDate(today) }
 
     }
 
@@ -314,6 +312,15 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail, bundle)
 
     }
+
+    private fun configureToolbarTitle() {
+        activityToolbar.title = if (currentMonth.year == today.year) {
+            titleSameYearFormatter.format(currentMonth)
+        } else {
+            titleFormatter.format(currentMonth)
+        }
+    }
+
 
 }
 
