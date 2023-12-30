@@ -27,10 +27,6 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.fetchArea()
     }
 
-    override suspend fun updateArea(dataModel: DataModel): Result<Unit> {
-        return fireBaseSource.updateArea(dataModel)
-    }
-
     override suspend fun getAllPost(currentUser: String, constructionName: String): Result<List<DataModel>> {
         return fireBaseSource.getAllPost(currentUser, constructionName)
     }
@@ -64,8 +60,8 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.getTaskDate(currentUser, constructionName)
     }
 
-    override suspend fun getTasksWithWorker(worker: String):Result<List<TaskModel>> {
-        return fireBaseSource.getTasksWithWorker(worker)
+    override suspend fun getTasksWithWorker(workerName: String):Result<List<TaskModel>> {
+        return fireBaseSource.getTasksWithWorker(workerName)
     }
 
 

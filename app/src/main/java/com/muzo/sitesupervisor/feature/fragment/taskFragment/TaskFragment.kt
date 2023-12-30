@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.taskFragment
 
 import android.os.Bundle
+import android.provider.SyncStateContract.Constants
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -76,7 +77,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         observe(ObservedState.DATE_STATE)
         config()
         navigateAddTask()
-        viewModel.getWorker("Kalıpçılar")
+        viewModel.getWorker("Boyacılar")
         if (savedInstanceState == null) {
             // Show today's events initially.
             binding.exThreeCalendar.post { selectDate(today) }
@@ -310,7 +311,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             putParcelable("sendData", taskModel)
             putString("location", "rv")
         }
-        findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail,bundle)
+        findNavController().navigate(R.id.action_taskFragment_to_taskFragmentDetail, bundle)
 
     }
 

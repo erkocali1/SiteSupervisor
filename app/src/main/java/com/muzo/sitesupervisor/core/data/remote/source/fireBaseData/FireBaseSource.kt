@@ -14,9 +14,6 @@ interface FireBaseSource {
     suspend fun fetchData(currentUser: String, constructionName: String,postId:String): Result<DataModel>
 
     suspend fun fetchArea(): Result<List<UserConstructionData>>
-
-    suspend fun updateArea(dataModel: DataModel): Result<Unit>
-
     suspend fun getAllPost(currentUser: String, constructionName: String):Result<List<DataModel>>
 
     suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?,postId: String): Result<List<Uri>>
@@ -34,7 +31,7 @@ interface FireBaseSource {
 
     suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>>
 
-    suspend fun getTasksWithWorker(worker: String):Result<List<TaskModel>>
+    suspend fun getTasksWithWorker(workerName: String):Result<List<TaskModel>>
 
 
 }

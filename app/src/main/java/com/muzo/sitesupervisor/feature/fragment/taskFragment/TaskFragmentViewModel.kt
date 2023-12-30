@@ -82,9 +82,9 @@ class TaskFragmentViewModel @Inject constructor(
         }
     }
 
-    fun getWorker(worker: String) {
+    fun getWorker(workerName:String) {
         viewModelScope.launch {
-            getTasksWithWorkerUseCase(worker).asReSource().onEach { result ->
+            getTasksWithWorkerUseCase(workerName).asReSource().onEach { result ->
                 when (result) {
                     is Resource.Error -> {
                         _workerState.value = _workerState.value.copy(loading = false)

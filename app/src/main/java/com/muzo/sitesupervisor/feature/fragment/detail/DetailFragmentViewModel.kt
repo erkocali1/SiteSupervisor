@@ -14,11 +14,9 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.AddImageToFirebaseStorageUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
-import com.muzo.sitesupervisor.domain.GetAllPostUseCase
 import com.muzo.sitesupervisor.domain.GetDataFromRoomUseCase
 import com.muzo.sitesupervisor.domain.GetDataUseCase
 import com.muzo.sitesupervisor.domain.GetImageUrlFromFireStoreUseCase
-import com.muzo.sitesupervisor.domain.UpdateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +31,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailFragmentViewModel @Inject constructor(
-    private val updateUseCase: UpdateUseCase,
     authRepository: AuthRepository,
     private val addDataUseCase: FireBaseSaveDataUseCase,
     private val localPostRepository: LocalPostRepository,
@@ -72,30 +69,6 @@ class DetailFragmentViewModel @Inject constructor(
                 }
             }.launchIn(this)
 
-        }
-    }
-
-
-    fun updateData(dataModel: DataModel) {
-
-        viewModelScope.launch {
-            updateUseCase(dataModel).asReSource().onEach { result ->
-                when (result) {
-                    Resource.Loading -> {
-                        _uiState.value = UpdateState(loading = true)
-                    }
-
-                    is Resource.Error -> {
-                        _uiState.value = UpdateState(loading = false, message = ERROR_MESSAGE)
-                    }
-
-                    is Resource.Success -> {
-                        _uiState.value = UpdateState(
-                            loading = false, message = OK_MESSAGE, isSuccessfulUpdateData = true
-                        )
-                    }
-                }
-            }.launchIn(this)
         }
     }
 
@@ -231,4 +204,4 @@ data class UpdateState(
     val photoList: List<String>? = null,
     val getDataFireBase: DataModel? = null,
 
-)
+    )

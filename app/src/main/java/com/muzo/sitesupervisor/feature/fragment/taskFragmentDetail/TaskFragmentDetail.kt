@@ -81,7 +81,6 @@ class TaskFragmentDetail : Fragment() {
         }
 
     }
-
     private fun defineToLocate() {
         location = arguments?.getString("location")
         if (location == "addButton") {

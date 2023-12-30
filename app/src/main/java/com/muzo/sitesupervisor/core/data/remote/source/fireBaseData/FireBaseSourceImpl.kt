@@ -114,31 +114,6 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun updateArea(dataModel: DataModel): Result<Unit> {
-        return kotlin.runCatching {
-
-            val currentUserRef = database.collection("Users").document(dataModel.currentUser)
-            val constructionSiteRef =
-                currentUserRef.collection("construcitonName").document(dataModel.constructionArea)
-
-            val postsRef = constructionSiteRef.collection("posts").document(dataModel.id.toString())
-
-            val post = hashMapOf(
-                "message" to dataModel.message,
-                "title" to dataModel.title,
-                "photoUrl" to dataModel.photoUrl,
-                "day" to dataModel.day,
-                "time" to dataModel.time,
-                "postId" to dataModel.id,
-                "modificationDate" to dataModel.modificationDate,
-                "modificationTime" to dataModel.modificationTime,
-            )
-
-            postsRef.set(post).await()
-        }
-    }
-
-
     override suspend fun getAllPost(
         currentUser: String, constructionName: String
     ): Result<List<DataModel>> {
@@ -269,7 +244,7 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    //-----------------Task
+    //-----------------Task//-----------------\\
     override suspend fun saveTask(taskModel: TaskModel): Result<Unit> {
 
         return kotlin.runCatching {
@@ -359,22 +334,89 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTasksWithWorker(worker: String): Result<List<TaskModel>> {
+
+//    override suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
+//        return kotlin.runCatching {
+//            val querySnapshot = database.collectionGroup("task")
+//                .whereArrayContains("workerList", workerName)
+//                .get()
+//                .await()
+//
+//            val taskList = mutableListOf<TaskModel>()
+//            for (document in querySnapshot.documents) {
+//                val data = document.data
+//
+//                val message = data?.get("message") as? String ?: ""
+//                val title = data?.get("title") as? String ?: ""
+//                val workerList = data?.get("workerList") as? List<String> ?: listOf()
+//                val day = data?.get("day") as? String ?: ""
+//                val currentUser = data?.get("day") as? String ?: ""
+//                val constructionName = data?.get("day") as? String ?: ""
+//                val taskId = data?.get("taskId") as? Long ?: 0
+//
+//
+//                val retrievedTaskModel = TaskModel(
+//                    taskId = taskId,
+//                    message = message,
+//                    title = title,
+//                    workerList = workerList,
+//                    day = day,
+//                    currentUser = currentUser, // Mevcut kullanıcı adını buradan alabilirsiniz
+//                    constructionArea = constructionName // Yapı adını buradan alabilirsiniz
+//                )
+//                taskList.add(retrievedTaskModel)
+//            }
+//            taskList
+//        }
+//    }
+
+  override  suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
         return kotlin.runCatching {
             val tasks = mutableListOf<TaskModel>()
 
-            val querySnapshot = database.collection("task")
-                .whereArrayContains("workerList", worker)
-                .get()
-                .await()
+            val usersCollection = database.collection("Users")
+            val userSnapshots = usersCollection.get().await()
 
-            for (document in querySnapshot.documents) {
-                val task = document.toObject(TaskModel::class.java)
-                task?.let {
-                    tasks.add(it)
+            for (userSnapshot in userSnapshots) {
+                val constructionSiteCollection = userSnapshot.reference.collection("construcitonName")
+                val constructionSiteSnapshots = constructionSiteCollection.get().await()
+
+                for (constructionSiteSnapshot in constructionSiteSnapshots) {
+                    val taskCollection = constructionSiteSnapshot.reference.collection("task")
+                    val taskSnapshots = taskCollection.get().await()
+
+                    for (taskSnapshot in taskSnapshots) {
+                        val taskQuery = taskSnapshot.reference.collection("taskId")
+                            .whereArrayContains("workerList", workerName)
+                        val taskQuerySnapshot = taskQuery.get().await()
+
+                        for (taskDoc in taskQuerySnapshot) {
+                            val data = taskDoc.data
+                            val message = data["message"] as? String ?: ""
+                            val title = data["title"] as? String ?: ""
+                            val workerList = data["workerList"] as? List<String> ?: listOf()
+                            val day = data["day"] as? String ?: ""
+                            val taskId = (data["taskId"] as? Long ?: 0).toLong()
+
+                            val retrievedTaskModel = TaskModel(
+                                taskId = taskId,
+                                message = message,
+                                title = title,
+                                workerList = workerList,
+                                day = day,
+                                currentUser = userSnapshot.id, // Güncelleme gerekebilir
+                                constructionArea = constructionSiteSnapshot.id, // Güncelleme gerekebilir
+                            )
+                            tasks.add(retrievedTaskModel)
+                        }
+                    }
                 }
             }
-            tasks
+            tasks.toList()
         }
     }
+
+
+
+
 }
