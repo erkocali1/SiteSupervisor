@@ -161,7 +161,6 @@ class DetailFragment : Fragment() {
                     uiState.loading -> {
                         binding.progressBar.show()
                     }
-
                     uiState.resultUriList != null -> {
                         binding.progressBar.hide()
                         val gettingUriList = uiState.resultUriList

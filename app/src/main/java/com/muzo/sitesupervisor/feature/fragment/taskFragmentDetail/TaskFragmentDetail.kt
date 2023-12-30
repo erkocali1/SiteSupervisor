@@ -37,7 +37,7 @@ class TaskFragmentDetail : Fragment() {
     private lateinit var adapter: TextAdapter
     private var taskIdNumber: Long? = null
     private lateinit var constructionArea: String
-    private  var location: String? = null
+    private var location: String? = null
     private lateinit var siteSupervisor: String
     private var specifiedDay: String? = null
     private val turkishLocale = Locale("tr", "TR")
@@ -83,7 +83,7 @@ class TaskFragmentDetail : Fragment() {
     }
 
     private fun defineToLocate() {
-         location = arguments?.getString("location")
+        location = arguments?.getString("location")
         if (location == "addButton") {
             showDate()
         } else {
@@ -93,8 +93,10 @@ class TaskFragmentDetail : Fragment() {
 
     private fun showData() {
         val receivedData = arguments?.getParcelable<TaskModel>("sendData")
-        val day = receivedData?.day
-        val convertStringToLocalDate = LocalDate.parse(day, DateTimeFormatter.ISO_DATE)
+        specifiedDay = receivedData?.day
+        val convertStringToLocalDate = LocalDate.parse(specifiedDay, DateTimeFormatter.ISO_DATE)
+        taskIdNumber = receivedData?.taskId
+
         binding.time.text = convertStringToLocalDate.format(selectionFormatter)
         binding.etDes.setText(receivedData?.message)
         binding.etTitle.setText(receivedData?.title)
@@ -157,37 +159,44 @@ class TaskFragmentDetail : Fragment() {
         val workerList = stringList
         val date = specifiedDay
 
+
         return if (title.isNotEmpty() && desc.isNotEmpty()) {
             Log.d("safasfasfa", "burayı döndü")
             TaskModel(
                 taskIdNumber, desc, title, date!!, workerList, siteSupervisor, constructionArea
             )
-
-
         } else {
             dataEmpty = true
-            Log.d("safasfasfa", "şrayı döndü")
             null
         }
     }
-
 
     private fun sendData() {
         binding.ivButtonOK.setOnClickListener {
             if (dataEmpty) {
                 toastMessage("Lütfen bilgilerinizi Doldurunuz", requireContext())
             } else {
-                if (location =="rv"){
-               //     updateData()
-                }
-                val data = getData()
-                lifecycleScope.launch {
-                    taskIdNumber = viewModel.saveRoom(data!!)
-                    Log.d("safasfasfa", taskIdNumber.toString())
-                    data.taskId = taskIdNumber
-                    viewModel.saveTask(data.copy(taskId = taskIdNumber))
-                    sendData = true
-                    observeData()
+                if (location == "rv") {
+                    if (changeListener()) {
+                        val data = getData()
+                        lifecycleScope.launch {
+                            viewModel.saveRoom(data!!)
+                            viewModel.saveTask(data)
+                            sendData = true
+                            observeData()
+                        }
+                    } else {
+                        navigateFragment()
+                    }
+                } else {
+                    val data = getData()
+                    lifecycleScope.launch {
+                        taskIdNumber = viewModel.saveRoom(data!!)
+                        data.taskId = taskIdNumber
+                        viewModel.saveTask(data.copy(taskId = taskIdNumber))
+                        sendData = true
+                        observeData()
+                    }
                 }
             }
         }
