@@ -10,6 +10,7 @@ class Constants {
 
         object ConstructionTeams {
             val TEAMS = listOf(
+                "Demirci",
                 "Kalıpçılar",
                 "Duvarcılar",
                 "Duvar Ustaları",

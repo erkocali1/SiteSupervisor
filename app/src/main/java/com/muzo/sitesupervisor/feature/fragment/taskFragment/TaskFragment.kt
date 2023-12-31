@@ -1,11 +1,8 @@
 package com.muzo.sitesupervisor.feature.fragment.taskFragment
 
 import android.os.Bundle
-import android.provider.SyncStateContract.Constants
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -35,6 +32,8 @@ import com.muzo.sitesupervisor.feature.adapters.task.TaskAdapter
 import com.muzo.sitesupervisor.feature.fragment.baseFragment.BaseFragment
 import com.muzo.sitesupervisor.feature.fragment.baseFragment.HasBackButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -71,10 +70,12 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         getSiteInfo()
         viewModel.getTaskDate(siteSupervisor, constructionArea)
         observe(ObservedState.DATE_STATE)
+        searchEvent()
         config()
         configureToolbarTitle()
         navigateAddTask()
-        viewModel.getWorker("Boyacılar")
+
+        //  viewModel.getWorker("Boyacılar")
         if (savedInstanceState == null) {
             // Show today's events initially.
             binding.exThreeCalendar.post { selectDate(today) }
@@ -115,6 +116,16 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                 container.day = data
                 val textView = container.binding.exThreeDayText
                 val dotView = container.binding.exThreeDotView
+
+                // Tıklama algılama işlemleri burada gerçekleştirilecek
+                container.binding.root.setOnClickListener {
+                    if (data.position == DayPosition.MonthDate) {
+                        selectDate(data.date)
+                        binding.linearLayout.show()
+                        binding.list.hide()
+                        binding.list.clearFocus()
+                    }
+                }
 
                 textView.text = data.date.dayOfMonth.toString()
 
@@ -245,6 +256,24 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                             }
                         }
                     }
+
+                    ObservedState.SEARCH_STATE -> {
+                        launch {
+                            viewModel.workerState.collect { workerState ->
+                                when {
+                                    workerState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    workerState.resulListWithWorker != null -> {
+                                        binding.progressBar.hide()
+                                        list = workerState.resulListWithWorker
+                                        setupAdapter()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -321,11 +350,36 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         }
     }
 
-
+    private fun searchEvent() {
+        binding.searchBtn.setOnClickListener {
+            list = emptyList()
+            setupAdapter()
+            binding.linearLayout.visibility = View.INVISIBLE
+            binding.list.show()
+        }
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.list_item,
+            com.muzo.sitesupervisor.core.constans.Constants.Companion.ConstructionTeams.TEAMS
+        )
+        binding.listConstruction.setAdapter(adapter)
+        var job: Job? = null
+        binding.listConstruction.setOnItemClickListener { _, _, position, _ ->
+            val selectedWorker =
+                com.muzo.sitesupervisor.core.constans.Constants.Companion.ConstructionTeams.TEAMS[position]
+            job?.cancel()
+            job = MainScope().launch {
+                selectedWorker.let {
+                    viewModel.getWorker(selectedWorker)
+                    observe(ObservedState.SEARCH_STATE)
+                }
+            }
+        }
+    }
 }
 
 enum class ObservedState {
-    UI_STATE, DATE_STATE
+    UI_STATE, DATE_STATE, SEARCH_STATE
 }
 
 

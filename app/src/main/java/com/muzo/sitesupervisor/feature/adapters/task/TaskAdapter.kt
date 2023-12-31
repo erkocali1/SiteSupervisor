@@ -20,6 +20,7 @@ class TaskAdapter(private val list: List<TaskModel>?, val onClick: (item: TaskMo
             binding.apply {
                 textTitle.text = item.title
                 textDesc.text = item.message
+                textTime.text = item.day
 
                 val innerRecyclerView: RecyclerView = binding.workerRv
                 val layoutManager =
