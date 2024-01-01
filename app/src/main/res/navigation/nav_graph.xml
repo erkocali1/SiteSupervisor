@@ -111,7 +111,11 @@
         android:id="@+id/statisticsFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.statisticsFragment.StatisticsFragment"
         android:label="fragment_statistics"
-        tools:layout="@layout/fragment_statistics" />
+        tools:layout="@layout/fragment_statistics" >
+        <action
+            android:id="@+id/action_statisticsFragment_to_bottomSheetDialogFragment"
+            app:destination="@id/bottomSheetDialogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/taskFragment"
         android:name="com.muzo.sitesupervisor.feature.fragment.taskFragment.TaskFragment"
@@ -130,6 +134,16 @@
             android:id="@+id/action_taskFragmentDetail_to_taskFragment"
             app:destination="@id/taskFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/bottomSheetDialogFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.bottomSheet.BottomSheetDialogFragment"
+        android:label="fragment_bottom_sheet_dialog"
+        tools:layout="@layout/fragment_bottom_sheet_dialog" >
+        <action
+            android:id="@+id/action_bottomSheetDialogFragment_to_statisticsFragment"
+            app:destination="@id/statisticsFragment" />
+    </dialog>
 
 
 </navigation>

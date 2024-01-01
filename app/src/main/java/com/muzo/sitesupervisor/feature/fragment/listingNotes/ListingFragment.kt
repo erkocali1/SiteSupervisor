@@ -105,7 +105,7 @@ class ListingFragment : Fragment() {
                     validationUser(currentUser, supervisorUser)
 
                     if (supervisorUser != null && constructionArea != null) {
-                        viewModel.getAllData(currentUser, constructionArea)
+                        viewModel.getAllData(supervisorUser, constructionArea)
                         Log.d("bakacaz", "$supervisorUser and $constructionArea")
 
                     }

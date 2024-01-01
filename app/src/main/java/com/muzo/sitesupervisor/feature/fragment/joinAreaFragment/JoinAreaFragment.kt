@@ -103,6 +103,7 @@ class JoinAreaFragment : Fragment() {
     }
 
     private fun joinEvent(constructionName: String) {
+
         val selectedUserConstructionData = list.find { userConstructionData ->
             userConstructionData.constructionAreas.contains(constructionName)
         }
@@ -114,14 +115,11 @@ class JoinAreaFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.saveDataStore(currentUser, constructionName)
-        }
-
-
-        binding.btnJoin.setOnClickListener {
-            Log.d("kontrol", userConstructionData.currentUser)
-            findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment)
+            binding.btnJoin.setOnClickListener {
+                Log.d("kontrol", userConstructionData.currentUser)
+                findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment)
+            }
         }
     }
-
 
 }
