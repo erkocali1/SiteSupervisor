@@ -151,7 +151,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                             dotView.isVisible = isDateInList(data.date)
                         }
                     }
-
                 } else {
                     textView.hide()
                     dotView.hide()
@@ -226,6 +225,11 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                                         binding.progressBar.hide()
                                         list = uiState.resultList
                                         setupAdapter()
+                                        if (list!!.isNotEmpty()) {
+                                            binding.emptyLayout.hide()
+                                        }else{
+                                            binding.emptyLayout.show()
+                                        }
                                     }
                                 }
                             }
@@ -256,7 +260,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                             }
                         }
                     }
-
                     ObservedState.SEARCH_STATE -> {
                         launch {
                             viewModel.workerState.collect { workerState ->
@@ -264,11 +267,15 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                                     workerState.loading -> {
                                         binding.progressBar.show()
                                     }
-
                                     workerState.resulListWithWorker != null -> {
                                         binding.progressBar.hide()
                                         list = workerState.resulListWithWorker
                                         setupAdapter()
+                                        if (list!!.isNotEmpty()) {
+                                            binding.emptyLayout.hide()
+                                        }else{
+                                            binding.emptyLayout.show()
+                                        }
                                     }
                                 }
                             }
@@ -299,7 +306,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     }
 
     private fun config() {
-
         binding.exThreeCalendar.monthScrollListener = {
             activityToolbar.title = if (it.yearMonth.year == today.year) {
                 titleSameYearFormatter.format(it.yearMonth)
