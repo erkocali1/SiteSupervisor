@@ -8,79 +8,116 @@
     android:padding="20sp"
     tools:context=".feature.fragment.bottomSheet.BottomSheetDialogFragment">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_image"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        app:cardCornerRadius="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/list"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/worker" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/text_info"
+        style="@style/montserrat_medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12sp"
+        android:text="Kayıt Girilecek Ekip ve Tarihi Seçiniz"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cv_image"
+        app:layout_constraintStart_toEndOf="@+id/cv_image"
+        app:layout_constraintTop_toTopOf="@+id/cv_image" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1sp"
+        android:layout_margin="6sp"
+        android:background="#EEEEEE"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cv_image" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/list"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8sp"
+        android:background="@color/white"
+        android:hint="Çalışan Ekipleri Ekleyiniz"
+        android:padding="8sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider">
+
+        <AutoCompleteTextView
+            android:id="@+id/list_construction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8sp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/startDayLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8sp"
+            android:layout_weight="1"
+            android:background="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_startDay"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:hint="Çalışan Ekipleri Ekleyiniz"
-                android:padding="8sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <AutoCompleteTextView
-                    android:id="@+id/list_construction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="false"
+                android:hint="Başlangıç Günü "
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
 
 
-            <LinearLayout
-                android:id="@+id/linearLayout"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/finishDayLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8sp"
+            android:layout_weight="1"
+            android:background="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_finishDay"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8sp"
-                android:orientation="horizontal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/list">
+                android:layout_height="match_parent"
+                android:hint="Bitiş Günü "
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/startDayLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8sp"
-                    android:layout_weight="1"
-                    android:background="@color/white">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_startDay"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="Gün Sayısı "
-                        android:inputType="number" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/finishDayLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8sp"
-                    android:layout_weight="1"
-                    android:background="@color/white">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_finishDay"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="Gün Sayısı "
-                        android:inputType="number" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-            <Button
-                android:layout_width="200sp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12sp"
-                android:backgroundTint="@color/logButton"
-                android:text="Kaydet"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-
+    <Button
+        style="@style/montserrat_bold"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12sp"
+        android:backgroundTint="@color/logButton"
+        android:text="Kaydet"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
