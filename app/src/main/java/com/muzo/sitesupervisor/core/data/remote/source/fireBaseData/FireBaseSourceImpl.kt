@@ -8,6 +8,7 @@ import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import java.util.UUID
 import javax.inject.Inject
 
@@ -335,42 +336,8 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-//    override suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
-//        return kotlin.runCatching {
-//            val querySnapshot = database.collectionGroup("task")
-//                .whereArrayContains("workerList", workerName)
-//                .get()
-//                .await()
-//
-//            val taskList = mutableListOf<TaskModel>()
-//            for (document in querySnapshot.documents) {
-//                val data = document.data
-//
-//                val message = data?.get("message") as? String ?: ""
-//                val title = data?.get("title") as? String ?: ""
-//                val workerList = data?.get("workerList") as? List<String> ?: listOf()
-//                val day = data?.get("day") as? String ?: ""
-//                val currentUser = data?.get("day") as? String ?: ""
-//                val constructionName = data?.get("day") as? String ?: ""
-//                val taskId = data?.get("taskId") as? Long ?: 0
-//
-//
-//                val retrievedTaskModel = TaskModel(
-//                    taskId = taskId,
-//                    message = message,
-//                    title = title,
-//                    workerList = workerList,
-//                    day = day,
-//                    currentUser = currentUser, // Mevcut kullanıcı adını buradan alabilirsiniz
-//                    constructionArea = constructionName // Yapı adını buradan alabilirsiniz
-//                )
-//                taskList.add(retrievedTaskModel)
-//            }
-//            taskList
-//        }
-//    }
 
-  override  suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
+    override suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
         return kotlin.runCatching {
             val tasks = mutableListOf<TaskModel>()
 
@@ -378,7 +345,8 @@ class FireBaseSourceImpl @Inject constructor(
             val userSnapshots = usersCollection.get().await()
 
             for (userSnapshot in userSnapshots) {
-                val constructionSiteCollection = userSnapshot.reference.collection("construcitonName")
+                val constructionSiteCollection =
+                    userSnapshot.reference.collection("construcitonName")
                 val constructionSiteSnapshots = constructionSiteCollection.get().await()
 
                 for (constructionSiteSnapshot in constructionSiteSnapshots) {
@@ -413,6 +381,60 @@ class FireBaseSourceImpl @Inject constructor(
                 }
             }
             tasks.toList()
+        }
+    }
+
+    override suspend fun saveStatisticInfo(workerInfoModel: WorkInfoModel): Result<Unit> {
+        return kotlin.runCatching {
+
+            val fileName = UUID.randomUUID()
+            val currentUserRef = database.collection("Users").document(workerInfoModel.currentUser)
+            val constructionSiteRef = currentUserRef.collection("construcitonName").document(workerInfoModel.constructionArea)
+            val postsRef = constructionSiteRef.collection("statistic").document(workerInfoModel.vocation)
+            val statisticRef=postsRef.collection("randomId").document(fileName.toString())
+
+            currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+            constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+            postsRef.set(hashMapOf("dummyField" to "dummyValue")).await()
+
+            val post = hashMapOf(
+                "vocation" to workerInfoModel.vocation,
+                "operationTime" to workerInfoModel.operationTime,
+                "operationDuration" to workerInfoModel.operationDuration,
+                "currentUser" to workerInfoModel.currentUser,
+                "constructionArea" to workerInfoModel.constructionArea,
+            )
+
+            statisticRef.set(post).await()
+
+        }
+    }
+
+   override suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>> {
+        return kotlin.runCatching {
+            val statisticList = mutableListOf<WorkInfoModel>()
+
+            val currentUserRef = database.collection("Users").document(infoCurrentUser)
+            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
+
+            val statisticQuery = constructionSiteRef.collection("statistic")
+                .whereEqualTo("vocation", infoVocation)
+                .get()
+                .await()
+
+            for (statisticDoc in statisticQuery.documents) {
+                val data = statisticDoc.data
+                val vocation = data?.get("vocation") as? String ?: ""
+                val operationTime = data?.get("operationTime") as? String ?: ""
+                val operationDuration = data?.get("operationDuration") as? Int ?: 0
+                val currentUser = data?.get("currentUser") as? String ?: ""
+                val constructionArea = data?.get("constructionArea") as? String ?: ""
+
+                val workInfo = WorkInfoModel(vocation, operationTime, operationDuration, currentUser, constructionArea)
+                statisticList.add(workInfo)
+            }
+
+            statisticList
         }
     }
 

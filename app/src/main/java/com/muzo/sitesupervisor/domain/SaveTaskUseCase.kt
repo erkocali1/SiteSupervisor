@@ -12,9 +12,7 @@ class SaveTaskUseCase @Inject constructor(private val repository: FireBaseReposi
     suspend operator fun invoke(taskModel: TaskModel): Flow<Unit> {
         return flow {
             val result = repository.saveTask(taskModel)
-            (result.getOrNull() ?: throw IllegalArgumentException(Constants.ERROR_MESSAGE)).also {
-                emit(it)
-            }
+            (result.getOrNull() ?: throw IllegalArgumentException(Constants.ERROR_MESSAGE)).also { emit(it) }
 
         }
     }

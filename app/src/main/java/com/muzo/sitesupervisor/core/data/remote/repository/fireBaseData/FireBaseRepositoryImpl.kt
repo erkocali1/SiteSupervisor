@@ -4,6 +4,7 @@ import android.net.Uri
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import com.muzo.sitesupervisor.core.data.remote.source.fireBaseData.FireBaseSource
 import javax.inject.Inject
 
@@ -62,6 +63,15 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
 
     override suspend fun getTasksWithWorker(workerName: String):Result<List<TaskModel>> {
         return fireBaseSource.getTasksWithWorker(workerName)
+    }
+
+    override suspend fun saveStatisticInfo(workerInfoModel: WorkInfoModel): Result<Unit> {
+        return fireBaseSource.saveStatisticInfo(workerInfoModel)
+    }
+
+    override suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String
+    ): Result<List<WorkInfoModel>> {
+        return fireBaseSource.getStatisticForVocation(infoCurrentUser, constructionName, infoVocation)
     }
 
 

@@ -4,6 +4,7 @@ import android.net.Uri
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 
 interface FireBaseRepository {
 
@@ -33,5 +34,12 @@ interface FireBaseRepository {
     suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>>
 
     suspend fun getTasksWithWorker(workerName: String):Result<List<TaskModel>>
+
+    //-----------------Statistic------------\\
+
+    suspend fun saveStatisticInfo(workerInfoModel: WorkInfoModel):Result<Unit>
+
+    suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>>
+
 
 }

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -19,12 +21,17 @@ import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.databinding.FragmentStatisticsBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class StatisticsFragment : Fragment() {
+    private val viewModel: SaveStatisticViewModel by viewModels()
     private lateinit var binding: FragmentStatisticsBinding
     private lateinit var barList: ArrayList<BarEntry>
     private lateinit var barDataSet: BarDataSet
+    private lateinit var constructionArea: String
+    private lateinit var siteSupervisor: String
     private lateinit var barData: BarData
 
     override fun onCreateView(
@@ -37,6 +44,8 @@ class StatisticsFragment : Fragment() {
             findNavController().navigate(R.id.action_statisticsFragment_to_bottomSheetDialogFragment)
         }
         initViews()
+        getSiteInfo()
+        viewModel.getStatisticForVocation(siteSupervisor,constructionArea,"Demirci")
         return binding.root
     }
 
@@ -141,6 +150,17 @@ class StatisticsFragment : Fragment() {
         binding.pieChart.data = data
         binding.pieChart.highlightValues(null)
         binding.pieChart.invalidate()
+    }
+
+    private fun getSiteInfo() {
+        lifecycleScope.launch {
+            viewModel.readDataStore("construction_key").collect { area ->
+                constructionArea = area!!
+                viewModel.readDataStore("user_key").collect { supervisor ->
+                    siteSupervisor = supervisor!!
+                }
+            }
+        }
     }
 
 }
