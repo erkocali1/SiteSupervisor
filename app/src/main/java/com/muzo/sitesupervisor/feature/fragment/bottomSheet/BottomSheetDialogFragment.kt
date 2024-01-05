@@ -32,9 +32,9 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentBottomSheetDialogBinding
     private val viewModel: BottomSheetDialogViewModel by viewModels()
     private var selectedDate = ""
+    private var specifiedMonth = ""
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
-    private lateinit var specifiedMonth: String
     private lateinit var updateItJob: Job
 
     override fun onCreateView(
@@ -51,10 +51,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun setList() {
-        val adapter = ArrayAdapter(
-            requireContext(),
-            com.muzo.sitesupervisor.R.layout.list_item,
-            Constants.Companion.ConstructionTeams.TEAMS
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, Constants.Companion.ConstructionTeams.TEAMS
         )
         binding.listConstruction.setAdapter(adapter)
 
@@ -84,6 +81,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
                 DatePickerDialog.OnDateSetListener { datePicker: DatePicker, selectedYear: Int, selectedMonth: Int, day: Int ->
                     val selectedMonthName = monthsArray[selectedMonth] // Seçilen ayı al
                     selectedDate = "$day $selectedMonthName $selectedYear"
+                    specifiedMonth=selectedMonthName
                     dayPicker.setText(selectedDate)
                 },
                 year,
@@ -158,14 +156,15 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun getData(): WorkInfoModel {
         val listItem = binding.listConstruction.text.toString()
         val dayItem = selectedDate
-        val workDayItem = binding.etFinishDay.text.toString().toInt()
+        val workDayItem = binding.etFinishDay.text.toString().toLong()
 
         return WorkInfoModel(
             listItem,
             dayItem,
             workDayItem,
             siteSupervisor,
-            constructionArea
+            constructionArea,
+            specifiedMonth
         )
     }
     private fun clearFields() {
@@ -173,6 +172,6 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
         binding.etStartDay.setText("")
         binding.etFinishDay.setText("")
     }
-
 }
+
 

@@ -403,6 +403,7 @@ class FireBaseSourceImpl @Inject constructor(
                 "operationDuration" to workerInfoModel.operationDuration,
                 "currentUser" to workerInfoModel.currentUser,
                 "constructionArea" to workerInfoModel.constructionArea,
+                "specifiedMonth" to workerInfoModel.specifiedMonth,
             )
 
             statisticRef.set(post).await()
@@ -410,33 +411,46 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-   override suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>> {
+  override  suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>> {
         return kotlin.runCatching {
-            val statisticList = mutableListOf<WorkInfoModel>()
-
             val currentUserRef = database.collection("Users").document(infoCurrentUser)
             val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
+            val postsRef = constructionSiteRef.collection("statistic").document(infoVocation)
+            val statisticSnapshot = postsRef.collection("randomId").get().await()
 
-            val statisticQuery = constructionSiteRef.collection("statistic")
-                .whereEqualTo("vocation", infoVocation)
-                .get()
-                .await()
+            val workInfoModels = mutableListOf<WorkInfoModel>()
 
-            for (statisticDoc in statisticQuery.documents) {
-                val data = statisticDoc.data
-                val vocation = data?.get("vocation") as? String ?: ""
+            for (document in statisticSnapshot.documents) {
+                val data = document.data
                 val operationTime = data?.get("operationTime") as? String ?: ""
-                val operationDuration = data?.get("operationDuration") as? Int ?: 0
+                val operationDuration = data?.get("operationDuration") as? Long ?: 0
                 val currentUser = data?.get("currentUser") as? String ?: ""
                 val constructionArea = data?.get("constructionArea") as? String ?: ""
+                val specifiedMonth = data?.get("constructionArea") as? String ?: ""
 
-                val workInfo = WorkInfoModel(vocation, operationTime, operationDuration, currentUser, constructionArea)
-                statisticList.add(workInfo)
+                val workInfoModel = WorkInfoModel(
+                    vocation = infoVocation,
+                    operationTime = operationTime,
+                    operationDuration = operationDuration,
+                    currentUser = currentUser,
+                    constructionArea = constructionArea,
+                    specifiedMonth = specifiedMonth,
+                )
+
+                workInfoModels.add(workInfoModel)
+                Log.d("workInfoModel",workInfoModel.vocation)
+                Log.d("workInfoModel",workInfoModel.operationDuration.toString())
             }
 
-            statisticList
+            workInfoModels
+
         }
     }
+
+
+
+
+
 
 
 

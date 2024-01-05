@@ -2,13 +2,19 @@ package com.muzo.sitesupervisor.feature.fragment.statisticsFragment
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -20,9 +26,21 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.muzo.sitesupervisor.R
+import com.muzo.sitesupervisor.core.common.hide
+import com.muzo.sitesupervisor.core.common.show
+import com.muzo.sitesupervisor.core.constans.Constants
+import com.muzo.sitesupervisor.core.data.model.TaskModel
+import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import com.muzo.sitesupervisor.databinding.FragmentStatisticsBinding
+import com.muzo.sitesupervisor.feature.adapters.staticsAdapter.StatisticsAdapter
+import com.muzo.sitesupervisor.feature.adapters.task.TaskAdapter
+import com.muzo.sitesupervisor.feature.fragment.taskFragment.ObservedState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class StatisticsFragment : Fragment() {
@@ -33,6 +51,11 @@ class StatisticsFragment : Fragment() {
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
     private lateinit var barData: BarData
+    private var list: List<WorkInfoModel> = emptyList()
+    private lateinit var adapter: StatisticsAdapter
+    private lateinit var updateItJob: Job
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,7 +68,7 @@ class StatisticsFragment : Fragment() {
         }
         initViews()
         getSiteInfo()
-        viewModel.getStatisticForVocation(siteSupervisor,constructionArea,"Demirci")
+        setList()
         return binding.root
     }
 
@@ -70,7 +93,6 @@ class StatisticsFragment : Fragment() {
             "Kasım",
             "Aralık",
         )
-
         barList = ArrayList()
         barList.add(BarEntry(0f, 10f))
         barList.add(BarEntry(1f, 20f))
@@ -163,7 +185,86 @@ class StatisticsFragment : Fragment() {
         }
     }
 
+    private fun observeData(observedState: String) {
+        updateItJob= lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                when (observedState) {
+                    "file" -> {
+                        launch {
+                            viewModel.uiState.collect { uiState ->
+                                when {
+                                    uiState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    uiState.resultList != null -> {
+                                        binding.progressBar.hide()
+                                        list = uiState.resultList
+                                        val monthList = extractTime(list)
+                                        Log.d("selam", monthList.size.toString())
+                                        setupAdapter()
+                                        updateItJob.cancel()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupAdapter() {
+
+        adapter = StatisticsAdapter(list)
+
+        binding.rvRecords.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvRecords.adapter = adapter
+
+    }
+
+    private fun setList() {
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.custom_spinner_item,
+            Constants.Companion.ConstructionTeams.TEAMS
+        )
+        binding.spinner.adapter = adapter
+
+        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                viewModel.getStatisticForVocation(siteSupervisor, constructionArea, selectedItem)
+                observeData("file")
+                // Seçilen öğeyle bir şeyler yapabilirsiniz
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Hiçbir şey seçilmediğinde ne olacağını belirleyebilirsiniz
+            }
+
+
+        }
+    }
+
+    private fun extractTime(workInfoModel: List<WorkInfoModel>): List<String> {
+
+        val operationTimes = mutableListOf<String>()
+        for (workInfo in workInfoModel) {
+            operationTimes.add(workInfo.specifiedMonth)
+        }
+        return operationTimes
+    }
+
+
 }
+
 
 //        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
 //            override fun onValueSelected(e: Entry?, h: Highlight?) {
