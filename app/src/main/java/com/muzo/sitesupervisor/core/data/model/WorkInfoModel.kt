@@ -4,7 +4,9 @@ data class WorkInfoModel(
     val vocation: String,
     val operationTime: String,
     val operationDuration: Long,
-    var currentUser: String,
-    var constructionArea: String,
-    var specifiedMonth:String
+    val currentUser: String,
+    val constructionArea: String,
+    val specifiedMonth:String,
+    val cost:String,
+    val amountPaid:String,
 )

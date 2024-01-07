@@ -46,15 +46,11 @@ import java.util.Locale
 class StatisticsFragment : Fragment() {
     private val viewModel: SaveStatisticViewModel by viewModels()
     private lateinit var binding: FragmentStatisticsBinding
-    private lateinit var barList: ArrayList<BarEntry>
-    private lateinit var barDataSet: BarDataSet
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
-    private lateinit var barData: BarData
     private var list: List<WorkInfoModel> = emptyList()
     private lateinit var adapter: StatisticsAdapter
     private lateinit var updateItJob: Job
-
 
 
     override fun onCreateView(
@@ -72,8 +68,7 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun initViews() {
-        setPieChartData(12, 100F)
-      //  setBarChartData()
+        //  setBarChartData()
     }
 
     private fun setBarChartData(months: List<String>, operationDuration: List<Float>) {
@@ -129,8 +124,6 @@ class StatisticsFragment : Fragment() {
     }
 
 
-
-
     /*
         private fun setBarChartData(months: List<String>, operationDuration: List<Float>) {
             val chart = binding.barChart
@@ -171,56 +164,44 @@ class StatisticsFragment : Fragment() {
 
     */
 
-    private fun setPieChartData(count: Int, range: Float) {
+    private fun setPieChartData(cost: List<Float>, amountPaid: List<Float>) {
+        // Toplam maliyet ve ödenen miktarı hesapla
+        val totalCost = cost.sum()
+        val totalAmountPaid = amountPaid.sum()
+
+        // Farkı hesapla
+        val remainingAmount = totalCost - totalAmountPaid
+
+        // Verileri hazırla
         val entries = ArrayList<PieEntry>()
-        val months = arrayOf(
-            "Ocak",
-            "Şubat",
-            "Mart",
-            "Nisan",
-            "Mayıs",
-            "Haziran",
-            "Temmuz",
-            "Ağustos",
-            "Eylül",
-            "Ekim",
-            "Kasım",
-            "Aralık",
+        entries.add(PieEntry(totalCost, "Toplam Maliyet"))
+        entries.add(PieEntry(totalAmountPaid, "Ödenen Miktar"))
+        entries.add(PieEntry(remainingAmount, "Kalan Miktar"))
+
+
+        val colors = intArrayOf(
+            Color.parseColor("#F9E0BB"), // Turuncu
+            Color.parseColor("#607D8B"), // Yeşil
+            Color.parseColor("#C38154")  // Mavi
         )
 
-        for (i in 0 until count) {
-            entries.add(
-                PieEntry(
-                    ((Math.random() * range + range / 5).toFloat()),
-                    months[i % months.size]
-                )
-            )
-        }
-
-        val dataSet = PieDataSet(entries, "Election Results")
-        dataSet.sliceSpace = 3f
-        dataSet.selectionShift = 5f
-
-        val colors = ArrayList<Int>()
-
-        colors.addAll(ColorTemplate.VORDIPLOM_COLORS.asList())
-        colors.addAll(ColorTemplate.JOYFUL_COLORS.asList())
-        colors.addAll(ColorTemplate.COLORFUL_COLORS.asList())
-        colors.addAll(ColorTemplate.LIBERTY_COLORS.asList())
-        colors.addAll(ColorTemplate.PASTEL_COLORS.asList())
-        colors.add(ColorTemplate.getHoloBlue())
-
-        dataSet.colors = colors
+        // Veri setini oluştur
+        val dataSet = PieDataSet(entries, "|Miktarlar")
+        dataSet.colors = colors.toList()
+        dataSet.valueTextSize = 13f
+        dataSet.valueTextColor = Color.BLACK
 
         val data = PieData(dataSet)
         data.setValueFormatter(PercentFormatter())
         data.setValueTextSize(11f)
-        data.setValueTextColor(Color.WHITE)
+        data.setValueTextColor(Color.BLACK)
 
         binding.pieChart.data = data
+        binding.pieChart.setEntryLabelColor(Color.BLACK)
         binding.pieChart.highlightValues(null)
         binding.pieChart.invalidate()
     }
+
 
     private fun getSiteInfo() {
         lifecycleScope.launch {
@@ -234,7 +215,7 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun observeData(observedState: String) {
-        updateItJob= lifecycleScope.launch {
+        updateItJob = lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 when (observedState) {
                     "file" -> {
@@ -249,10 +230,12 @@ class StatisticsFragment : Fragment() {
                                         binding.progressBar.hide()
                                         list = uiState.resultList
                                         val monthList = extractTime(list)
-                                        val operationDuration=extractWokDay(list)
-                                        Log.d("selam", monthList.size.toString())
+                                        val operationDuration = extractWokDay(list)
+                                        val cost = extractCost(list)
+                                        val amountPaid = extractAmountPaid(list)
                                         setupAdapter()
-                                        setBarChartData(monthList,operationDuration)
+                                        setBarChartData(monthList, operationDuration)
+                                        setPieChartData(cost, amountPaid)
                                         updateItJob.cancel()
                                     }
                                 }
@@ -312,13 +295,29 @@ class StatisticsFragment : Fragment() {
         return operationTimes
     }
 
-    private fun extractWokDay(workInfoModel: List<WorkInfoModel>):List<Float>{
-        val operationDuration= mutableListOf<Float>()
+    private fun extractWokDay(workInfoModel: List<WorkInfoModel>): List<Float> {
+        val operationDuration = mutableListOf<Float>()
 
-        for (workDuration in workInfoModel){
+        for (workDuration in workInfoModel) {
             operationDuration.add(workDuration.operationDuration.toFloat())
         }
         return operationDuration
+    }
+
+    private fun extractCost(workInfoModel: List<WorkInfoModel>): List<Float> {
+        val operationCost = mutableListOf<Float>()
+        for (cost in workInfoModel) {
+            operationCost.add(cost.cost.toFloat())
+        }
+        return operationCost
+    }
+
+    private fun extractAmountPaid(workInfoModel: List<WorkInfoModel>): List<Float> {
+        val operationAmountPaid = mutableListOf<Float>()
+        for (amountPaid in workInfoModel) {
+            operationAmountPaid.add(amountPaid.amountPaid.toFloat())
+        }
+        return operationAmountPaid
     }
 
 

@@ -90,6 +90,7 @@
                     android:layout_height="18sp"
                     android:layout_marginStart="4sp"
                     android:src="@drawable/ic_time"
+                    app:tint="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/text_time" />
 

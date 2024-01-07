@@ -404,6 +404,8 @@ class FireBaseSourceImpl @Inject constructor(
                 "currentUser" to workerInfoModel.currentUser,
                 "constructionArea" to workerInfoModel.constructionArea,
                 "specifiedMonth" to workerInfoModel.specifiedMonth,
+                "cost" to workerInfoModel.cost,
+                "amountPaid" to workerInfoModel.amountPaid,
             )
 
             statisticRef.set(post).await()
@@ -427,6 +429,8 @@ class FireBaseSourceImpl @Inject constructor(
                 val currentUser = data?.get("currentUser") as? String ?: ""
                 val constructionArea = data?.get("constructionArea") as? String ?: ""
                 val specifiedMonth = data?.get("specifiedMonth") as? String ?: ""
+                val cost = data?.get("cost") as? String ?: ""
+                val amountPaid = data?.get("amountPaid") as? String ?: ""
 
                 val workInfoModel = WorkInfoModel(
                     vocation = infoVocation,
@@ -435,11 +439,10 @@ class FireBaseSourceImpl @Inject constructor(
                     currentUser = currentUser,
                     constructionArea = constructionArea,
                     specifiedMonth = specifiedMonth,
+                    cost = cost,
+                    amountPaid = amountPaid,
                 )
-
                 workInfoModels.add(workInfoModel)
-                Log.d("workInfoModel",workInfoModel.vocation)
-                Log.d("workInfoModel",workInfoModel.operationDuration.toString())
             }
 
             workInfoModels

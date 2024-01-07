@@ -138,8 +138,10 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
         val listItem = binding.listConstruction.text.toString()
         val dayItem = selectedDate
         val workDayItem = binding.etFinishDay.text.toString()
+        val cost=binding.etCoastMoney.text.toString()
+        val amountPaid=binding.etAvailableBalance.text.toString()
 
-        return listItem.isNotBlank() && dayItem.isNotBlank() && workDayItem.isNotBlank()
+        return listItem.isNotBlank() && dayItem.isNotBlank() && workDayItem.isNotBlank()  && cost.isNotBlank()  && amountPaid.isNotBlank()
     }
 
     private fun getSiteInfo() {
@@ -157,6 +159,8 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
         val listItem = binding.listConstruction.text.toString()
         val dayItem = selectedDate
         val workDayItem = binding.etFinishDay.text.toString().toLong()
+        val cost=binding.etCoastMoney.text.toString()
+        val amountPaid=binding.etAvailableBalance.text.toString()
 
         return WorkInfoModel(
             listItem,
@@ -164,13 +168,17 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
             workDayItem,
             siteSupervisor,
             constructionArea,
-            specifiedMonth
+            specifiedMonth,
+            cost,
+            amountPaid
         )
     }
     private fun clearFields() {
         binding.listConstruction.setText("")
         binding.etStartDay.setText("")
         binding.etFinishDay.setText("")
+        binding.etCoastMoney.setText("")
+        binding.etAvailableBalance.setText("")
     }
 }
 
