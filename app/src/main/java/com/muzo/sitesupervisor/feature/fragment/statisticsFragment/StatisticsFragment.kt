@@ -66,7 +66,6 @@ class StatisticsFragment : Fragment() {
         binding.bttn.setOnClickListener {
             findNavController().navigate(R.id.action_statisticsFragment_to_bottomSheetDialogFragment)
         }
-        initViews()
         getSiteInfo()
         setList()
         return binding.root
@@ -74,54 +73,103 @@ class StatisticsFragment : Fragment() {
 
     private fun initViews() {
         setPieChartData(12, 100F)
-        setData()
+      //  setBarChartData()
     }
 
-    private fun setData() {
+    private fun setBarChartData(months: List<String>, operationDuration: List<Float>) {
         val chart = binding.barChart
-        val months = arrayOf(
-            "Ocak",
-            "Şubat",
-            "Mart",
-            "Nisan",
-            "Mayıs",
-            "Haziran",
-            "Temmuz",
-            "Ağustos",
-            "Eylül",
-            "Ekim",
-            "Kasım",
-            "Aralık",
-        )
-        barList = ArrayList()
-        barList.add(BarEntry(0f, 10f))
-        barList.add(BarEntry(1f, 20f))
-        barList.add(BarEntry(2f, 30f))
-        barList.add(BarEntry(3f, 40f))
-        barList.add(BarEntry(4f, 50f))
-        barList.add(BarEntry(5f, 60f))
-        barList.add(BarEntry(6f, 70f))
-        barList.add(BarEntry(7f, 80f))
-        barList.add(BarEntry(8f, 90f))
-        barList.add(BarEntry(9f, 100f))
-        barList.add(BarEntry(10f, 110f))
-        barList.add(BarEntry(11f, 120f))
 
+        val monthlyTotalDuration = mutableMapOf<String, Float>()
 
-        barDataSet = BarDataSet(barList, "Aylar")
+        // Aylara göre çalışma sürelerini topla veya ekle
+        for (i in months.indices) {
+            val month = months[i]
+            val duration = operationDuration[i]
 
+            // Aynı ay için daha önce bir giriş yapılmadıysa ekle, yapıldıysa topla
+            if (monthlyTotalDuration.containsKey(month)) {
+                val currentTotal = monthlyTotalDuration[month] ?: 0f
+                monthlyTotalDuration[month] = currentTotal + duration
+            } else {
+                monthlyTotalDuration[month] = duration
+            }
+        }
+
+        // Birleştirilmiş aylar ve toplam süreler için veri listesi oluştur
+        val combinedMonths = mutableListOf<String>()
+        val combinedDurations = mutableListOf<Float>()
+
+        for (entry in monthlyTotalDuration) {
+            combinedMonths.add(entry.key)
+            combinedDurations.add(entry.value)
+        }
+
+        // Yeni oluşturulan verileri kullanarak çubuk grafik veri setlerini oluştur
+        val barList = ArrayList<BarEntry>()
+        for (i in combinedMonths.indices) {
+            barList.add(BarEntry(i.toFloat(), combinedDurations[i]))
+        }
+
+        val barDataSet = BarDataSet(barList, "Aylar")
         barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 250)
         barDataSet.valueTextSize = 15f
-        barData = BarData(barDataSet)
+        val barData = BarData(barDataSet)
         chart.data = barData
 
+        // X ekseninde ayların yazısını etiketleme
         val xAxis = chart.xAxis
-        xAxis.valueFormatter = IndexAxisValueFormatter(months)
+        xAxis.valueFormatter = IndexAxisValueFormatter(combinedMonths)
         xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setDrawLabels(true)
+        xAxis.granularity = 1f
+        xAxis.labelCount = combinedMonths.size // Tüm ayların gösterilmesini sağlar
 
+        // Grafik güncellemesi
         chart.invalidate()
-
     }
+
+
+
+
+    /*
+        private fun setBarChartData(months: List<String>, operationDuration: List<Float>) {
+            val chart = binding.barChart
+
+            val aggregatedMonths = mutableMapOf<String, Float>()
+
+    // Aynı ayları toplama
+            for (i in months.indices) {
+                val month = months[i]
+                val duration = operationDuration.getOrNull(i) ?: 0f
+                val currentValue = aggregatedMonths[month] ?: 0f
+                aggregatedMonths[month] = currentValue + duration
+            }
+
+
+            // Yeni değerleri barList'e ekleme
+            val barList = ArrayList<BarEntry>()
+            var index = 0f
+            for ((month, duration) in aggregatedMonths) {
+                barList.add(BarEntry(index, duration))
+                index += 1f
+            }
+
+            val xAxis = chart.xAxis
+            xAxis.valueFormatter = IndexAxisValueFormatter(aggregatedMonths.keys.toList())
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.setAvoidFirstLastClipping(true)
+
+            val barDataSet = BarDataSet(barList, "Aylar")
+            barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 250)
+            barDataSet.valueTextSize = 15f
+            val barData = BarData(barDataSet)
+            chart.data = barData
+
+
+            chart.invalidate()
+        }
+
+    */
 
     private fun setPieChartData(count: Int, range: Float) {
         val entries = ArrayList<PieEntry>()
@@ -201,8 +249,10 @@ class StatisticsFragment : Fragment() {
                                         binding.progressBar.hide()
                                         list = uiState.resultList
                                         val monthList = extractTime(list)
+                                        val operationDuration=extractWokDay(list)
                                         Log.d("selam", monthList.size.toString())
                                         setupAdapter()
+                                        setBarChartData(monthList,operationDuration)
                                         updateItJob.cancel()
                                     }
                                 }
@@ -260,6 +310,15 @@ class StatisticsFragment : Fragment() {
             operationTimes.add(workInfo.specifiedMonth)
         }
         return operationTimes
+    }
+
+    private fun extractWokDay(workInfoModel: List<WorkInfoModel>):List<Float>{
+        val operationDuration= mutableListOf<Float>()
+
+        for (workDuration in workInfoModel){
+            operationDuration.add(workDuration.operationDuration.toFloat())
+        }
+        return operationDuration
     }
 
 
@@ -321,3 +380,5 @@ private fun setData() {
 
     chart.invalidate()
 }*/
+
+

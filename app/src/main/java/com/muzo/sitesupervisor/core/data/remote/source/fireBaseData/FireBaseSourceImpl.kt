@@ -426,7 +426,7 @@ class FireBaseSourceImpl @Inject constructor(
                 val operationDuration = data?.get("operationDuration") as? Long ?: 0
                 val currentUser = data?.get("currentUser") as? String ?: ""
                 val constructionArea = data?.get("constructionArea") as? String ?: ""
-                val specifiedMonth = data?.get("constructionArea") as? String ?: ""
+                val specifiedMonth = data?.get("specifiedMonth") as? String ?: ""
 
                 val workInfoModel = WorkInfoModel(
                     vocation = infoVocation,
