@@ -9,6 +9,6 @@
     <string name="activity_title_view">Calendar View Sample</string>
     <string name="_date">17 Jun 2023</string>
     <string name="workerName">Kalıpçı</string>
-
+    <string name="google_map_api_key">AIzaSyBAOgha8Vjr2cLWsChsjz01Moy0Sy3Pmic</string>
 
 </resources>

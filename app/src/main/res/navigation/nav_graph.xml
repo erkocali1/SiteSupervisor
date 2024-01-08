@@ -82,6 +82,9 @@
         <action
             android:id="@+id/action_listingFragment_to_statisticsFragment"
             app:destination="@id/statisticsFragment" />
+        <action
+            android:id="@+id/action_listingFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
@@ -144,6 +147,24 @@
             android:id="@+id/action_bottomSheetDialogFragment_to_statisticsFragment"
             app:destination="@id/statisticsFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.settingsFragment.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_locationFragment"
+            app:destination="@id/locationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/locationFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.settingsFragment.location.LocationFragment"
+        android:label="fragment_location"
+        tools:layout="@layout/fragment_location" >
+        <action
+            android:id="@+id/action_locationFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
 
 
 </navigation>

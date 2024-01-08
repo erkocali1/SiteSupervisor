@@ -20,5 +20,11 @@
         android:menuCategory="secondary"
         android:title="ANALİZ" />
 
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_settings"
+        android:menuCategory="secondary"
+        android:title="AYARLAR" />
+
 
 </menu>

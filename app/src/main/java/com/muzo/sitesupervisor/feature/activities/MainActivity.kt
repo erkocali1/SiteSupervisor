@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.github.dhaval2404.imagepicker.ImagePicker
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
             when (destination.id) {
-                R.id.listingFragment, R.id.statisticsFragment, R.id.taskFragment -> binding.bottomMenu.show()
+                R.id.listingFragment, R.id.statisticsFragment, R.id.taskFragment,R.id.settingsFragment -> binding.bottomMenu.show()
 
                 else -> binding.bottomMenu.hide()
             }

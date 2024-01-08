@@ -8,6 +8,7 @@ import com.muzo.sitesupervisor.databinding.ItemStatisticBinding
 
 class StatisticsAdapter(private var list: List<WorkInfoModel>) :
     RecyclerView.Adapter<StatisticsAdapter.ViewHolder>() {
+    private var number = 1
 
 
     inner class ViewHolder(private val binding: ItemStatisticBinding) :
@@ -16,11 +17,13 @@ class StatisticsAdapter(private var list: List<WorkInfoModel>) :
         fun bind(item: WorkInfoModel) {
 
             binding.apply {
-                textDate.text=""
-                textVocation.text=item.vocation
-                textRecordTime.text=item.operationTime
-                textAmount.text=item.operationDuration.toString()
+                textDate.text = number.toString()
+                textVocation.text = item.vocation
+                textRecordTime.text = item.operationTime
+                textAmount.text = item.operationDuration.toString()
+
             }
+            number += 1
 
         }
 

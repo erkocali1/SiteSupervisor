@@ -8,5 +8,11 @@
 
     <style name="Theme.SiteSupervisor" parent="Base.Theme.SiteSupervisor" />
 
+    <style name="Base.Theme.SiteSupervisor.NoActionbar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
 
 </resources>

@@ -38,6 +38,7 @@ import com.muzo.sitesupervisor.feature.fragment.taskFragment.ObservedState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import okio.utf8Size
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -73,7 +74,7 @@ class StatisticsFragment : Fragment() {
 
     private fun setBarChartData(months: List<String>, operationDuration: List<Float>) {
         val chart = binding.barChart
-
+        chart.description.text="Aylık Çalışma Miktarları(Gün)"
         val monthlyTotalDuration = mutableMapOf<String, Float>()
 
         // Aylara göre çalışma sürelerini topla veya ekle
@@ -118,6 +119,12 @@ class StatisticsFragment : Fragment() {
         xAxis.setDrawLabels(true)
         xAxis.granularity = 1f
         xAxis.labelCount = combinedMonths.size // Tüm ayların gösterilmesini sağlar
+
+        val yAxis = chart.axisLeft
+        yAxis.axisMinimum = 0f
+
+
+
 
         // Grafik güncellemesi
         chart.invalidate()
@@ -198,6 +205,7 @@ class StatisticsFragment : Fragment() {
 
         binding.pieChart.data = data
         binding.pieChart.setEntryLabelColor(Color.BLACK)
+        binding.pieChart.description.text="Toplam Alacak Verecek Miktarı"
         binding.pieChart.highlightValues(null)
         binding.pieChart.invalidate()
     }
