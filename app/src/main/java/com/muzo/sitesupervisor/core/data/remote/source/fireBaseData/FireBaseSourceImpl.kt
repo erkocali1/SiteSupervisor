@@ -2,6 +2,7 @@ package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 
 import android.net.Uri
 import android.util.Log
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await
@@ -336,7 +337,6 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-
     override suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
         return kotlin.runCatching {
             val tasks = mutableListOf<TaskModel>()
@@ -389,9 +389,11 @@ class FireBaseSourceImpl @Inject constructor(
 
             val fileName = UUID.randomUUID()
             val currentUserRef = database.collection("Users").document(workerInfoModel.currentUser)
-            val constructionSiteRef = currentUserRef.collection("construcitonName").document(workerInfoModel.constructionArea)
-            val postsRef = constructionSiteRef.collection("statistic").document(workerInfoModel.vocation)
-            val statisticRef=postsRef.collection("randomId").document(fileName.toString())
+            val constructionSiteRef = currentUserRef.collection("construcitonName")
+                .document(workerInfoModel.constructionArea)
+            val postsRef =
+                constructionSiteRef.collection("statistic").document(workerInfoModel.vocation)
+            val statisticRef = postsRef.collection("randomId").document(fileName.toString())
 
             currentUserRef.set(hashMapOf("dummyField" to "dummyValue")).await()
             constructionSiteRef.set(hashMapOf("dummyField" to "dummyValue")).await()
@@ -413,10 +415,15 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-  override  suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>> {
+    override suspend fun getStatisticForVocation(
+        infoCurrentUser: String,
+        constructionName: String,
+        infoVocation: String
+    ): Result<List<WorkInfoModel>> {
         return kotlin.runCatching {
             val currentUserRef = database.collection("Users").document(infoCurrentUser)
-            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(constructionName)
             val postsRef = constructionSiteRef.collection("statistic").document(infoVocation)
             val statisticSnapshot = postsRef.collection("randomId").get().await()
 
@@ -450,11 +457,42 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+    //-----------------Location//-----------------\\
 
 
+    override suspend fun saveLocation(latLng: LatLng, currentUser: String, constructionName: String): Result<Unit> {
+
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("Users").document(currentUser)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(constructionName)
+            val locationRef = constructionSiteRef.collection("location").document(constructionName)
+
+            val newLocation = hashMapOf(
+                "latitude" to latLng.latitude.toString(),
+                "longitude" to latLng.longitude.toString(),
+            )
+
+            locationRef.set(newLocation)
 
 
+        }
+    }
 
+    override suspend fun uploadLocation(currentUser: String, constructionName: String): Result<Pair<String, String>> {
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("Users").document(currentUser)
+            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
+            val locationRef = constructionSiteRef.collection("location").document(constructionName).get().await()
+
+            val data = locationRef.data
+
+            val latitude = data?.get("latitude") as String? ?: ""
+            val longitude = data?.get("longitude") as String? ?: ""
+
+            Pair(latitude, longitude)
+        }
+    }
 
 
 

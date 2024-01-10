@@ -1,143 +1,266 @@
 package com.muzo.sitesupervisor.feature.fragment.settingsFragment.location
 
-import android.Manifest
-import android.os.Build
+import android.annotation.SuppressLint
+import android.location.Location
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.muzo.sitesupervisor.R
-import com.muzo.sitesupervisor.core.common.LocationUtility
-import com.muzo.sitesupervisor.core.constans.Constants.Companion.REQUEST_CODE_LOCATION_PERMISSION
+import com.muzo.sitesupervisor.core.common.hide
+import com.muzo.sitesupervisor.core.common.show
+import com.muzo.sitesupervisor.core.common.toastMessage
 import com.muzo.sitesupervisor.databinding.FragmentLocationBinding
-import pub.devrel.easypermissions.AppSettingsDialog
-import pub.devrel.easypermissions.EasyPermissions
+import com.muzo.sitesupervisor.feature.fragment.taskFragment.ObservedState
+import com.thecode.aestheticdialogs.AestheticDialog
+import com.thecode.aestheticdialogs.DialogAnimation
+import com.thecode.aestheticdialogs.DialogStyle
+import com.thecode.aestheticdialogs.DialogType
+import com.thecode.aestheticdialogs.OnDialogClickListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-
-class LocationFragment : Fragment(), EasyPermissions.PermissionCallbacks {
+@AndroidEntryPoint
+class LocationFragment : Fragment() {
     private lateinit var binding: FragmentLocationBinding
+    private val viewModel: LocationFragmentViewModel by viewModels()
     private var map: GoogleMap? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var currentLocation: LatLng? = null
+    private lateinit var constructionArea: String
+    private lateinit var siteSupervisor: String
+    private lateinit var updateItJob: Job
+    private var firstEnter = false
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        requestPermissions()
         binding = FragmentLocationBinding.inflate(layoutInflater, container, false)
-
+        getSiteInfo()
+        viewModel.upLoad(siteSupervisor, constructionArea)
+        observeData("file")
         return binding.root
-    }
 
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.mapView.onCreate(savedInstanceState)
-        mapview()
+        saveLocation()
+        deleteLocation()
     }
 
-    private fun mapview() {
+    private fun initView() {
+        if (currentLocation?.latitude == 0.0 && currentLocation?.longitude == 0.0) {
+            showCurrentLocation()
+            infAlert()
+            firstEnter = true
+            Log.i("TagKe göründü", "neresi çaşıştı")
+        } else {
+            showSpecifiedLocation()
+            Log.i("TagKe göründü", "burası çaşıştı")
+        }
+    }
+
+    private fun observeData(observedState: String) {
+        updateItJob = lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                when (observedState) {
+                    "file" -> {
+                        launch {
+                            viewModel.upLoadState.collect { upLoadState ->
+                                when {
+                                    upLoadState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    upLoadState.resultList != null -> {
+                                        binding.progressBar.hide()
+                                        val latLng = upLoadState.resultList
+                                        val location = convertToLatLng(latLng)
+                                        currentLocation = location
+                                        initView()
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    "save" -> {
+                        launch {
+                            viewModel.uiState.collect { uiState ->
+                                when {
+                                    uiState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    uiState.result -> {
+                                        toastMessage(
+                                            "Konum Başarılı Bir Şekilde Kaydedildi",
+                                            requireContext())
+                                        firstEnter=false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun showCurrentLocation() {
         binding.mapView.getMapAsync { googleMap ->
             map = googleMap
-            // Harita hazır olduğunda yapılacak işlemler burada olmalı
-            // Belirli bir konuma gitmek için:
-            val latitude = 41.0 // Belirli bir enlem
-            val longitude = 29.0 // Belirli bir boylam
-            val zoomLevel = 15f // Yakınlaştırma seviyesi (1 ile 20 arasında bir değer)
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val zoomLevel = 15f // Zoom level (a value between 1 and 20)
 
-            val location = LatLng(latitude, longitude)
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
+                    val currentLatLng = LatLng(it.latitude, it.longitude)
+                    currentLocation = currentLatLng
+                    map?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, zoomLevel))
 
-            // İşaretçi eklemek için:
-            val markerOptions = MarkerOptions().position(location).title("İşaretçi Başlığı")
+                    // Add a marker
+                    val markerOptions =
+                        MarkerOptions().position(currentLatLng).title("Şantiye Konumu")
+                    map?.addMarker(markerOptions)
+                }
+            }.addOnFailureListener { exception ->
+                // Handle failure to get the last known location here
+            }
+        }
+    }
+
+    private fun showSpecifiedLocation() {
+        binding.mapView.getMapAsync { googleMap ->
+            map = googleMap
+            val zoomLevel = 15f
+            val currentLatLng = currentLocation
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng!!, zoomLevel))
+            val markerOptions = MarkerOptions().position(currentLatLng!!).title("Şantiye Konumu")
             map?.addMarker(markerOptions)
         }
     }
 
+    private fun convertToLatLng(pair: Pair<String, String>): LatLng {
+        val latitude = pair.first.toDoubleOrNull() ?: 0.0
+        val longitude = pair.second.toDoubleOrNull() ?: 0.0
+        return LatLng(latitude, longitude)
+    }
 
+    private fun saveLocation() {
 
-    private fun requestPermissions() {
-        if (LocationUtility.hasLocationPermissions(requireContext())) {
-            return
+        binding.setLocation.setOnClickListener {
+            if (currentLocation?.latitude != 0.0 && currentLocation?.longitude != 0.0) {
+                currentLocation?.let {
+                    viewModel.saveLocation(currentLocation!!, siteSupervisor, constructionArea)
+                    observeData("save")
+                }
+            } else {
+                toastMessage("Konum Seçerken Hata! Daha Sonra Tekrar Deneyiniz", requireContext())
+            }
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            EasyPermissions.requestPermissions(
-                this,
-                "Bu uygulamayı kullanmak icin konum izinine ihtiyaç vardır",
-                REQUEST_CODE_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        } else {
-            EasyPermissions.requestPermissions(
-                this,
-                "Bu uygulamayı kullanmak icin konum izinine ihtiyaç vardır",
-                REQUEST_CODE_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            )
+
+    }
+
+    private fun getSiteInfo() {
+        lifecycleScope.launch {
+            viewModel.readDataStore("construction_key").collect { area ->
+                constructionArea = area!!
+                viewModel.readDataStore("user_key").collect { supervisor ->
+                    siteSupervisor = supervisor!!
+                }
+            }
         }
     }
 
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            AppSettingsDialog.Builder(this).build().show()
+    private fun deleteLocation() {
 
-        } else {
-            requestPermissions()
+        binding.resetLocation.setOnClickListener {
+            if (firstEnter) {
+                toastMessage("Lütfen İlk Önce Konum Ekleyiniz", requireContext())
+            } else {
+                if (currentLocation?.latitude == 0.0 && currentLocation?.longitude != 0.0) {
+                    toastMessage("Henüz Konum Eklenmedi.", requireContext())
+                } else {
+                    val zeroLatLng = LatLng(0.0, 0.0)
+                    viewModel.saveLocation(zeroLatLng, siteSupervisor, constructionArea)
+                    toastMessage("Konum Başarıyla Silinmiştir", requireContext())
+                    navigateFragment()
+                }
+            }
+
         }
     }
 
+    private fun navigateFragment() {
+        findNavController().navigate(R.id.action_locationFragment_to_settingsFragment)
+    }
 
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    private fun infAlert() {
+        AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
+            .setTitle("Şantiye Konum Bilgisi Henüz Girilmedi").setCancelable(false)
+            .setMessage("Eğer Şuanki Konumunuz Şantiye ise Konum Seç Diyerek Konum Ekleyebilirsiniz")
+            .setDarkMode(false).setGravity(Gravity.CENTER).setAnimation(DialogAnimation.DEFAULT)
+            .setOnClickListener(object : OnDialogClickListener {
+                override fun onClick(dialog: AestheticDialog.Builder) {
+                    dialog.dismiss()
+                    //actions...
+                }
+            }).show()
     }
 
     override fun onResume() {
         super.onResume()
-        binding.mapView?.onResume()
+        binding.mapView.onResume()
     }
 
     override fun onStart() {
         super.onStart()
-        binding.mapView?.onStart()
+        binding.mapView.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        binding.mapView?.onStop()
+        binding.mapView.onStop()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mapView?.onPause()
+        binding.mapView.onPause()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mapView?.onLowMemory()
+        binding.mapView.onLowMemory()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.mapView?.onDestroy()
+        binding.mapView.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding.mapView?.onSaveInstanceState(outState)
+        binding.mapView.onSaveInstanceState(outState)
     }
 
 

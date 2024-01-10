@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.core.data.remote.repository.fireBaseData
 
 import android.net.Uri
+import com.google.android.gms.maps.model.LatLng
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
@@ -41,5 +42,10 @@ interface FireBaseRepository {
 
     suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>>
 
+
+    //-----------------Statistic------------//
+    suspend fun saveLocation(latLng: LatLng, currentUser: String, constructionName: String): Result<Unit>
+
+    suspend fun uploadLocation(currentUser: String, constructionName: String): Result<Pair<String, String>>
 
 }
