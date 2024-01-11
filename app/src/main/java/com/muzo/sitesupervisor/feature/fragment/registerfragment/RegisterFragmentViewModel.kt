@@ -13,22 +13,27 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class RegisterFragmentViewModel @Inject constructor(private val repository: AuthRepository) :
+class RegisterFragmentViewModel @Inject constructor(
+    private val repository: AuthRepository, authRepository: AuthRepository,
+) :
     ViewModel() {
 
     private val _signUpState = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val signUpFlow: StateFlow<Resource<FirebaseUser>?> = _signUpState
 
+
+    val currentUser = authRepository.currentUser
+
     init {
-        if(repository.currentUser !=null){
-            _signUpState.value=Resource.Success(repository.currentUser!!)
+        if (repository.currentUser != null) {
+            _signUpState.value = Resource.Success(repository.currentUser!!)
         }
     }
 
-    fun signUp(name:String,email:String,password:String)=viewModelScope.launch {
-        _signUpState.value=Resource.Loading
-         val result=repository.register(name, email, password)
-        _signUpState.value=result
+    fun signUp(name: String, email: String, password: String) = viewModelScope.launch {
+        _signUpState.value = Resource.Loading
+        val result = repository.register(name, email, password)
+        _signUpState.value = result
 
     }
 

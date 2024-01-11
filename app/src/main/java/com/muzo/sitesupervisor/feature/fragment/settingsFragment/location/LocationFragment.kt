@@ -101,7 +101,6 @@ class LocationFragment : Fragment() {
                             }
                         }
                     }
-
                     "save" -> {
                         launch {
                             viewModel.uiState.collect { uiState ->

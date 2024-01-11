@@ -20,6 +20,7 @@
         android:layout_width="22dp"
         android:layout_height="22dp"
         android:layout_marginTop="32sp"
+        android:layout_marginStart="12sp"
         android:src="@drawable/ic_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

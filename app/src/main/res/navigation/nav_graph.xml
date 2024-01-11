@@ -155,6 +155,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_locationFragment"
             app:destination="@id/locationFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_siteSuperVisorFragment"
+            app:destination="@id/siteSuperVisorFragment" />
     </fragment>
     <fragment
         android:id="@+id/locationFragment"
@@ -163,6 +166,15 @@
         tools:layout="@layout/fragment_location" >
         <action
             android:id="@+id/action_locationFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/siteSuperVisorFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.settingsFragment.userInfo.SiteSuperVisorFragment"
+        android:label="fragment_site_super_visor"
+        tools:layout="@layout/fragment_site_super_visor" >
+        <action
+            android:id="@+id/action_siteSuperVisorFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
     </fragment>
 

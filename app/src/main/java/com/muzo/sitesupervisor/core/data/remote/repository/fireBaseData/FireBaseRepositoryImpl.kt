@@ -29,40 +29,77 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.fetchArea()
     }
 
-    override suspend fun getAllPost(currentUser: String, constructionName: String): Result<List<DataModel>> {
+    override suspend fun getAllPost(
+        currentUser: String,
+        constructionName: String
+    ): Result<List<DataModel>> {
         return fireBaseSource.getAllPost(currentUser, constructionName)
     }
 
-    override suspend fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String): Result<List<Uri>> {
+    override suspend fun addImageToFirebaseStorage(
+        fileUris: List<Uri>?,
+        postId: String
+    ): Result<List<Uri>> {
         return fireBaseSource.addImageToFirebaseStorage(fileUris, postId)
     }
 
-    override suspend fun addImageUrlToFireStore(downloadUrl:List<Uri>, currentUser: String, constructionName: String, postId: String): Result<Unit> {
-        return fireBaseSource.addImageUrlToFireStore(downloadUrl, currentUser, constructionName, postId)
+    override suspend fun addImageUrlToFireStore(
+        downloadUrl: List<Uri>,
+        currentUser: String,
+        constructionName: String,
+        postId: String
+    ): Result<Unit> {
+        return fireBaseSource.addImageUrlToFireStore(
+            downloadUrl,
+            currentUser,
+            constructionName,
+            postId
+        )
     }
 
-    override suspend fun getImageUrlFromFireStore(currentUser: String, constructionName: String, postId: String): Result<List<String>> {
+    override suspend fun getImageUrlFromFireStore(
+        currentUser: String,
+        constructionName: String,
+        postId: String
+    ): Result<List<String>> {
         return fireBaseSource.getImageUrlFromFireStore(currentUser, constructionName, postId)
     }
 
-    override suspend fun deletePhotoUrlFromFireStore(currentUser: String, constructionName: String, postId: String, photoUrlToDelete: String): Result<Unit> {
-        return fireBaseSource.deletePhotoUrlFromFireStore(currentUser, constructionName, postId, photoUrlToDelete)
+    override suspend fun deletePhotoUrlFromFireStore(
+        currentUser: String,
+        constructionName: String,
+        postId: String,
+        photoUrlToDelete: String
+    ): Result<Unit> {
+        return fireBaseSource.deletePhotoUrlFromFireStore(
+            currentUser,
+            constructionName,
+            postId,
+            photoUrlToDelete
+        )
     }
 
     //-----------------Task------------------------\\
     override suspend fun saveTask(taskModel: TaskModel): Result<Unit> {
-    return fireBaseSource.saveTask(taskModel)
+        return fireBaseSource.saveTask(taskModel)
     }
 
-    override suspend fun getAllTask(currentUser: String, constructionName: String,date:String ): Result<List<TaskModel>> {
-        return fireBaseSource.getAllTask(currentUser, constructionName,date)
+    override suspend fun getAllTask(
+        currentUser: String,
+        constructionName: String,
+        date: String
+    ): Result<List<TaskModel>> {
+        return fireBaseSource.getAllTask(currentUser, constructionName, date)
     }
 
-    override suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>> {
+    override suspend fun getTaskDate(
+        currentUser: String,
+        constructionName: String
+    ): Result<List<String>> {
         return fireBaseSource.getTaskDate(currentUser, constructionName)
     }
 
-    override suspend fun getTasksWithWorker(workerName: String):Result<List<TaskModel>> {
+    override suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
         return fireBaseSource.getTasksWithWorker(workerName)
     }
 
@@ -70,17 +107,37 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.saveStatisticInfo(workerInfoModel)
     }
 
-    override suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String
+    override suspend fun getStatisticForVocation(
+        infoCurrentUser: String, constructionName: String, infoVocation: String
     ): Result<List<WorkInfoModel>> {
-        return fireBaseSource.getStatisticForVocation(infoCurrentUser, constructionName, infoVocation)
+        return fireBaseSource.getStatisticForVocation(
+            infoCurrentUser,
+            constructionName,
+            infoVocation
+        )
     }
 
-    override suspend fun saveLocation(latLng: LatLng, currentUser: String, constructionName: String): Result<Unit> {
-       return fireBaseSource.saveLocation(latLng, currentUser, constructionName)
+    override suspend fun saveLocation(
+        latLng: LatLng,
+        currentUser: String,
+        constructionName: String
+    ): Result<Unit> {
+        return fireBaseSource.saveLocation(latLng, currentUser, constructionName)
     }
 
-    override suspend fun uploadLocation(currentUser: String, constructionName: String): Result<Pair<String, String>> {
-        return  fireBaseSource.uploadLocation(currentUser, constructionName)
+    override suspend fun uploadLocation(
+        currentUser: String,
+        constructionName: String
+    ): Result<Pair<String, String>> {
+        return fireBaseSource.uploadLocation(currentUser, constructionName)
+    }
+
+    override suspend fun addUserImage(fileUri: Uri, siteSuperVisor: String): Result<Uri> {
+        return fireBaseSource.addUserImage(fileUri, siteSuperVisor)
+    }
+
+    override suspend fun addImageUrlToFireStore(downloadUrl: Uri, currentUser: String, constructionName: String): Result<Unit> {
+        return fireBaseSource.addImageUrlToFireStore(downloadUrl, currentUser, constructionName)
     }
 
 

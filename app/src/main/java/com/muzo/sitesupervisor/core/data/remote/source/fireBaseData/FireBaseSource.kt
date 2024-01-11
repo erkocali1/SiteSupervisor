@@ -47,4 +47,10 @@ interface FireBaseSource {
      suspend fun saveLocation(latLng: LatLng, currentUser: String, constructionName: String): Result<Unit>
 
     suspend fun uploadLocation(currentUser: String, constructionName: String): Result<Pair<String, String>>
+
+    //-----------------Settings------------//
+
+     suspend fun addUserImage(fileUri: Uri, siteSuperVisor: String): Result<Uri>
+
+    suspend fun addImageUrlToFireStore(downloadUrl: Uri, currentUser: String, constructionName: String): Result<Unit>
 }

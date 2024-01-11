@@ -43,9 +43,15 @@ interface FireBaseRepository {
     suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>>
 
 
-    //-----------------Statistic------------//
+    //-----------------Location------------//
     suspend fun saveLocation(latLng: LatLng, currentUser: String, constructionName: String): Result<Unit>
 
     suspend fun uploadLocation(currentUser: String, constructionName: String): Result<Pair<String, String>>
+
+    //-----------------Settings------------//
+
+    suspend fun addUserImage(fileUri: Uri, siteSuperVisor: String): Result<Uri>
+
+    suspend fun addImageUrlToFireStore(downloadUrl: Uri, currentUser: String, constructionName: String): Result<Unit>
 
 }

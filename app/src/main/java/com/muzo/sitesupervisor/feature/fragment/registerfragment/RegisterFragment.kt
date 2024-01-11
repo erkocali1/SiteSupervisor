@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.registerfragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseUser
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.databinding.FragmentRegisterBinding
@@ -34,12 +36,13 @@ class RegisterFragment : Fragment() {
 
     private fun observeData() {
         lifecycleScope.launch {
-            viewModel.signUpFlow.collect() {
-                when (it) {
-                    is Resource.Error -> toastMessage(it.exception?.message!!)
+            viewModel.signUpFlow.collect {firebaseUser->
+                when (firebaseUser) {
+                    is Resource.Error -> toastMessage(firebaseUser.exception?.message!!)
                     Resource.Loading -> binding.etUserName.visibility = View.GONE
-                    is Resource.Success -> navigateFragment()
-
+                    is Resource.Success -> {
+                        navigateFragment()
+                    }
                     else -> {}
                 }
             }
@@ -56,6 +59,7 @@ class RegisterFragment : Fragment() {
             if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
                 if (confirmPassword == password) {
                     viewModel.signUp(name, email, password)
+
                 } else {
                     toastMessage("Password does not Match")
                 }

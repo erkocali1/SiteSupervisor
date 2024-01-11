@@ -1,11 +1,13 @@
 package com.muzo.sitesupervisor.feature.fragment.selectionFragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.databinding.FragmentSelectionBinding
@@ -15,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SelectionFragment : Fragment() {
     private lateinit var binding: FragmentSelectionBinding
+    private val viewModels:SelectionFragmentViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,12 +25,9 @@ class SelectionFragment : Fragment() {
     ): View? {
         binding = FragmentSelectionBinding.inflate(layoutInflater, container, false)
 
-
-//        val items= listOf("hello","karemel")
-//        val adapter=ArrayAdapter(requireContext(), R.layout.list_item,items)
+        Log.d("LOOG THAT",viewModels.currentUser?.uid.toString())
         setButtonClickListeners()
         return binding.root
-
 
     }
 

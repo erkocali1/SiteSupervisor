@@ -34,6 +34,10 @@ class SettingsFragment : Fragment() {
             locationEvent()
 
         }
+
+        binding.cvPerson.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_siteSuperVisorFragment)
+        }
         return binding.root
     }
 

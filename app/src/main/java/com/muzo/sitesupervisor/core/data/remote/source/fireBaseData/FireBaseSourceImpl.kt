@@ -9,6 +9,7 @@ import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import java.util.UUID
 import javax.inject.Inject
@@ -159,7 +160,8 @@ class FireBaseSourceImpl @Inject constructor(
 
 
     override suspend fun addImageToFirebaseStorage(
-        fileUris: List<Uri>?, postId: String
+        fileUris: List<Uri>?,
+        postId: String
     ): Result<List<Uri>> {
         return kotlin.runCatching {
             val uploadedUris = mutableListOf<Uri>()
@@ -460,7 +462,11 @@ class FireBaseSourceImpl @Inject constructor(
     //-----------------Location//-----------------\\
 
 
-    override suspend fun saveLocation(latLng: LatLng, currentUser: String, constructionName: String): Result<Unit> {
+    override suspend fun saveLocation(
+        latLng: LatLng,
+        currentUser: String,
+        constructionName: String
+    ): Result<Unit> {
 
         return kotlin.runCatching {
             val currentUserRef = database.collection("Users").document(currentUser)
@@ -479,11 +485,16 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadLocation(currentUser: String, constructionName: String): Result<Pair<String, String>> {
+    override suspend fun uploadLocation(
+        currentUser: String,
+        constructionName: String
+    ): Result<Pair<String, String>> {
         return kotlin.runCatching {
             val currentUserRef = database.collection("Users").document(currentUser)
-            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
-            val locationRef = constructionSiteRef.collection("location").document(constructionName).get().await()
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(constructionName)
+            val locationRef =
+                constructionSiteRef.collection("location").document(constructionName).get().await()
 
             val data = locationRef.data
 
@@ -494,6 +505,40 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun addUserImage(fileUri: Uri, siteSuperVisor: String): Result<Uri> {
+        return kotlin.runCatching {
+            var uploadedUri: Uri? = null // uploadedUri'yi null olarak başlatın
+
+            val fileRef = storage.reference.child("users").child("siteSuperVisor").child(siteSuperVisor)
+
+            // putFile fonksiyonunu kullanarak dosyayı yükleyin
+            fileRef.putFile(fileUri).await()
+
+            // downloadUrl fonksiyonunu kullanarak yüklenen dosyanın indirme bağlantısını alın
+            val downloadUrl = fileRef.downloadUrl.await()
+
+            uploadedUri = Uri.parse(downloadUrl.toString())
+
+            uploadedUri
+        }
+    }
 
 
+    override suspend fun addImageUrlToFireStore(downloadUrl: Uri, currentUser: String, constructionName: String): Result<Unit> {
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("Users").document(currentUser)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(constructionName)
+            val postsRef = constructionSiteRef.collection("UserInfo").document(constructionName)
+
+            val data = hashMapOf("usuerPhotoUrl" to downloadUrl.toString())
+            postsRef.set(data).await()
+        }
+    }
+
+//    override suspend fun addUserInfo(userInfo: UserInfo):Result<Unit>{
+//        return kotlin.runCatching {
+//            val currentUserRef = database.collection("Users").document(currentUser)
+//        }
+//    }
 }
