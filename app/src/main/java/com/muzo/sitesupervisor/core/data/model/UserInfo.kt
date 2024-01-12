@@ -5,7 +5,6 @@ data class UserInfo(
     val photoUrl: String? = null,
     val email: String? = null,
     val phoneNumber:String? = null,
-    val constructionName:String?=null
 ) {
 
 }

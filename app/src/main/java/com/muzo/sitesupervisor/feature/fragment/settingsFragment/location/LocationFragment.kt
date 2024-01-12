@@ -71,10 +71,8 @@ class LocationFragment : Fragment() {
             showCurrentLocation()
             infAlert()
             firstEnter = true
-            Log.i("TagKe göründü", "neresi çaşıştı")
         } else {
             showSpecifiedLocation()
-            Log.i("TagKe göründü", "burası çaşıştı")
         }
     }
 

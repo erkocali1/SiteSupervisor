@@ -524,21 +524,49 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun addImageUrlToFireStore(downloadUrl: Uri, currentUser: String, constructionName: String): Result<Unit> {
+    override suspend fun changeUserItem(itemValue: String, currentUser: String, changedItem: String): Result<Unit> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("Users").document(currentUser)
-            val constructionSiteRef =
-                currentUserRef.collection("construcitonName").document(constructionName)
-            val postsRef = constructionSiteRef.collection("UserInfo").document(constructionName)
+            val currentUserRef = database.collection("UsersInfo").document(currentUser)
 
-            val data = hashMapOf("usuerPhotoUrl" to downloadUrl.toString())
-            postsRef.set(data).await()
+            val data = hashMapOf(changedItem to itemValue)
+            currentUserRef.update(data.toMap()).await()
         }
     }
 
-//    override suspend fun addUserInfo(userInfo: UserInfo):Result<Unit>{
-//        return kotlin.runCatching {
-//            val currentUserRef = database.collection("Users").document(currentUser)
-//        }
-//    }
+
+
+    override suspend fun addUserInfo(currentUser:String, userInfo: UserInfo):Result<Unit>{
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("UsersInfo").document(currentUser)
+
+            val post = hashMapOf(
+                "name" to userInfo.name,
+                "email" to userInfo.email,
+                "photoUrl" to userInfo.photoUrl,
+                "phoneNumber" to userInfo.phoneNumber,
+            )
+            currentUserRef.set(post).await()
+        }
+    }
+
+    override suspend fun getSiteSuperVisorInfo(siteSuperVisor: String):Result<UserInfo>{
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("UsersInfo").document(siteSuperVisor).get().await()
+
+           val data=currentUserRef.data
+
+            val mail=data?.get("email") as String? ?: ""
+            val name=data?.get("name") as String? ?: ""
+            val phone=data?.get("phone") as String? ?: ""
+            val photoUrl=data?.get("photoUrl") as String? ?: ""
+
+            val userInfo=UserInfo(
+                email = mail,
+                name = name,
+                phoneNumber = phone,
+                photoUrl =photoUrl
+            )
+            userInfo
+        }
+    }
 }

@@ -8,9 +8,11 @@ import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
+import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
-import com.muzo.sitesupervisor.domain.AddUserImageUrlUseCase
+import com.muzo.sitesupervisor.domain.ChangeUserITemUseCase
 import com.muzo.sitesupervisor.domain.AddUserImageUseCase
+import com.muzo.sitesupervisor.domain.GetSiteSuperVisorInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +25,9 @@ import javax.inject.Inject
 class SiteSuperVisorViewModel @Inject constructor(
     private val dataStore: MyDataStore,
     private val addUserImageUseCase: AddUserImageUseCase,
-    private val addUserImageUrlUseCase: AddUserImageUrlUseCase,
+    private val addUserImageUrlUseCase: ChangeUserITemUseCase,
     private val authRepository: AuthRepository,
+    private val getSiteSuperVisorInfoUseCase: GetSiteSuperVisorInfoUseCase
 ) : ViewModel() {
 
     private val _photoLoadState: MutableStateFlow<PhotoLoadState> = MutableStateFlow(PhotoLoadState())
@@ -32,6 +35,9 @@ class SiteSuperVisorViewModel @Inject constructor(
 
     private val _loadUrlState: MutableStateFlow<UrlLoadState> = MutableStateFlow(UrlLoadState())
     val loadUrlState = _loadUrlState
+
+    private val _getInfoState: MutableStateFlow<GetInfoState> = MutableStateFlow(GetInfoState())
+    val getInfoState = _getInfoState
 
     val currentUser: FirebaseUser?
         get() = authRepository.currentUser
@@ -63,9 +69,9 @@ class SiteSuperVisorViewModel @Inject constructor(
         }
     }
 
-    fun addUrlToFireBase(downloadUrl: Uri, currentUser: String, constructionName: String) {
+    fun addUrlToFireBase(itemValue: String, currentUser: String, changedItem: String) {
         viewModelScope.launch {
-            addUserImageUrlUseCase(downloadUrl, currentUser, constructionName).asReSource().onEach { result ->
+            addUserImageUrlUseCase(itemValue, currentUser, changedItem).asReSource().onEach { result ->
                 when (result) {
                     is Resource.Error -> {
                         _loadUrlState.value = _loadUrlState.value.copy(loading = false)
@@ -83,6 +89,27 @@ class SiteSuperVisorViewModel @Inject constructor(
         }
     }
 
+    fun getSiteSuperVisorInfo(siteSuperVisor: String) {
+        viewModelScope.launch {
+            getSiteSuperVisorInfoUseCase(siteSuperVisor).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        _getInfoState.value = _getInfoState.value.copy(loading = false)
+                    }
+
+                    is Resource.Loading -> {
+                        _getInfoState.value = _getInfoState.value.copy(loading = true)
+                    }
+
+                    is Resource.Success -> {
+                        _getInfoState.value = _getInfoState.value.copy(loading = false, userInfoList = result.data)
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+
 
 }
 
@@ -97,4 +124,9 @@ data class PhotoLoadState(
 data class UrlLoadState(
     val loading: Boolean = false,
     val result: Boolean = false,
+)
+
+data class GetInfoState(
+    val loading: Boolean = false,
+    val userInfoList:UserInfo? = null
 )

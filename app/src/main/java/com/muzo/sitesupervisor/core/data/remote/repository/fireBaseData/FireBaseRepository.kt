@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 
 interface FireBaseRepository {
@@ -52,6 +53,11 @@ interface FireBaseRepository {
 
     suspend fun addUserImage(fileUri: Uri, siteSuperVisor: String): Result<Uri>
 
-    suspend fun addImageUrlToFireStore(downloadUrl: Uri, currentUser: String, constructionName: String): Result<Unit>
+    suspend fun changeUserItem(itemValue: String, currentUser: String, changedItem: String): Result<Unit>
+
+    suspend fun addUserInfo(currentUser:String, userInfo: UserInfo):Result<Unit>
+
+    suspend fun getSiteSuperVisorInfo(siteSuperVisor: String):Result<UserInfo>
+
 
 }

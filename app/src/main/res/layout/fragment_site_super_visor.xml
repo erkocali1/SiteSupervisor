@@ -110,7 +110,20 @@
                         app:layout_constraintStart_toEndOf="@+id/ic_constant_name"
                         app:layout_constraintTop_toTopOf="@+id/ic_person" />
 
+                    <EditText
+                        android:id="@+id/et_siteSupervisor"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="@+id/ic_person"
+                        app:layout_constraintStart_toEndOf="@+id/ic_constant_name"
+                        app:layout_constraintTop_toTopOf="@+id/ic_person"
+                        android:maxLines="1"
+                        android:maxLength="20"
+                        app:layout_constraintEnd_toStartOf="@+id/ic_edit_siteSupervisor"
+                        android:visibility="invisible"/>
+
                     <ImageView
+                        android:id="@+id/ic_edit_siteSupervisor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
@@ -121,62 +134,29 @@
                         app:layout_constraintTop_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24sp"
-                app:strokeColor="@color/black"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="4sp">
-
                     <ImageView
-                        android:id="@+id/ic_area"
-                        style="@style/montserrat_bold"
+                        android:id="@+id/ic_done_siteSupervisor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:padding="8dp"
-                        android:src="@drawable/ic_area"
-                        app:layout_constraintStart_toStartOf="parent"
+                        android:visibility="invisible"
+                        android:src="@drawable/ic_done"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/ic_area_Name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Şantiye Adı:"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/ic_area"
-                        app:layout_constraintStart_toEndOf="@+id/ic_area"
-                        app:layout_constraintTop_toTopOf="@+id/ic_area" />
-
-                    <TextView
-                        android:id="@+id/construcitonName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4sp"
-                        android:text="Şantiye Adı"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/ic_area_Name"
-                        app:layout_constraintStart_toEndOf="@+id/ic_area_Name"
-                        app:layout_constraintTop_toTopOf="@+id/ic_area_Name" />
-
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
 
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24sp"
+                android:layout_marginTop="32sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="1dp">
 
@@ -217,13 +197,40 @@
                         app:layout_constraintStart_toEndOf="@+id/ic_phone_constant"
                         app:layout_constraintTop_toTopOf="@+id/ic_phone_constant" />
 
+                    <EditText
+                        android:id="@+id/et_phone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        app:layout_constraintBottom_toBottomOf="@+id/ic_phone_constant"
+                        app:layout_constraintStart_toEndOf="@+id/ic_phone_constant"
+                        app:layout_constraintTop_toTopOf="@+id/ic_phone_constant"
+                        android:maxLines="1"
+                        android:maxLength="20"
+                        app:layout_constraintEnd_toStartOf="@+id/ic_edit_phone"
+                        android:visibility="invisible"/>
+
                     <ImageView
+                        android:id="@+id/ic_edit_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:padding="8dp"
                         android:src="@drawable/ic_edit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/ic_done_phoneNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:padding="8dp"
+                        android:visibility="invisible"
+                        android:src="@drawable/ic_done"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -234,7 +241,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24sp"
+                android:layout_marginTop="32sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="1dp">
 
@@ -275,7 +282,22 @@
                         app:layout_constraintStart_toEndOf="@+id/mail_constant"
                         app:layout_constraintTop_toTopOf="@+id/mail_constant" />
 
+                    <EditText
+                        android:id="@+id/et_mail"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        app:layout_constraintBottom_toBottomOf="@+id/mail_constant"
+                        app:layout_constraintStart_toEndOf="@+id/mail_constant"
+                        app:layout_constraintTop_toTopOf="@+id/mail_constant"
+                        android:maxLines="1"
+                        android:maxLength="20"
+                        app:layout_constraintEnd_toStartOf="@+id/ic_mail_edit"
+                        android:visibility="invisible"/>
+
+
                     <ImageView
+                        android:id="@+id/ic_mail_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
@@ -285,6 +307,20 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/ic_mail_done"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:padding="8dp"
+                        android:visibility="invisible"
+                        android:src="@drawable/ic_done"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 

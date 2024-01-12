@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import com.muzo.sitesupervisor.core.data.remote.source.fireBaseData.FireBaseSource
 import javax.inject.Inject
@@ -136,10 +137,18 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.addUserImage(fileUri, siteSuperVisor)
     }
 
-    override suspend fun addImageUrlToFireStore(downloadUrl: Uri, currentUser: String, constructionName: String): Result<Unit> {
-        return fireBaseSource.addImageUrlToFireStore(downloadUrl, currentUser, constructionName)
+    override suspend fun changeUserItem(itemValue: String, currentUser: String, changedItem: String): Result<Unit> {
+        return fireBaseSource.changeUserItem(itemValue, currentUser, changedItem)
     }
 
+
+    override suspend fun addUserInfo(currentUser: String, userInfo: UserInfo): Result<Unit> {
+         return fireBaseSource.addUserInfo(currentUser, userInfo)
+    }
+
+    override suspend fun getSiteSuperVisorInfo(siteSuperVisor: String): Result<UserInfo> {
+        return fireBaseSource.getSiteSuperVisorInfo(siteSuperVisor)
+    }
 
 }
 

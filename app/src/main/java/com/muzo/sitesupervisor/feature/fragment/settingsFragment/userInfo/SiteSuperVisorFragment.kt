@@ -14,9 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.common.toastMessage
+import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.databinding.FragmentSiteSuperVisorBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -39,8 +41,10 @@ class SiteSuperVisorFragment : Fragment() {
         binding = FragmentSiteSuperVisorBinding.inflate(layoutInflater, container, false)
 
         getSiteInfo()
-        setData()
+        viewModel.getSiteSuperVisorInfo(siteSupervisor)
         changePhoto()
+        observeData("getData")
+        editData()
         return binding.root
     }
 
@@ -73,11 +77,6 @@ class SiteSuperVisorFragment : Fragment() {
         }
     }
 
-    private fun setData() {
-        binding.construcitonName.text = constructionArea
-        binding.name.text = viewModel.currentUser?.displayName
-        binding.mail.text = viewModel.currentUser?.email
-    }
 
     private fun changePhoto() {
 
@@ -112,9 +111,9 @@ class SiteSuperVisorFragment : Fragment() {
                                         val resultList = photoLoadState.resultUriList
                                         binding.progressBar.hide()
                                         viewModel.addUrlToFireBase(
-                                            resultList,
+                                            resultList.toString(),
                                             siteSupervisor,
-                                            constructionArea
+                                            ItemType.PHOTO_URL.key
                                         )
                                         observeData("save")
                                     }
@@ -143,9 +142,105 @@ class SiteSuperVisorFragment : Fragment() {
                             }
                         }
                     }
+
+                    "getData" -> {
+                        launch {
+                            viewModel.getInfoState.collect { getInfoState ->
+                                when {
+                                    getInfoState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    getInfoState.userInfoList != null -> {
+                                        binding.progressBar.hide()
+                                        showKnownData(getInfoState.userInfoList)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
+    private fun editData() {
+        binding.icEditSiteSupervisor.setOnClickListener {
+            binding.icEditSiteSupervisor.hide()
+            val textName = binding.name.text.toString()
+            binding.etSiteSupervisor.setText(textName)
+            binding.name.hide()
+            binding.etSiteSupervisor.show()
+            binding.icDoneSiteSupervisor.show()
+        }
+        binding.icDoneSiteSupervisor.setOnClickListener {
+            val editTextName = binding.etSiteSupervisor.text.toString()
+            viewModel.addUrlToFireBase(editTextName, siteSupervisor, ItemType.NAME.key)
+            binding.icDoneSiteSupervisor.hide()
+            binding.icEditSiteSupervisor.show()
+            binding.name.show()
+            binding.etSiteSupervisor.hide()
+            binding.name.text = editTextName
+        }
+
+        binding.icEditPhone.setOnClickListener {
+            binding.icEditPhone.hide()
+            val phoneText = binding.phoneNumber.text.toString()
+            binding.etPhone.setText(phoneText)
+            binding.phoneNumber.hide()
+            binding.etPhone.show()
+            binding.icDonePhoneNumber.show()
+        }
+        binding.icDonePhoneNumber.setOnClickListener {
+            val editPhoneNumber = binding.etPhone.text.toString()
+            viewModel.addUrlToFireBase(editPhoneNumber, siteSupervisor, ItemType.PHONE_NUMBER.key)
+            binding.icDonePhoneNumber.hide()
+            binding.icEditPhone.show()
+            binding.etPhone.hide()
+            binding.phoneNumber.show()
+            binding.phoneNumber.text = editPhoneNumber
+        }
+
+        binding.icMailEdit.setOnClickListener {
+            binding.icEditPhone.hide()
+            val mailText = binding.mail.text.toString()
+            binding.etMail.setText(mailText)
+            binding.icEditPhone.hide()
+            binding.icMailDone.show()
+            binding.etMail.show()
+        }
+        binding.icMailDone.setOnClickListener {
+            val editMail = binding.etPhone.text.toString()
+            viewModel.addUrlToFireBase(editMail, siteSupervisor, ItemType.MAIL.key)
+            binding.icMailDone.hide()
+            binding.icEditPhone.show()
+            binding.mail.show()
+            binding.etMail.hide()
+            binding.mail.text = editMail
+
+        }
+
+    }
+
+    private fun showKnownData(userInfo: UserInfo) {
+        binding.name.text = userInfo.name
+        binding.mail.text = userInfo.email
+        binding.phoneNumber.text = userInfo.phoneNumber
+        val uri = userInfo.photoUrl
+        if (uri?.isNotEmpty() == true) {
+            Glide.with(requireContext())
+                .load(uri)
+                .into(binding.personPhoto)
+        } else {
+            binding.personPhoto.setImageResource(R.drawable.ic_person)
+        }
+    }
+
+}
+
+enum class ItemType(val key: String) {
+    NAME("name"),
+    PHOTO_URL("photoUrl"),
+    PHONE_NUMBER("phoneNumber"),
+    MAIL("email")
 }

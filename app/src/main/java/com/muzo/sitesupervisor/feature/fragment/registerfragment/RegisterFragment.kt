@@ -11,8 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.auth.User
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.Resource
+import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.databinding.FragmentRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 class RegisterFragment : Fragment() {
     private lateinit var binding: FragmentRegisterBinding
     private val viewModel: RegisterFragmentViewModel by viewModels()
+    private lateinit var name :String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -41,6 +44,10 @@ class RegisterFragment : Fragment() {
                     is Resource.Error -> toastMessage(firebaseUser.exception?.message!!)
                     Resource.Loading -> binding.etUserName.visibility = View.GONE
                     is Resource.Success -> {
+                        firebaseUser.data?.let { user->
+                            getInfo(user)
+                        }
+                        toastMessage("Kayıt İşlemi Başarılı bir şekilde Tamamlandı. ")
                         navigateFragment()
                     }
                     else -> {}
@@ -51,14 +58,15 @@ class RegisterFragment : Fragment() {
 
     private fun clickEvent() {
         binding.btnRegister.setOnClickListener {
-            val name = binding.etUserName.text.toString()
+            val nameText = binding.etUserName.text.toString()
             val email = binding.etMail.text.toString()
             val password = binding.etPassword.text.toString()
             val confirmPassword = binding.etConfirmPassword.text.toString()
 
-            if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
+            if (nameText.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
                 if (confirmPassword == password) {
-                    viewModel.signUp(name, email, password)
+                    name=nameText
+                    viewModel.signUp(nameText, email, password)
 
                 } else {
                     toastMessage("Password does not Match")
@@ -69,6 +77,17 @@ class RegisterFragment : Fragment() {
             }
 
         }
+    }
+    private fun  getInfo(fireBaseUser :FirebaseUser ){
+        val mail=fireBaseUser.email
+        val uid=fireBaseUser.uid
+        val name=fireBaseUser.displayName
+
+        val userInfo=UserInfo(
+            email=mail,
+            name=name
+        )
+        viewModel.addUserInfo(uid,userInfo)
     }
 
     private fun navigateFragment() {
