@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EnterFragmentViewModel @Inject constructor(private val repository: AuthRepository):ViewModel() {
 
-     val _userInfoState = MutableStateFlow<Resource<FirebaseUser>?>(null)
+     private val _userInfoState = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val userInfo: StateFlow<Resource<FirebaseUser>?> = _userInfoState
 
     init {

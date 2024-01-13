@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_createAreaFragment_to_listingFragment"
             app:destination="@id/listingFragment" />
+        <action
+            android:id="@+id/action_createAreaFragment_to_passwordFragment"
+            app:destination="@id/passwordFragment" />
     </fragment>
     <fragment
         android:id="@+id/joinAreaFragment"
@@ -67,6 +70,9 @@
         <action
             android:id="@+id/action_joinAreaFragment_to_listingFragment"
             app:destination="@id/listingFragment" />
+        <action
+            android:id="@+id/action_joinAreaFragment_to_verifyPasswordFragment"
+            app:destination="@id/verifyPasswordFragment" />
     </fragment>
     <fragment
         android:id="@+id/listingFragment"
@@ -176,6 +182,30 @@
         <action
             android:id="@+id/action_siteSuperVisorFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/passwordFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.paswordFragment.PasswordFragment"
+        android:label="fragment_password"
+        tools:layout="@layout/fragment_password" >
+        <action
+            android:id="@+id/action_passwordFragment_to_listingFragment"
+            app:destination="@id/listingFragment" />
+        <action
+            android:id="@+id/action_passwordFragment_to_createAreaFragment"
+            app:destination="@id/createAreaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifyPasswordFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.verifyPasswordFragment.VerifyPasswordFragment"
+        android:label="fragment_verify_password"
+        tools:layout="@layout/fragment_verify_password" >
+        <action
+            android:id="@+id/action_verifyPasswordFragment_to_listingFragment"
+            app:destination="@id/listingFragment" />
+        <action
+            android:id="@+id/action_verifyPasswordFragment_to_joinAreaFragment"
+            app:destination="@id/joinAreaFragment" />
     </fragment>
 
 

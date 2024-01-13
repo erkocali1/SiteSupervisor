@@ -110,7 +110,7 @@ class SiteSuperVisorFragment : Fragment() {
                                     photoLoadState.resultUriList != null -> {
                                         val resultList = photoLoadState.resultUriList
                                         binding.progressBar.hide()
-                                        viewModel.addUrlToFireBase(
+                                        viewModel.addItemValueToFireBase(
                                             resultList.toString(),
                                             siteSupervisor,
                                             ItemType.PHOTO_URL.key
@@ -124,13 +124,13 @@ class SiteSuperVisorFragment : Fragment() {
 
                     "save" -> {
                         launch {
-                            viewModel.loadUrlState.collect { loadUrlState ->
+                            viewModel.loadItemState.collect { loadItemState ->
                                 when {
-                                    loadUrlState.loading -> {
+                                    loadItemState.loading -> {
                                         binding.progressBar.show()
                                     }
 
-                                    loadUrlState.result -> {
+                                    loadItemState.result -> {
                                         toastMessage(
                                             "Fotoğraf Başarılı Bir Şekilde Kaydedildi",
                                             requireContext()
@@ -148,10 +148,12 @@ class SiteSuperVisorFragment : Fragment() {
                             viewModel.getInfoState.collect { getInfoState ->
                                 when {
                                     getInfoState.loading -> {
+                                        binding.linear.hide()
                                         binding.progressBar.show()
                                     }
 
                                     getInfoState.userInfoList != null -> {
+                                        binding.linear.show()
                                         binding.progressBar.hide()
                                         showKnownData(getInfoState.userInfoList)
                                     }
@@ -175,7 +177,7 @@ class SiteSuperVisorFragment : Fragment() {
         }
         binding.icDoneSiteSupervisor.setOnClickListener {
             val editTextName = binding.etSiteSupervisor.text.toString()
-            viewModel.addUrlToFireBase(editTextName, siteSupervisor, ItemType.NAME.key)
+            viewModel.addItemValueToFireBase(editTextName, siteSupervisor, ItemType.NAME.key)
             binding.icDoneSiteSupervisor.hide()
             binding.icEditSiteSupervisor.show()
             binding.name.show()
@@ -193,7 +195,7 @@ class SiteSuperVisorFragment : Fragment() {
         }
         binding.icDonePhoneNumber.setOnClickListener {
             val editPhoneNumber = binding.etPhone.text.toString()
-            viewModel.addUrlToFireBase(editPhoneNumber, siteSupervisor, ItemType.PHONE_NUMBER.key)
+            viewModel.addItemValueToFireBase(editPhoneNumber, siteSupervisor, ItemType.PHONE_NUMBER.key)
             binding.icDonePhoneNumber.hide()
             binding.icEditPhone.show()
             binding.etPhone.hide()
@@ -202,18 +204,18 @@ class SiteSuperVisorFragment : Fragment() {
         }
 
         binding.icMailEdit.setOnClickListener {
-            binding.icEditPhone.hide()
+            binding.icMailEdit.hide()
             val mailText = binding.mail.text.toString()
             binding.etMail.setText(mailText)
-            binding.icEditPhone.hide()
+            binding.mail.hide()
             binding.icMailDone.show()
             binding.etMail.show()
         }
         binding.icMailDone.setOnClickListener {
-            val editMail = binding.etPhone.text.toString()
-            viewModel.addUrlToFireBase(editMail, siteSupervisor, ItemType.MAIL.key)
+            val editMail = binding.etMail.text.toString()
+            viewModel.addItemValueToFireBase(editMail, siteSupervisor, ItemType.MAIL.key)
             binding.icMailDone.hide()
-            binding.icEditPhone.show()
+            binding.icMailEdit.show()
             binding.mail.show()
             binding.etMail.hide()
             binding.mail.text = editMail

@@ -533,6 +533,27 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun changeSitePassword(itemValue: String, siteSuperVisor: String,constructionName: String): Result<Unit> {
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("UsersInfo").document(siteSuperVisor).collection("constName").document(constructionName)
+
+            val data = hashMapOf("Password" to itemValue)
+            currentUserRef.set(data.toMap()).await()
+        }
+    }
+
+  override  suspend fun getSitePassword(siteSuperVisor: String, constructionName: String): Result<String> {
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("UsersInfo").document(siteSuperVisor).collection("constName").document(constructionName)
+            val documentSnapshot = currentUserRef.get().await()
+
+            val data=documentSnapshot.data
+            val passowrd=data?.get("Password") as String
+            passowrd
+        }
+    }
+
+
 
 
     override suspend fun addUserInfo(currentUser:String, userInfo: UserInfo):Result<Unit>{
@@ -557,14 +578,14 @@ class FireBaseSourceImpl @Inject constructor(
 
             val mail=data?.get("email") as String? ?: ""
             val name=data?.get("name") as String? ?: ""
-            val phone=data?.get("phone") as String? ?: ""
+            val phone=data?.get("phoneNumber") as String? ?: ""
             val photoUrl=data?.get("photoUrl") as String? ?: ""
 
             val userInfo=UserInfo(
                 email = mail,
                 name = name,
                 phoneNumber = phone,
-                photoUrl =photoUrl
+                photoUrl =photoUrl,
             )
             userInfo
         }

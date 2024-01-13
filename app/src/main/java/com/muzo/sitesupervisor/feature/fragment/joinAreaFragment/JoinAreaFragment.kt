@@ -117,7 +117,7 @@ class JoinAreaFragment : Fragment() {
             viewModel.saveDataStore(currentUser, constructionName)
             binding.btnJoin.setOnClickListener {
                 Log.d("kontrol", userConstructionData.currentUser)
-                findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment)
+                findNavController().navigate(R.id.action_joinAreaFragment_to_verifyPasswordFragment)
             }
         }
     }

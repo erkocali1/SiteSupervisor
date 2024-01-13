@@ -95,12 +95,13 @@ class CreateAreaFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.saveDataStore(currentUser, constructionName)
 
-            findNavController().navigate(R.id.action_createAreaFragment_to_listingFragment)
+            findNavController().navigate(R.id.action_createAreaFragment_to_passwordFragment)
         }
     }
 
 
     private fun createDataModel(constructionName: String): DataModel {
+
 
         val currentUser = viewModel.currentUser?.uid.toString()
         return DataModel(

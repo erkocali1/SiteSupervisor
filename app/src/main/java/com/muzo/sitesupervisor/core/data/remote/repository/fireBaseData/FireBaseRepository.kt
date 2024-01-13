@@ -58,6 +58,8 @@ interface FireBaseRepository {
     suspend fun addUserInfo(currentUser:String, userInfo: UserInfo):Result<Unit>
 
     suspend fun getSiteSuperVisorInfo(siteSuperVisor: String):Result<UserInfo>
+    suspend fun changeSitePassword(itemValue: String, siteSuperVisor: String,constructionName: String): Result<Unit>
 
+    suspend fun getSitePassword(siteSuperVisor: String, constructionName: String): Result<String>
 
 }

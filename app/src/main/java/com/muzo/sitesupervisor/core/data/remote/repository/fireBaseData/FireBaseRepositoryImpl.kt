@@ -150,5 +150,14 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.getSiteSuperVisorInfo(siteSuperVisor)
     }
 
+    override suspend fun changeSitePassword(itemValue: String, siteSuperVisor: String, constructionName: String): Result<Unit> {
+        return fireBaseSource.changeSitePassword(itemValue, siteSuperVisor, constructionName)
+    }
+
+    override suspend fun getSitePassword(siteSuperVisor: String, constructionName: String): Result<String> {
+        return fireBaseSource.getSitePassword(siteSuperVisor, constructionName)
+    }
+
+
 }
 

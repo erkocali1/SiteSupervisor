@@ -25,7 +25,7 @@ import javax.inject.Inject
 class SiteSuperVisorViewModel @Inject constructor(
     private val dataStore: MyDataStore,
     private val addUserImageUseCase: AddUserImageUseCase,
-    private val addUserImageUrlUseCase: ChangeUserITemUseCase,
+    private val changeUserITemUseCase: ChangeUserITemUseCase,
     private val authRepository: AuthRepository,
     private val getSiteSuperVisorInfoUseCase: GetSiteSuperVisorInfoUseCase
 ) : ViewModel() {
@@ -33,8 +33,8 @@ class SiteSuperVisorViewModel @Inject constructor(
     private val _photoLoadState: MutableStateFlow<PhotoLoadState> = MutableStateFlow(PhotoLoadState())
     val photoLoadState = _photoLoadState
 
-    private val _loadUrlState: MutableStateFlow<UrlLoadState> = MutableStateFlow(UrlLoadState())
-    val loadUrlState = _loadUrlState
+    private val _loadItemState: MutableStateFlow<UrlLoadState> = MutableStateFlow(UrlLoadState())
+    val loadItemState = _loadItemState
 
     private val _getInfoState: MutableStateFlow<GetInfoState> = MutableStateFlow(GetInfoState())
     val getInfoState = _getInfoState
@@ -69,20 +69,20 @@ class SiteSuperVisorViewModel @Inject constructor(
         }
     }
 
-    fun addUrlToFireBase(itemValue: String, currentUser: String, changedItem: String) {
+    fun addItemValueToFireBase(itemValue: String, currentUser: String, changedItem: String) {
         viewModelScope.launch {
-            addUserImageUrlUseCase(itemValue, currentUser, changedItem).asReSource().onEach { result ->
+            changeUserITemUseCase(itemValue, currentUser, changedItem).asReSource().onEach { result ->
                 when (result) {
                     is Resource.Error -> {
-                        _loadUrlState.value = _loadUrlState.value.copy(loading = false)
+                        _loadItemState.value = _loadItemState.value.copy(loading = false)
                     }
 
                     is Resource.Loading -> {
-                        _loadUrlState.value = _loadUrlState.value.copy(loading = true)
+                        _loadItemState.value = _loadItemState.value.copy(loading = true)
                     }
 
                     is Resource.Success -> {
-                        _loadUrlState.value = _loadUrlState.value.copy(loading = false,result = true)
+                        _loadItemState.value = _loadItemState.value.copy(loading = false,result = true)
                     }
                 }
             }.launchIn(this)
