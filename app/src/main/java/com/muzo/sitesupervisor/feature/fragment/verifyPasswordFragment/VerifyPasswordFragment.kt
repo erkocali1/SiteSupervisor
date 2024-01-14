@@ -26,6 +26,7 @@ import com.thecode.aestheticdialogs.OnDialogClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.selects.select
 
 @AndroidEntryPoint
 class VerifyPasswordFragment : Fragment() {
@@ -52,9 +53,8 @@ class VerifyPasswordFragment : Fragment() {
                 binding.editText2,
                 binding.editText3,
                 binding.editText4,
-                binding.editText5
-            )
-        )
+                binding.editText5))
+        clearEditTexts()
         return binding.root
     }
 
@@ -83,7 +83,7 @@ class VerifyPasswordFragment : Fragment() {
                     getPasswordState.password != null -> {
                         binding.progressBar.hide()
                         val password = getPasswordState.password
-                            sitePassword= password
+                        sitePassword = password
                     }
                 }
             }
@@ -92,34 +92,57 @@ class VerifyPasswordFragment : Fragment() {
 
     private fun setEditTextListeners(editTexts: Array<EditText>) {
         val passwordStringBuilder = StringBuilder()
+
         for (i in editTexts.indices) {
             editTexts[i].addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?, start: Int, count: Int, after: Int
-                ) {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 }
 
-                override fun onTextChanged(
-                    s: CharSequence?, start: Int, before: Int, count: Int
-                ) {
-                    if (s?.length == 1) {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (count == 1) {
+                        // Bir karakter eklendi
                         passwordStringBuilder.append(s)
                         if (i < editTexts.size - 1) {
                             editTexts[i + 1].requestFocus()
                         } else {
-                            val password = passwordStringBuilder.toString()
-                            if (sitePassword == password) {
-                                navigateFragment()
-                                toastMessage("Şifre Onaylandı", requireContext())
-                            } else {
-                                toastMessage("Şifre Doğru Değil Tekrar Deneyiniz", requireContext())
-                            }
+                            checkPassword(passwordStringBuilder.toString())
                         }
+                    } else if (count == 0 && before == 1) {
+                        // Bir karakter silindi
+                        passwordStringBuilder.deleteCharAt(passwordStringBuilder.length - 1)
                     }
                 }
 
-                override fun afterTextChanged(s: Editable?) {}
+                override fun afterTextChanged(s: Editable?) {
+                }
             })
+        }
+    }
+    private fun checkPassword(password: String) {
+        if (sitePassword == password) {
+            navigateFragment()
+            toastMessage("Şifre Onaylandı", requireContext())
+        } else {
+            toastMessage("Şifre Doğru Değil Tekrar Deneyiniz", requireContext())
+        }
+    }
+
+
+    private fun clearEditTexts() {
+        binding.btnClearText.setOnClickListener {
+            val editTexts = arrayOf(
+                binding.editText1,
+                binding.editText2,
+                binding.editText3,
+                binding.editText4,
+                binding.editText5
+            )
+
+            for (editText in editTexts) {
+                editText.text = null
+            }
+            editTexts[0].requestFocus()
+
         }
     }
 
