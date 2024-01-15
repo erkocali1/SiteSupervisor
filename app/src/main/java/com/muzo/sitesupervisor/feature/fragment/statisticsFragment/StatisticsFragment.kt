@@ -130,47 +130,6 @@ class StatisticsFragment : Fragment() {
         chart.invalidate()
     }
 
-
-    /*
-        private fun setBarChartData(months: List<String>, operationDuration: List<Float>) {
-            val chart = binding.barChart
-
-            val aggregatedMonths = mutableMapOf<String, Float>()
-
-    // Aynı ayları toplama
-            for (i in months.indices) {
-                val month = months[i]
-                val duration = operationDuration.getOrNull(i) ?: 0f
-                val currentValue = aggregatedMonths[month] ?: 0f
-                aggregatedMonths[month] = currentValue + duration
-            }
-
-
-            // Yeni değerleri barList'e ekleme
-            val barList = ArrayList<BarEntry>()
-            var index = 0f
-            for ((month, duration) in aggregatedMonths) {
-                barList.add(BarEntry(index, duration))
-                index += 1f
-            }
-
-            val xAxis = chart.xAxis
-            xAxis.valueFormatter = IndexAxisValueFormatter(aggregatedMonths.keys.toList())
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.setAvoidFirstLastClipping(true)
-
-            val barDataSet = BarDataSet(barList, "Aylar")
-            barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 250)
-            barDataSet.valueTextSize = 15f
-            val barData = BarData(barDataSet)
-            chart.data = barData
-
-
-            chart.invalidate()
-        }
-
-    */
-
     private fun setPieChartData(cost: List<Float>, amountPaid: List<Float>) {
         // Toplam maliyet ve ödenen miktarı hesapla
         val totalCost = cost.sum()

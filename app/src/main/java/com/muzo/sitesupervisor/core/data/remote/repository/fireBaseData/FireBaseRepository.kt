@@ -62,4 +62,10 @@ interface FireBaseRepository {
 
     suspend fun getSitePassword(siteSuperVisor: String, constructionName: String): Result<String>
 
+    suspend fun addTeam(currentUser:String, teams: List<String>, constructionName: String):Result<Unit>
+
+    suspend fun getTeam(currentUser:String, constructionName: String):Result<List<String>>
+
+    suspend fun updateTeam(currentUser: String, teams: List<String>, constructionName: String): Result<Unit>
+
 }

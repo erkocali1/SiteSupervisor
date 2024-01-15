@@ -31,16 +31,16 @@ class VerifyPasswordFragmentViewModel @Inject constructor(
             getPasswordUseCase(siteSuperVisor, constructionName).asReSource().onEach { result ->
                 when (result) {
                     is Resource.Error -> {
-                        getPasswordState.value = getPasswordState.value.copy(loading = false)
+                        _getPasswordState.value = _getPasswordState.value.copy(loading = false)
                     }
 
                     is Resource.Loading -> {
-                        getPasswordState.value = getPasswordState.value.copy(loading = true)
+                        _getPasswordState.value = _getPasswordState.value.copy(loading = true)
                     }
 
                     is Resource.Success -> {
-                        getPasswordState.value =
-                            getPasswordState.value.copy(loading = false, password = result.data)
+                        _getPasswordState.value =
+                            _getPasswordState.value.copy(loading = false, password = result.data)
                     }
                 }
             }.launchIn(this)

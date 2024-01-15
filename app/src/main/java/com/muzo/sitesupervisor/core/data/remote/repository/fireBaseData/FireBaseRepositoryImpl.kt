@@ -158,6 +158,18 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.getSitePassword(siteSuperVisor, constructionName)
     }
 
+    override suspend fun addTeam(currentUser: String, teams: List<String>, constructionName: String): Result<Unit> {
+       return fireBaseSource.addTeam(currentUser, teams, constructionName)
+    }
+
+    override suspend fun getTeam(currentUser: String, constructionName: String): Result<List<String>> {
+       return  fireBaseSource.getTeam(currentUser, constructionName)
+    }
+
+    override suspend fun updateTeam(currentUser: String, teams: List<String>, constructionName: String): Result<Unit> {
+        return fireBaseSource.updateTeam(currentUser, teams, constructionName)
+    }
+
 
 }
 

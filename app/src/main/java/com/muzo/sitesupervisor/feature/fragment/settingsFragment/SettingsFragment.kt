@@ -30,14 +30,20 @@ class SettingsFragment : Fragment() {
         binding.toolbar.title = "AYARLAR"
 
         binding.cvLocation.setOnClickListener {
-
             locationEvent()
-
         }
 
         binding.cvPerson.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_siteSuperVisorFragment)
         }
+
+        binding.cvPasswordSettings.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_settingsPasswordFragment)
+        }
+        binding.cvTeam.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_teamFragment)
+        }
+
         return binding.root
     }
 

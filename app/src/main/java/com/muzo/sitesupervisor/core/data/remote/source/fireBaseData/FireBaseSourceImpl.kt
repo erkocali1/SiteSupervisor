@@ -538,7 +538,7 @@ class FireBaseSourceImpl @Inject constructor(
             val currentUserRef = database.collection("UsersInfo").document(siteSuperVisor).collection("constName").document(constructionName)
 
             val data = hashMapOf("Password" to itemValue)
-            currentUserRef.set(data.toMap()).await()
+            currentUserRef.update(data.toMap()).await()
         }
     }
 
@@ -548,12 +548,46 @@ class FireBaseSourceImpl @Inject constructor(
             val documentSnapshot = currentUserRef.get().await()
 
             val data=documentSnapshot.data
-            val passowrd=data?.get("Password") as String
-            passowrd
+            val password=data?.get("Password") as String
+            password
+        }
+    }
+
+    override suspend fun addTeam(currentUser:String, teams: List<String>, constructionName: String):Result<Unit>{
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("UsersInfo").document(currentUser).collection("constName").document(constructionName)
+
+
+            val post = hashMapOf(
+                "teams" to teams,
+            )
+            currentUserRef.set(post).await()
+        }
+    }
+
+    override suspend fun updateTeam(currentUser: String, teams: List<String>, constructionName: String): Result<Unit> {
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("UsersInfo").document(currentUser).collection("constName").document(constructionName)
+
+            val post = hashMapOf<String, Any>(
+                "teams" to teams as Any
+            )
+            currentUserRef.update(post).await()
         }
     }
 
 
+
+
+    override suspend fun getTeam(currentUser:String, constructionName: String):Result<List<String>>{
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("UsersInfo").document(currentUser).collection("constName").document(constructionName).get().await()
+
+            val data=currentUserRef.data
+            val teams=data?.get("teams") as? List<String> ?: emptyList()
+            teams
+        }
+    }
 
 
     override suspend fun addUserInfo(currentUser:String, userInfo: UserInfo):Result<Unit>{

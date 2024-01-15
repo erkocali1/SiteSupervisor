@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
+import com.muzo.sitesupervisor.core.constans.Constants.Companion.ConstructionTeams.TEAMS
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentCreateAreaBinding
 import com.thecode.aestheticdialogs.AestheticDialog
@@ -45,6 +46,9 @@ class CreateAreaFragment : Fragment() {
         binding.btnCreate.setOnClickListener {
 
             val constructionName = binding.etConstructionName.text.toString()
+            val currentUser = viewModel.currentUser?.uid.toString()
+
+
 
             if (constructionName.isNotEmpty()) {
 
@@ -68,6 +72,7 @@ class CreateAreaFragment : Fragment() {
                             uiState.isSuccessful -> {
                                 toastMessage(uiState.message!!)
                                 navigateFragment()
+                                viewModel.addItem(currentUser, TEAMS, constructionName)
                             }
 
                             uiState.message != null -> {
@@ -108,7 +113,7 @@ class CreateAreaFragment : Fragment() {
             id = postId,
             message = "Lets start",
             title = "First Commit",
-            photoUrl = listOf("",""),
+            photoUrl = listOf("", ""),
             day = "1234",
             time = "123",
             currentUser = currentUser,
