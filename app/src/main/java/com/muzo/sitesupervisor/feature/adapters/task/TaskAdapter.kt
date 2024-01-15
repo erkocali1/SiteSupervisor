@@ -26,7 +26,7 @@ class TaskAdapter(private val list: List<TaskModel>?, val onClick: (item: TaskMo
                 val layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
                 innerRecyclerView.layoutManager = layoutManager
-                val adapter = TextAdapter(item.workerList) {}
+               val adapter = TextAdapter(item.workerList) {}
                 innerRecyclerView.adapter = adapter
 
                 root.setOnClickListener {

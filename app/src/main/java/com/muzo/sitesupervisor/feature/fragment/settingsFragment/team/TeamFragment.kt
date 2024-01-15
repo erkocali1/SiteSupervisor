@@ -61,8 +61,7 @@ class TeamFragment : Fragment() {
 
                                     addItemState.result -> {
                                         binding.progressBar.hide()
-                                        toastMessage("Ekip Başarılı Bir Şekilde Eklendi", requireContext())
-
+                                        toastMessage("İşlem Başarılı Bir Şekilde Eklendi", requireContext())
                                         updateJob.cancel()
                                     }
                                 }
@@ -81,7 +80,7 @@ class TeamFragment : Fragment() {
                                     getTeamState.resultList != null -> {
                                         workerTeamList=getTeamState.resultList
                                         setupAdapter(workerTeamList)
-
+                                        updateJob.cancel()
                                     }
                                 }
                             }
@@ -107,11 +106,22 @@ class TeamFragment : Fragment() {
 
 
     private fun setupAdapter(list: List<String>) {
-        adapter = TextAdapter(list) {}
+        adapter = TextAdapter(list) { deletedItem ->
+            // Tıklanan öğeyi listeden çıkar
+            val updatedList = workerTeamList.toMutableList().apply {
+                remove(deletedItem)
+            }
+            workerTeamList = updatedList
+            setupAdapter(updatedList)
+
+            viewModel.updateItem(siteSupervisor,updatedList,constructionArea)
+            observeData("change")
+        }
         binding.rv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rv.adapter = adapter
     }
+
     private fun getSiteInfo() {
         lifecycleScope.launch {
             viewModel.readDataStore("construction_key").collect { area ->

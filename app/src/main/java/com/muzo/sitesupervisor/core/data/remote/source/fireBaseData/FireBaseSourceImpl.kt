@@ -576,9 +576,6 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-
-
-
     override suspend fun getTeam(currentUser:String, constructionName: String):Result<List<String>>{
         return kotlin.runCatching {
             val currentUserRef = database.collection("UsersInfo").document(currentUser).collection("constName").document(constructionName).get().await()
