@@ -9,6 +9,7 @@ import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.databinding.ItemImageBinding
 import com.muzo.sitesupervisor.databinding.TaskEventsBinding
 import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
+import com.muzo.sitesupervisor.feature.adapters.textAdapter.SmallTextAdapter
 import com.muzo.sitesupervisor.feature.adapters.textAdapter.TextAdapter
 
 class TaskAdapter(private val list: List<TaskModel>?, val onClick: (item: TaskModel) -> Unit) :
@@ -26,7 +27,7 @@ class TaskAdapter(private val list: List<TaskModel>?, val onClick: (item: TaskMo
                 val layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
                 innerRecyclerView.layoutManager = layoutManager
-               val adapter = TextAdapter(item.workerList) {}
+               val adapter = SmallTextAdapter(item.workerList) {}
                 innerRecyclerView.adapter = adapter
 
                 root.setOnClickListener {

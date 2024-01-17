@@ -52,6 +52,8 @@ class StatisticsFragment : Fragment() {
     private var list: List<WorkInfoModel> = emptyList()
     private lateinit var adapter: StatisticsAdapter
     private lateinit var updateItJob: Job
+    private lateinit var workerTeamList: List<String>
+
 
 
     override fun onCreateView(
@@ -64,17 +66,15 @@ class StatisticsFragment : Fragment() {
             findNavController().navigate(R.id.action_statisticsFragment_to_bottomSheetDialogFragment)
         }
         getSiteInfo()
-        setList()
+        viewModel.getTeam(siteSupervisor,constructionArea)
+        observeData("getTeam")
         return binding.root
     }
 
-    private fun initViews() {
-        //  setBarChartData()
-    }
 
     private fun setBarChartData(months: List<String>, operationDuration: List<Float>) {
         val chart = binding.barChart
-        chart.description.text="Aylık Çalışma Miktarları(Gün)"
+        chart.description.text = "Aylık Çalışma Miktarları(Gün)"
         val monthlyTotalDuration = mutableMapOf<String, Float>()
 
         // Aylara göre çalışma sürelerini topla veya ekle
@@ -124,8 +124,6 @@ class StatisticsFragment : Fragment() {
         yAxis.axisMinimum = 0f
 
 
-
-
         // Grafik güncellemesi
         chart.invalidate()
     }
@@ -164,7 +162,7 @@ class StatisticsFragment : Fragment() {
 
         binding.pieChart.data = data
         binding.pieChart.setEntryLabelColor(Color.BLACK)
-        binding.pieChart.description.text="Toplam Alacak Verecek Miktarı"
+        binding.pieChart.description.text = "Toplam Alacak Verecek Miktarı"
         binding.pieChart.highlightValues(null)
         binding.pieChart.invalidate()
     }
@@ -209,6 +207,22 @@ class StatisticsFragment : Fragment() {
                             }
                         }
                     }
+                    "getTeam"->{
+                        launch {
+                            viewModel.teamStatisticState.collect { teamStatisticState ->
+                                when {
+                                    teamStatisticState.loading -> {
+
+                                    }
+
+                                    teamStatisticState.resultList != null -> {
+                                        workerTeamList = teamStatisticState.resultList
+                                        setList()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -228,7 +242,7 @@ class StatisticsFragment : Fragment() {
         val adapter = ArrayAdapter(
             requireContext(),
             R.layout.custom_spinner_item,
-            Constants.Companion.ConstructionTeams.TEAMS
+           workerTeamList
         )
         binding.spinner.adapter = adapter
 

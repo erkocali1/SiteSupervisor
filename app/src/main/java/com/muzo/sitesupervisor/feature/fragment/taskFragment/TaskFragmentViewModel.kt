@@ -11,7 +11,9 @@ import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.domain.GetAllTaskUseCase
 import com.muzo.sitesupervisor.domain.GetTaskDateUseCase
 import com.muzo.sitesupervisor.domain.GetTasksWithWorkerUseCase
+import com.muzo.sitesupervisor.domain.GetTeamUseCase
 import com.muzo.sitesupervisor.feature.fragment.detail.UpdateState
+import com.muzo.sitesupervisor.feature.fragment.taskFragmentDetail.GetTeamTaskState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +27,7 @@ class TaskFragmentViewModel @Inject constructor(
     private val getAllTaskUseCase: GetAllTaskUseCase,
     private val getTaskDateUseCase: GetTaskDateUseCase,
     private val getTasksWithWorkerUseCase: GetTasksWithWorkerUseCase,
+    private val getTeamUseCase: GetTeamUseCase,
     private val dataStore: MyDataStore
 ) : ViewModel() {
 
@@ -36,6 +39,9 @@ class TaskFragmentViewModel @Inject constructor(
 
     private val _workerState: MutableStateFlow<WorkerState> = MutableStateFlow(WorkerState())
     val workerState = _workerState
+
+    private val _teamTaskState: MutableStateFlow<TeamTaskState> = MutableStateFlow(TeamTaskState())
+    val teamTaskState = _teamTaskState
 
 
     fun getAllTask(currentUser: String, constructionName: String, date: String) {
@@ -82,7 +88,7 @@ class TaskFragmentViewModel @Inject constructor(
         }
     }
 
-    fun getWorker(workerName:String) {
+    fun getWorker(workerName: String) {
         viewModelScope.launch {
             getTasksWithWorkerUseCase(workerName).asReSource().onEach { result ->
                 when (result) {
@@ -98,6 +104,28 @@ class TaskFragmentViewModel @Inject constructor(
                         _workerState.value = _workerState.value.copy(
                             loading = false, resulListWithWorker = result.data
                         )
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+    fun getTeam(currentUser: String, constructionName: String) {
+        viewModelScope.launch {
+            getTeamUseCase(currentUser, constructionName).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _teamTaskState.value = _teamTaskState.value.copy(loading = true)
+                    }
+
+                    is Resource.Error -> {
+                        _teamTaskState.value = _teamTaskState.value.copy(loading = false)
+                    }
+
+                    is Resource.Success -> {
+                        _teamTaskState.value =
+                            _teamTaskState.value.copy(loading = false, resultList = result.data)
+
                     }
                 }
             }.launchIn(this)
@@ -131,6 +159,10 @@ data class WorkerState(
     val message: String? = null,
     val resulListWithWorker: List<TaskModel>? = null,
     val isSuccessful: Boolean = false,
+)
+
+data class TeamTaskState(
+    val resultList: List<String>? = null, val loading: Boolean = false
 )
 
 

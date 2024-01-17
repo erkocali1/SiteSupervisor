@@ -11,7 +11,9 @@ import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.EditText
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.muzo.sitesupervisor.R
@@ -36,27 +38,30 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
     private lateinit var updateItJob: Job
+    private lateinit var workerTeamList: List<String>
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBottomSheetDialogBinding.inflate(layoutInflater, container, false)
-
         setDatePicker()
-        setList()
         getSiteInfo()
+        viewModel.getTeam(siteSupervisor,constructionArea)
+        observeData("getTeam")
         sendData()
 
         return binding.root
     }
 
     private fun setList() {
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, Constants.Companion.ConstructionTeams.TEAMS
+        val adapter = ArrayAdapter(
+            requireContext(), R.layout.list_item,workerTeamList
         )
         binding.listConstruction.setAdapter(adapter)
 
         binding.listConstruction.setOnItemClickListener { _, _, position, _ ->
-            val selectedConstruction = Constants.Companion.ConstructionTeams.TEAMS[position]
+            val selectedConstruction =workerTeamList[position]
         }
     }
 
@@ -81,7 +86,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
                 DatePickerDialog.OnDateSetListener { datePicker: DatePicker, selectedYear: Int, selectedMonth: Int, day: Int ->
                     val selectedMonthName = monthsArray[selectedMonth] // Seçilen ayı al
                     selectedDate = "$day $selectedMonthName $selectedYear"
-                    specifiedMonth=selectedMonthName
+                    specifiedMonth = selectedMonthName
                     dayPicker.setText(selectedDate)
                 },
                 year,
@@ -103,83 +108,103 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
             if (isCheckBlankItem()) {
                 val data = getData()
                 viewModel.saveStatistic(data)
-                observeData()
+                observeData("file")
             } else {
                 toastMessage("Lütfen Tüm Alanları Doldurunuz", requireContext())
             }
         }
     }
 
-    private fun observeData() {
-        updateItJob= lifecycleScope.launch {
-           viewModel.uiState.collect { uiState ->
-                when {
-                    uiState.isSuccessful -> {
-                        binding.progressBar.hide()
-                        clearFields()
-                        toastMessage("Kayıt Başarı Bir Şekilde Eklenmiştir",requireContext())
-                        updateItJob.cancel()
-                      //  navigateFragment()
-                    }
+    private fun observeData(observedState: String) {
+        updateItJob = lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                when (observedState) {
+                    "file" -> {
+                        launch {
+                            viewModel.uiState.collect { uiState ->
+                                when {
+                                    uiState.isSuccessful -> {
+                                        binding.progressBar.hide()
+                                        clearFields()
+                                        toastMessage("Kayıt Başarı Bir Şekilde Eklenmiştir", requireContext())
+                                        updateItJob.cancel()
+                                        //  navigateFragment()
+                                    }
 
-                    uiState.loading -> {
-                        binding.progressBar.show()
+                                    uiState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    "getTeam"->{
+                        launch {
+                            viewModel.getTeamBottomState.collect { getTeamBottomState ->
+                                when {
+                                    getTeamBottomState.loading -> {
+
+                                    }
+
+                                    getTeamBottomState.resultList != null -> {
+                                        workerTeamList = getTeamBottomState.resultList
+                                        setList()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
+        private fun isCheckBlankItem(): Boolean {
+            val listItem = binding.listConstruction.text.toString()
+            val dayItem = selectedDate
+            val workDayItem = binding.etFinishDay.text.toString()
+            val cost = binding.etCoastMoney.text.toString()
+            val amountPaid = binding.etAvailableBalance.text.toString()
 
-    private fun navigateFragment() {
-        findNavController().navigate(R.id.action_bottomSheetDialogFragment_to_statisticsFragment)
-    }
+            return listItem.isNotBlank() && dayItem.isNotBlank() && workDayItem.isNotBlank() && cost.isNotBlank() && amountPaid.isNotBlank()
+        }
 
-    private fun isCheckBlankItem(): Boolean {
-        val listItem = binding.listConstruction.text.toString()
-        val dayItem = selectedDate
-        val workDayItem = binding.etFinishDay.text.toString()
-        val cost=binding.etCoastMoney.text.toString()
-        val amountPaid=binding.etAvailableBalance.text.toString()
-
-        return listItem.isNotBlank() && dayItem.isNotBlank() && workDayItem.isNotBlank()  && cost.isNotBlank()  && amountPaid.isNotBlank()
-    }
-
-    private fun getSiteInfo() {
-        lifecycleScope.launch {
-            viewModel.readDataStore("construction_key").collect { area ->
-                constructionArea = area!!
-                viewModel.readDataStore("user_key").collect { supervisor ->
-                    siteSupervisor = supervisor!!
+        private fun getSiteInfo() {
+            lifecycleScope.launch {
+                viewModel.readDataStore("construction_key").collect { area ->
+                    constructionArea = area!!
+                    viewModel.readDataStore("user_key").collect { supervisor ->
+                        siteSupervisor = supervisor!!
+                    }
                 }
             }
         }
-    }
 
-    private fun getData(): WorkInfoModel {
-        val listItem = binding.listConstruction.text.toString()
-        val dayItem = selectedDate
-        val workDayItem = binding.etFinishDay.text.toString().toLong()
-        val cost=binding.etCoastMoney.text.toString()
-        val amountPaid=binding.etAvailableBalance.text.toString()
+        private fun getData(): WorkInfoModel {
+            val listItem = binding.listConstruction.text.toString()
+            val dayItem = selectedDate
+            val workDayItem = binding.etFinishDay.text.toString().toLong()
+            val cost = binding.etCoastMoney.text.toString()
+            val amountPaid = binding.etAvailableBalance.text.toString()
 
-        return WorkInfoModel(
-            listItem,
-            dayItem,
-            workDayItem,
-            siteSupervisor,
-            constructionArea,
-            specifiedMonth,
-            cost,
-            amountPaid
-        )
+            return WorkInfoModel(
+                listItem,
+                dayItem,
+                workDayItem,
+                siteSupervisor,
+                constructionArea,
+                specifiedMonth,
+                cost,
+                amountPaid
+            )
+        }
+
+        private fun clearFields() {
+            binding.listConstruction.setText("")
+            binding.etStartDay.setText("")
+            binding.etFinishDay.setText("")
+            binding.etCoastMoney.setText("")
+            binding.etAvailableBalance.setText("")
+        }
     }
-    private fun clearFields() {
-        binding.listConstruction.setText("")
-        binding.etStartDay.setText("")
-        binding.etFinishDay.setText("")
-        binding.etCoastMoney.setText("")
-        binding.etAvailableBalance.setText("")
-    }
-}
 
 

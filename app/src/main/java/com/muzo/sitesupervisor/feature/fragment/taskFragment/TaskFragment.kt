@@ -34,6 +34,7 @@ import com.muzo.sitesupervisor.feature.fragment.baseFragment.HasBackButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -61,7 +62,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private val currentMonth = YearMonth.now()
     private val startMonth = currentMonth.minusMonths(50)
     private val endMonth = currentMonth.plusMonths(50)
-
+    private lateinit var workerTeamList: List<String>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,13 +70,14 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         binding = FragmentTaskBinding.bind(view)
         getSiteInfo()
         viewModel.getTaskDate(siteSupervisor, constructionArea)
+        viewModel.getTeam(siteSupervisor,constructionArea)
         observe(ObservedState.DATE_STATE)
+        observe(ObservedState.GET_TEAM_STATE)
         searchEvent()
         config()
         configureToolbarTitle()
         navigateAddTask()
 
-        //  viewModel.getWorker("Boyacılar")
         if (savedInstanceState == null) {
             // Show today's events initially.
             binding.exThreeCalendar.post { selectDate(today) }
@@ -281,6 +283,22 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                             }
                         }
                     }
+                    ObservedState.GET_TEAM_STATE->{
+                        launch {
+                            viewModel.teamTaskState.collect { teamTaskState ->
+                                when {
+                                    teamTaskState.loading -> {
+
+                                    }
+
+                                    teamTaskState.resultList != null -> {
+                                        workerTeamList = teamTaskState.resultList
+                                        setList()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -371,8 +389,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         binding.listConstruction.setAdapter(adapter)
         var job: Job? = null
         binding.listConstruction.setOnItemClickListener { _, _, position, _ ->
-            val selectedWorker =
-                com.muzo.sitesupervisor.core.constans.Constants.Companion.ConstructionTeams.TEAMS[position]
+            val selectedWorker = workerTeamList[position]
             job?.cancel()
             job = MainScope().launch {
                 selectedWorker.let {
@@ -382,10 +399,15 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             }
         }
     }
+    private fun setList(){
+
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, workerTeamList)
+        binding.listConstruction.setAdapter(adapter)
+    }
 }
 
 enum class ObservedState {
-    UI_STATE, DATE_STATE, SEARCH_STATE
+    UI_STATE, DATE_STATE, SEARCH_STATE,GET_TEAM_STATE
 }
 
 

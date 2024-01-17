@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -82,11 +81,11 @@
         android:id="@+id/cv_time_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16sp"
         android:backgroundTint="@color/example_3_blue_light"
         android:elevation="5sp"
         app:cardCornerRadius="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16sp"
         app:layout_constraintTop_toBottomOf="@+id/top_divider">
 
         <TextView
@@ -99,60 +98,6 @@
             android:text="@string/_date"
             android:textSize="24sp" />
     </androidx.cardview.widget.CardView>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/workerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/list">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="-20sp"
-            android:layout_marginBottom="4sp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_worker"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Farklı Bir Ekip Girin"
-                android:inputType="textPersonName"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="40dp"
-                android:layout_height="40sp"
-                android:backgroundTint="@color/white"
-                android:contentDescription="Add Icon"
-                android:layout_marginEnd="15dp"
-                android:src="@drawable/ic_add"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_workerPicker"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8sp"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/workerLayout"
-        tools:itemCount="5"
-        tools:listitem="@layout/item_worker" />
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/list"
@@ -172,6 +117,19 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_workerPicker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8sp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/list"
+        tools:itemCount="5"
+        tools:listitem="@layout/item_worker" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/titleLayout"

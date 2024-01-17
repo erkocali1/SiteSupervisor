@@ -1,25 +1,26 @@
 package com.muzo.sitesupervisor.feature.adapters.textAdapter
 
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.muzo.sitesupervisor.databinding.ItemTeamBinding
+import com.muzo.sitesupervisor.databinding.ItemWorkerBinding
 
-class TextAdapter(private var list: List<String>?, val onClick: (item: String) -> Unit) :
-    RecyclerView.Adapter<TextAdapter.ViewHolder>() {
+class SmallTextAdapter(private var list: List<String>?, val onClick: (item: String) -> Unit) :
+    RecyclerView.Adapter<SmallTextAdapter.ViewHolder>() {
 
-    inner class ViewHolder(private val binding: ItemTeamBinding) :
+    inner class ViewHolder(private val binding: ItemWorkerBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: String) {
-            binding.teamName.text = item
-            binding.icDelete.setOnClickListener {
+            binding.workerName.text = item
+            binding.root.setOnClickListener {
                 onClick(item)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemTeamBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemWorkerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

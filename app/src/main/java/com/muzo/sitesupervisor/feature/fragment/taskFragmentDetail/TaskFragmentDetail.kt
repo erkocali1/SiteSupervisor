@@ -16,9 +16,9 @@ import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.common.toastMessage
-import com.muzo.sitesupervisor.core.constans.Constants.Companion.ConstructionTeams.TEAMS
 import com.muzo.sitesupervisor.core.data.model.TaskModel
 import com.muzo.sitesupervisor.databinding.FragmentTaskDetailBinding
+import com.muzo.sitesupervisor.feature.adapters.textAdapter.SmallTextAdapter
 import com.muzo.sitesupervisor.feature.adapters.textAdapter.TextAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -33,7 +33,7 @@ class TaskFragmentDetail : Fragment() {
     private lateinit var binding: FragmentTaskDetailBinding
     private val viewModel: TaskFragmentDetailViewModel by viewModels()
     private var stringList: MutableList<String>? = mutableListOf()
-    private lateinit var adapter: TextAdapter
+    private lateinit var adapter: SmallTextAdapter
     private var taskIdNumber: Long? = null
     private lateinit var constructionArea: String
     private var location: String? = null
@@ -43,7 +43,7 @@ class TaskFragmentDetail : Fragment() {
     private var dataEmpty: Boolean = false
     private var sendData: Boolean = false
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
-
+    private lateinit var workerTeamList: List<String>
 
 
     override fun onCreateView(
@@ -54,26 +54,50 @@ class TaskFragmentDetail : Fragment() {
 
         defineToLocate()
         getSiteInfo()
-        setList()
-        addItemFromEditText()
+        viewModel.getTeam(siteSupervisor, constructionArea)
+        observeData("getITem")
+//        addItemFromEditText()
         sendData()
         backButtonEvent()
 
         return binding.root
     }
 
-    private fun observeData() {
+    private fun observeData(observedState: String) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { uiState ->
-                    when {
-                        uiState.loading -> {
-                            binding.progressBar.show()
-                        }
+                when (observedState) {
+                    "getITem" -> {
+                        launch {
+                            viewModel.getTaskTeamState.collect { getTaskTeamState ->
+                                when {
+                                    getTaskTeamState.loading -> {
 
-                        uiState.isSaveTask && sendData -> {
-                            binding.progressBar.hide()
-                            navigateFragment()
+                                    }
+
+                                    getTaskTeamState.resultList != null -> {
+                                        workerTeamList = getTaskTeamState.resultList
+                                        setList()
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    "saveTask" -> {
+                        launch {
+                            viewModel.uiState.collect { uiState ->
+                                when {
+                                    uiState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    uiState.isSaveTask && sendData -> {
+                                        binding.progressBar.hide()
+                                        navigateFragment()
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -106,11 +130,11 @@ class TaskFragmentDetail : Fragment() {
     }
 
     private fun setList() {
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, TEAMS)
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, workerTeamList)
         binding.listConstruction.setAdapter(adapter)
 
         binding.listConstruction.setOnItemClickListener { _, _, position, _ ->
-            val selectedConstruction = TEAMS[position]
+            val selectedConstruction = workerTeamList[position]
             val selectedList = listOf(selectedConstruction)
             stringList?.addAll(selectedList)
             setupAdapter()
@@ -121,7 +145,7 @@ class TaskFragmentDetail : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = TextAdapter(stringList) {
+        adapter = SmallTextAdapter(stringList) {
             deleteFromList(it)
         }
         binding.rvWorkerPicker.layoutManager =
@@ -136,21 +160,6 @@ class TaskFragmentDetail : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
-    private fun addItemFromEditText() {
-
-        binding.imageButton.setOnClickListener {
-            val workerString = binding.etWorker.text.toString()
-            if (workerString != "") {
-                val workerStringList = listOf(workerString)
-                stringList?.addAll(workerStringList)
-                setupAdapter()
-                binding.etWorker.text?.clear()
-            } else {
-                toastMessage("Lütfen Geçerli Bir Değer Girin", requireContext())
-            }
-
-        }
-    }
 
     private fun getData(): TaskModel? {
         val title = binding.etTitle.text.toString()
@@ -181,7 +190,7 @@ class TaskFragmentDetail : Fragment() {
                             viewModel.saveRoom(data!!)
                             viewModel.saveTask(data)
                             sendData = true
-                            observeData()
+                            observeData("saveTask")
                         }
                     } else {
                         navigateFragment()
@@ -193,7 +202,7 @@ class TaskFragmentDetail : Fragment() {
                         data.taskId = taskIdNumber
                         viewModel.saveTask(data.copy(taskId = taskIdNumber))
                         sendData = true
-                        observeData()
+                        observeData("saveTask")
                     }
                 }
             }
@@ -210,6 +219,7 @@ class TaskFragmentDetail : Fragment() {
             }
         }
     }
+
     private fun navigateFragment() {
         findNavController().navigate(R.id.action_taskFragmentDetail_to_taskFragment)
     }

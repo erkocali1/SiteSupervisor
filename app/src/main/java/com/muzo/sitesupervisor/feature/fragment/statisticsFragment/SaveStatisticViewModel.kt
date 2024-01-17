@@ -7,6 +7,8 @@ import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import com.muzo.sitesupervisor.domain.GetStatisticForVocationUseCase
+import com.muzo.sitesupervisor.domain.GetTeamUseCase
+import com.muzo.sitesupervisor.feature.fragment.taskFragment.TeamTaskState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,19 +20,19 @@ import javax.inject.Inject
 @HiltViewModel
 class SaveStatisticViewModel @Inject constructor(
     private val getStatisticForVocationUseCase: GetStatisticForVocationUseCase,
-    private val dataStore: MyDataStore
+    private val dataStore: MyDataStore,
+    private val getTeamUseCase: GetTeamUseCase,
 ) : ViewModel() {
 
 
-    private val _uiState: MutableStateFlow<GetStatisticState> =
-        MutableStateFlow(GetStatisticState())
+    private val _uiState: MutableStateFlow<GetStatisticState> = MutableStateFlow(GetStatisticState())
     val uiState = _uiState
 
+    private val _teamStatisticState: MutableStateFlow<TeamStaticState> = MutableStateFlow(TeamStaticState())
+    val teamStatisticState = _teamStatisticState
 
-    fun getStatisticForVocation(
-        infoCurrentUser: String,
-        constructionName: String,
-        infoVocation: String
+
+    fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String
     ) {
 
         viewModelScope.launch {
@@ -58,6 +60,28 @@ class SaveStatisticViewModel @Inject constructor(
 
     }
 
+    fun getTeam(currentUser: String, constructionName: String) {
+        viewModelScope.launch {
+            getTeamUseCase(currentUser, constructionName).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _teamStatisticState.value = _teamStatisticState.value.copy(loading = true)
+                    }
+
+                    is Resource.Error -> {
+                        _teamStatisticState.value = _teamStatisticState.value.copy(loading = false)
+                    }
+
+                    is Resource.Success -> {
+                        _teamStatisticState.value =
+                            _teamStatisticState.value.copy(loading = false, resultList = result.data)
+
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
     fun readDataStore(userKey: String): Flow<String?> {
         return dataStore.readDataStore(userKey)
     }
@@ -70,4 +94,8 @@ data class GetStatisticState(
     val message: String? = null,
     val isSuccessful: Boolean = false,
     val resultList: List<WorkInfoModel>? = null
+)
+
+data class TeamStaticState(
+    val resultList: List<String>? = null, val loading: Boolean = false
 )
