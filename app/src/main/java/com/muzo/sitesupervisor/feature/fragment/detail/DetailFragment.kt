@@ -34,6 +34,7 @@ class DetailFragment : Fragment() {
     private var postId: Long? = null
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
+    private lateinit var currentUser: String
     private var saveDataJob: Job? = null
     private var saveDataWithPhotoJob: Job? = null
     private var updateData: Job? = null
@@ -63,12 +64,15 @@ class DetailFragment : Fragment() {
             }
         }
 
+        currentUser=viewModel.currentUser
+
         isDeleteChange()
         getFromLocation()
         showDayAndTime()
         clickListener()
         addPhoto()
         turnBackFragment()
+        hideButton()
 
         return binding.root
     }
@@ -94,7 +98,7 @@ class DetailFragment : Fragment() {
         val stringUriList = photoUrl?.map { it.toString() }
         val day = binding.textDay.text.toString()
         val time = binding.textTime.text.toString()
-        val currentUser = viewModel.currentUser
+        val currentUser = siteSupervisor
         postId = receivedData?.id
         return DataModel(
             postId, message, title, stringUriList, day, time, currentUser, constructionArea
@@ -459,7 +463,6 @@ class DetailFragment : Fragment() {
             }
         }
     }
-
     private fun correctText(): Boolean {
 
         val title = binding.etTitle.text.toString()
@@ -474,6 +477,14 @@ class DetailFragment : Fragment() {
 
     private fun isDeleteChange() {
         isDeletePhoto = arguments?.getBoolean("isDelete") ?: false
+    }
+
+    private fun hideButton(){
+        if (siteSupervisor !=currentUser){
+            binding.okBtn.hide()
+            binding.okDelete.hide()
+            binding.cvAddPhoto.hide()
+        }
     }
 
 

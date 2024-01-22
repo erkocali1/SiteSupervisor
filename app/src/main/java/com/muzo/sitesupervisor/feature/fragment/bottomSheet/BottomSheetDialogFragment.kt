@@ -14,13 +14,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.common.toastMessage
-import com.muzo.sitesupervisor.core.constans.Constants
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import com.muzo.sitesupervisor.databinding.FragmentBottomSheetDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,7 +45,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
         binding = FragmentBottomSheetDialogBinding.inflate(layoutInflater, container, false)
         setDatePicker()
         getSiteInfo()
-        viewModel.getTeam(siteSupervisor,constructionArea)
+        viewModel.getTeam(siteSupervisor, constructionArea)
         observeData("getTeam")
         sendData()
 
@@ -56,12 +54,12 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     private fun setList() {
         val adapter = ArrayAdapter(
-            requireContext(), R.layout.list_item,workerTeamList
+            requireContext(), R.layout.list_item, workerTeamList
         )
         binding.listConstruction.setAdapter(adapter)
 
         binding.listConstruction.setOnItemClickListener { _, _, position, _ ->
-            val selectedConstruction =workerTeamList[position]
+            val selectedConstruction = workerTeamList[position]
         }
     }
 
@@ -126,9 +124,11 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
                                     uiState.isSuccessful -> {
                                         binding.progressBar.hide()
                                         clearFields()
-                                        toastMessage("Kayıt Başarı Bir Şekilde Eklenmiştir", requireContext())
+                                        toastMessage(
+                                            "Kayıt Başarı Bir Şekilde Eklenmiştir",
+                                            requireContext()
+                                        )
                                         updateItJob.cancel()
-                                        //  navigateFragment()
                                     }
 
                                     uiState.loading -> {
@@ -138,7 +138,8 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
                             }
                         }
                     }
-                    "getTeam"->{
+
+                    "getTeam" -> {
                         launch {
                             viewModel.getTeamBottomState.collect { getTeamBottomState ->
                                 when {
@@ -158,53 +159,54 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
             }
         }
     }
-        private fun isCheckBlankItem(): Boolean {
-            val listItem = binding.listConstruction.text.toString()
-            val dayItem = selectedDate
-            val workDayItem = binding.etFinishDay.text.toString()
-            val cost = binding.etCoastMoney.text.toString()
-            val amountPaid = binding.etAvailableBalance.text.toString()
 
-            return listItem.isNotBlank() && dayItem.isNotBlank() && workDayItem.isNotBlank() && cost.isNotBlank() && amountPaid.isNotBlank()
-        }
+    private fun isCheckBlankItem(): Boolean {
+        val listItem = binding.listConstruction.text.toString()
+        val dayItem = selectedDate
+        val workDayItem = binding.etFinishDay.text.toString()
+        val cost = binding.etCoastMoney.text.toString()
+        val amountPaid = binding.etAvailableBalance.text.toString()
 
-        private fun getSiteInfo() {
-            lifecycleScope.launch {
-                viewModel.readDataStore("construction_key").collect { area ->
-                    constructionArea = area!!
-                    viewModel.readDataStore("user_key").collect { supervisor ->
-                        siteSupervisor = supervisor!!
-                    }
+        return listItem.isNotBlank() && dayItem.isNotBlank() && workDayItem.isNotBlank() && cost.isNotBlank() && amountPaid.isNotBlank()
+    }
+
+    private fun getSiteInfo() {
+        lifecycleScope.launch {
+            viewModel.readDataStore("construction_key").collect { area ->
+                constructionArea = area!!
+                viewModel.readDataStore("user_key").collect { supervisor ->
+                    siteSupervisor = supervisor!!
                 }
             }
         }
-
-        private fun getData(): WorkInfoModel {
-            val listItem = binding.listConstruction.text.toString()
-            val dayItem = selectedDate
-            val workDayItem = binding.etFinishDay.text.toString().toLong()
-            val cost = binding.etCoastMoney.text.toString()
-            val amountPaid = binding.etAvailableBalance.text.toString()
-
-            return WorkInfoModel(
-                listItem,
-                dayItem,
-                workDayItem,
-                siteSupervisor,
-                constructionArea,
-                specifiedMonth,
-                cost,
-                amountPaid
-            )
-        }
-
-        private fun clearFields() {
-            binding.listConstruction.setText("")
-            binding.etStartDay.setText("")
-            binding.etFinishDay.setText("")
-            binding.etCoastMoney.setText("")
-            binding.etAvailableBalance.setText("")
-        }
     }
+
+    private fun getData(): WorkInfoModel {
+        val listItem = binding.listConstruction.text.toString()
+        val dayItem = selectedDate
+        val workDayItem = binding.etFinishDay.text.toString().toLong()
+        val cost = binding.etCoastMoney.text.toString()
+        val amountPaid = binding.etAvailableBalance.text.toString()
+
+        return WorkInfoModel(
+            listItem,
+            dayItem,
+            workDayItem,
+            siteSupervisor,
+            constructionArea,
+            specifiedMonth,
+            cost,
+            amountPaid
+        )
+    }
+
+    private fun clearFields() {
+        binding.listConstruction.setText("")
+        binding.etStartDay.setText("")
+        binding.etFinishDay.setText("")
+        binding.etCoastMoney.setText("")
+        binding.etAvailableBalance.setText("")
+    }
+}
 
 

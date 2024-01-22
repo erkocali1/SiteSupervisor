@@ -123,7 +123,7 @@ class VerifyPasswordFragment : Fragment() {
             navigateFragment()
             toastMessage("Şifre Onaylandı", requireContext())
         } else {
-            toastMessage("Şifre Doğru Değil Tekrar Deneyiniz", requireContext())
+            toastMessage("Şifre Eşleşmedi Tekrar Deneyiniz", requireContext())
         }
     }
 

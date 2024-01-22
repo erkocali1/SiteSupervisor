@@ -45,12 +45,14 @@ class CreateAreaFragment : Fragment() {
 
         binding.btnCreate.setOnClickListener {
 
-            val constructionName = binding.etConstructionName.text.toString()
+            val constructionNameFirst = binding.etParcelFirst.text.toString()
+            val constructionNameSecond = binding.etParcelSecond.text.toString()
+            val constructionName = "$constructionNameFirst-$constructionNameSecond"
             val currentUser = viewModel.currentUser?.uid.toString()
 
 
 
-            if (constructionName.isNotEmpty()) {
+            if (constructionNameFirst.isNotEmpty() ||constructionNameSecond.isNotEmpty()){
 
                 val dataModel = createDataModel(constructionName)
 
@@ -83,7 +85,7 @@ class CreateAreaFragment : Fragment() {
                     }
                 }
             } else {
-                toastMessage("please feel the Information")
+                toastMessage("Lütfen Tüm Alanları Doldurunuz")
             }
         }
     }
@@ -94,7 +96,7 @@ class CreateAreaFragment : Fragment() {
 
     private fun navigateFragment() {
 
-        val constructionName = binding.etConstructionName.text.toString()
+        val constructionName = binding.etParcelFirst.text.toString()
         val currentUser = viewModel.currentUser?.uid.toString()
 
         lifecycleScope.launch {

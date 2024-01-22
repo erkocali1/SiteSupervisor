@@ -1,69 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".feature.fragment.createAreaFragment.CreateAreaFragment">
 
-    <ImageView
-        android:id="@+id/iv_worker"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_top"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:padding="20sp"
-        android:src="@drawable/worker"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="430sp"
+        android:layout_marginTop="-40sp"
+        android:backgroundTint="@color/colorPurple"
+        app:cardCornerRadius="48dp"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/constructionNameLayout"
+            <androidx.cardview.widget.CardView
+                android:layout_width="250sp"
+                android:layout_height="250sp"
+                app:cardCornerRadius="250sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_worker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20sp"
+                    android:src="@drawable/worker"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20sp"
-        android:layout_marginTop="64sp"
-        android:layout_marginEnd="20sp"
+        android:layout_height="300sp"
+        android:layout_marginStart="45sp"
+        android:layout_marginTop="-55sp"
+        android:layout_marginEnd="45sp"
+        android:background="@color/dark_background"
+        app:cardCornerRadius="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_worker">
+        app:layout_constraintTop_toBottomOf="@+id/cv_top">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etConstructionName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Type Your Construction Site"
-            android:inputType="textPersonName" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical"
+            android:padding="30sp">
 
-    <TextView
-        android:id="@+id/constText"
-        style="@style/montserrat_regular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12sp"
-        android:text="Create a New Construction Site "
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnCreate" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginTop="18sp"
+                android:id="@+id/cv_ada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:strokeColor="@color/black"
+                app:strokeWidth="1dp">
 
-    <Button
-        android:id="@+id/btnCreate"
-        android:layout_width="150sp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/logButton"
-        android:text="Create"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="88sp"
-        app:layout_constraintTop_toBottomOf="@id/constructionNameLayout" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4sp">
+
+                    <ImageView
+                        android:id="@+id/ic_city"
+                        style="@style/montserrat_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_location"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/et_parcel_first"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Ada Giriniz"
+                        android:inputType="number"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/ic_city"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/ic_city"
+                        app:layout_constraintTop_toTopOf="@+id/ic_city" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_parsel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24sp"
+                app:strokeColor="@color/black"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4sp">
+
+                    <ImageView
+                        android:id="@+id/iv_parsel"
+                        style="@style/montserrat_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_city"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/et_parcel_second"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Parsel Giriniz"
+                        android:inputType="number"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_parsel"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/iv_parsel"
+                        app:layout_constraintTop_toTopOf="@+id/iv_parsel" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                android:id="@+id/btnCreate"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="14sp"
+                android:backgroundTint="@color/logButton"
+                android:text="Kaydet"
+                app:layout_constraintTop_toBottomOf="@id/cv_parsel" />
+
+            <TextView
+                android:id="@+id/constText"
+                style="@style/montserrat_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8sp"
+                android:text="Yeni Bir Şantyie Oluştur "
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/btnCreate" />
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="invisible" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
