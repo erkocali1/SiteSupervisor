@@ -46,7 +46,7 @@ class DetailFragment : Fragment() {
     private var isEnterInitialized = false
     private var changedFlag: Boolean = false
     private lateinit var getData: DataModel
-    private  var isDeletePhoto=false
+    private var isDeletePhoto = false
 
 
     override fun onCreateView(
@@ -64,7 +64,7 @@ class DetailFragment : Fragment() {
             }
         }
 
-        currentUser=viewModel.currentUser
+        currentUser = viewModel.currentUser
 
         isDeleteChange()
         getFromLocation()
@@ -165,6 +165,7 @@ class DetailFragment : Fragment() {
                     uiState.loading -> {
                         binding.progressBar.show()
                     }
+
                     uiState.resultUriList != null -> {
                         binding.progressBar.hide()
                         val gettingUriList = uiState.resultUriList
@@ -180,6 +181,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun clickListener() {
+
         binding.okBtn.setOnClickListener {
             if (isAllFieldsFilled()) {
                 if (getFromLocation()) {
@@ -244,7 +246,7 @@ class DetailFragment : Fragment() {
 
     private fun getData() {
         val receivedData = arguments?.getLong("id")
-        checkout= lifecycleScope.launch {
+        checkout = lifecycleScope.launch {
             viewModel.getData(siteSupervisor, constructionArea, receivedData.toString())
             Log.d("control", "$siteSupervisor $constructionArea ${receivedData.toString()}")
 
@@ -254,6 +256,7 @@ class DetailFragment : Fragment() {
                         binding.progressBar.show()
                         hideViews(true)
                     }
+
                     uiState.getDataFireBase != null -> {
                         binding.progressBar.hide()
                         getData = uiState.getDataFireBase
@@ -373,29 +376,32 @@ class DetailFragment : Fragment() {
 
     private fun turnBackFragment() {
         binding.back.setOnClickListener {
-            if (from == "recyclerview" || isDeletePhoto ) {
-                if (correctText()) {
-                    updateEvent()
-                    updateDataWithPhoto = lifecycleScope.launch {
-                        viewModel.uiState.collect { uiState ->
-                            when {
-                                uiState.isSuccessfulAddData -> {
-                                    binding.progressBar.hide()
-                                    updateDataWithPhoto?.cancel()
-                                    navigateListingFragment()
-                                }
+            if (currentUser == siteSupervisor) {
+                if (from == "recyclerview" || isDeletePhoto) {
+                    if (correctText()) {
+                        updateEvent()
+                        updateDataWithPhoto = lifecycleScope.launch {
+                            viewModel.uiState.collect { uiState ->
+                                when {
+                                    uiState.isSuccessfulAddData -> {
+                                        binding.progressBar.hide()
+                                        updateDataWithPhoto?.cancel()
+                                        navigateListingFragment()
+                                    }
 
-                                uiState.loading -> {
-                                    binding.progressBar.show()
+                                    uiState.loading -> {
+                                        binding.progressBar.show()
+                                    }
                                 }
                             }
                         }
+                    } else {
+                        navigateListingFragment()
                     }
                 } else {
                     navigateListingFragment()
                 }
-            }
-            else {
+            }else{
                 navigateListingFragment()
             }
         }
@@ -463,6 +469,7 @@ class DetailFragment : Fragment() {
             }
         }
     }
+
     private fun correctText(): Boolean {
 
         val title = binding.etTitle.text.toString()
@@ -479,8 +486,8 @@ class DetailFragment : Fragment() {
         isDeletePhoto = arguments?.getBoolean("isDelete") ?: false
     }
 
-    private fun hideButton(){
-        if (siteSupervisor !=currentUser){
+    private fun hideButton() {
+        if (siteSupervisor != currentUser) {
             binding.okBtn.hide()
             binding.okDelete.hide()
             binding.cvAddPhoto.hide()

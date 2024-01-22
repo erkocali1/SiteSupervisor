@@ -96,19 +96,17 @@ class CreateAreaFragment : Fragment() {
 
     private fun navigateFragment() {
 
-        val constructionName = binding.etParcelFirst.text.toString()
+        val constructionNameFirst = binding.etParcelFirst.text.toString()
+        val constructionNameSecond = binding.etParcelSecond.text.toString()
+        val constructionName = "$constructionNameFirst-$constructionNameSecond"
         val currentUser = viewModel.currentUser?.uid.toString()
 
         lifecycleScope.launch {
             viewModel.saveDataStore(currentUser, constructionName)
-
             findNavController().navigate(R.id.action_createAreaFragment_to_passwordFragment)
         }
     }
-
-
     private fun createDataModel(constructionName: String): DataModel {
-
 
         val currentUser = viewModel.currentUser?.uid.toString()
         return DataModel(
@@ -121,10 +119,7 @@ class CreateAreaFragment : Fragment() {
             currentUser = currentUser,
             constructionArea = constructionName
         )
-
-
     }
-
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
             .setTitle("Şantiye bilgilerini doldurun").setCancelable(false)
@@ -137,5 +132,4 @@ class CreateAreaFragment : Fragment() {
                 }
             }).show()
     }
-
 }

@@ -26,6 +26,7 @@ class PhotoFragment : Fragment() {
     private var deleteDataJob: Job? = null
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
+    private lateinit var currentUser: String
     private var uri: String? = null
 
 
@@ -46,9 +47,11 @@ class PhotoFragment : Fragment() {
                 }
             }
         }
+        currentUser=viewModel.currentUser
 
         deleteThisPhoto(postId!!, uri!!)
         binding.mBigImage.showImage(Uri.parse(uri))
+        hideBtn()
 
         return binding.root
     }
@@ -104,5 +107,10 @@ class PhotoFragment : Fragment() {
             }
         }
 
+    }
+    private fun hideBtn(){
+        if (siteSupervisor!=currentUser){
+            binding.deleteIc.hide()
+        }
     }
 }

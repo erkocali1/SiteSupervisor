@@ -6,6 +6,7 @@ import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.DeletePhotoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,7 @@ class PhotoFragmentViewModel @Inject constructor(
     private val repository: LocalPostRepository,
     private val deletePhotoUseCase: DeletePhotoUseCase,
     private val dataStore: MyDataStore,
-
+    authRepository: AuthRepository,
     ) : ViewModel() {
 
 
@@ -28,6 +29,7 @@ class PhotoFragmentViewModel @Inject constructor(
         MutableStateFlow(PhotoFragmentState())
     val uiState = _uiState
 
+    val currentUser = authRepository.currentUser?.uid.toString()
 
     fun deletePhotoFromFireBase(
         currentUser: String, constructionName: String, postId: String, photoUrlToDelete: String
