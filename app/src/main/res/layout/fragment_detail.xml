@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -74,13 +73,14 @@
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:background="@color/brownDark"
-        app:layout_constraintTop_toBottomOf="@+id/ok_delete"
+        app:layout_constraintTop_toBottomOf="@+id/back_text"
         tools:layout_editor_absoluteX="16dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gruopItem"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="8sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_divider">
 
@@ -249,9 +249,10 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_title"
+                style="@style/MyDisabledEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Konu Başlığı Giriniz"
+                android:hint="Konu Başlığı "
                 android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -267,10 +268,11 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_des"
+                style="@style/MyDisabledEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top|left"
-                android:hint="Açıklama Giriniz"
+                android:hint="Açıklama "
                 android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
 

@@ -25,7 +25,7 @@
                 android:id="@+id/left_layout"
                 android:layout_width="90sp"
                 android:layout_height="match_parent"
-                android:background="@color/brownExtraLight">
+                android:background="@color/colorPurple">
 
                 <TextView
                     android:id="@+id/text_day"
@@ -121,7 +121,7 @@
 
                 <TextView
                     android:id="@+id/text_Title"
-                    style="@style/titillium_web_black"
+                    style="@style/montserrat_bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8sp"
@@ -135,7 +135,7 @@
 
                 <TextView
                     android:id="@+id/text_desc"
-                    style="@style/titillium_web_bold"
+                    style="@style/montserrat_medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8sp"

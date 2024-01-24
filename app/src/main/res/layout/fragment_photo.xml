@@ -5,13 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundWhite"
+    android:padding="8sp"
     tools:context=".feature.fragment.photoFragment.PhotoFragment">
 
     <com.github.piasy.biv.view.BigImageView
         android:id="@+id/mBigImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:failureImageInitScaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back"
         app:optimizeDisplay="true" />
 
 
@@ -19,8 +22,8 @@
         android:id="@+id/back"
         android:layout_width="22dp"
         android:layout_height="22dp"
-        android:layout_marginTop="32sp"
         android:layout_marginStart="12sp"
+        android:layout_marginTop="32sp"
         android:src="@drawable/ic_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,14 +44,14 @@
         android:id="@+id/delete_ic"
         android:layout_width="40sp"
         android:layout_height="40sp"
-        android:layout_marginTop="22sp"
-        android:layout_marginEnd="36dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="40sp"
+        app:layout_constraintTop_toTopOf="@id/back"
+        app:layout_constraintBottom_toBottomOf="@id/back"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginEnd="12sp">
 
         <ImageView
             android:layout_width="match_parent"

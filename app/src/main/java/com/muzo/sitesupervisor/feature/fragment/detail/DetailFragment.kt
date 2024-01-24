@@ -248,8 +248,6 @@ class DetailFragment : Fragment() {
         val receivedData = arguments?.getLong("id")
         checkout = lifecycleScope.launch {
             viewModel.getData(siteSupervisor, constructionArea, receivedData.toString())
-            Log.d("control", "$siteSupervisor $constructionArea ${receivedData.toString()}")
-
             viewModel.uiState.collect { uiState ->
                 when {
                     uiState.loading -> {
@@ -401,73 +399,86 @@ class DetailFragment : Fragment() {
                 } else {
                     navigateListingFragment()
                 }
-            }else{
+            } else {
                 navigateListingFragment()
             }
         }
     }
 
     private fun navigateToBigPhotoFragment(uri: String) {
-        if (from == "recyclerview") {
-            if (correctText()) {
-                updateEvent()
-                updateDataWithPhoto = lifecycleScope.launch {
+        if (currentUser == siteSupervisor) {
+            if (from == "recyclerview") {
+                if (correctText()) {
+                    updateEvent()
+                    updateDataWithPhoto = lifecycleScope.launch {
+                        viewModel.uiState.collect { uiState ->
+                            when {
+                                uiState.isSuccessfulAddData -> {
+                                    binding.progressBar.hide()
+                                    val receivedData = arguments?.getLong("id")
+                                    val bundle = Bundle().apply {
+                                        putString("bigPhoto", uri)
+                                        putLong("id", receivedData!!)
+                                    }
+                                    findNavController().navigate(
+                                        R.id.action_detailFragment_to_photoFragment, bundle
+                                    )
+                                    updateDataWithPhoto?.cancel()
+                                }
+
+                                uiState.loading -> {
+                                    binding.progressBar.show()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    val receivedData = arguments?.getLong("id")
+                    postId = receivedData!!
+                    val bundle = Bundle().apply {
+                        putString("bigPhoto", uri)
+                        putLong("id", postId!!)
+                    }
+                    findNavController().navigate(
+                        R.id.action_detailFragment_to_photoFragment, bundle
+                    )
+                }
+            } else {
+                saveNewDataEvent()
+                saveDataWithPhotoJob = lifecycleScope.launch {
                     viewModel.uiState.collect { uiState ->
                         when {
+                            (uiState.loading) -> {
+                                binding.progressBar.show()
+                            }
+
                             uiState.isSuccessfulAddData -> {
-                                binding.progressBar.hide()
-                                val receivedData = arguments?.getLong("id")
                                 val bundle = Bundle().apply {
                                     putString("bigPhoto", uri)
-                                    putLong("id", receivedData!!)
+                                    putLong("id", postId!!)
                                 }
+                                binding.progressBar.hide()
                                 findNavController().navigate(
                                     R.id.action_detailFragment_to_photoFragment, bundle
                                 )
-                                updateDataWithPhoto?.cancel()
-                            }
-
-                            uiState.loading -> {
-                                binding.progressBar.show()
+                                saveDataWithPhotoJob?.cancel()
                             }
                         }
                     }
                 }
-            } else {
+            }
+        } else {
+            val bundle = Bundle().apply {
                 val receivedData = arguments?.getLong("id")
                 postId = receivedData!!
-                val bundle = Bundle().apply {
-                    putString("bigPhoto", uri)
-                    putLong("id", postId!!)
-                }
-                findNavController().navigate(
-                    R.id.action_detailFragment_to_photoFragment, bundle
-                )
-            }
-        } else {
-            saveNewDataEvent()
-            saveDataWithPhotoJob = lifecycleScope.launch {
-                viewModel.uiState.collect { uiState ->
-                    when {
-                        (uiState.loading) -> {
-                            binding.progressBar.show()
-                        }
+                putString("bigPhoto", uri)
+                Log.d("aslihanerkoc",postId.toString())
+               putLong("id", postId!!)
 
-                        uiState.isSuccessfulAddData -> {
-                            val bundle = Bundle().apply {
-                                putString("bigPhoto", uri)
-                                putLong("id", postId!!)
-                            }
-                            binding.progressBar.hide()
-                            findNavController().navigate(
-                                R.id.action_detailFragment_to_photoFragment, bundle
-                            )
-                            saveDataWithPhotoJob?.cancel()
-                        }
-                    }
-                }
             }
+            findNavController().navigate(R.id.action_detailFragment_to_photoFragment,bundle)
         }
+
     }
 
     private fun correctText(): Boolean {
@@ -491,6 +502,8 @@ class DetailFragment : Fragment() {
             binding.okBtn.hide()
             binding.okDelete.hide()
             binding.cvAddPhoto.hide()
+            binding.etDes.isEnabled=false
+            binding.etTitle.isEnabled=false
         }
     }
 

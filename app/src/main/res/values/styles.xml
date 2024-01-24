@@ -54,6 +54,12 @@
         <item name="backgroundTint">@android:color/transparent</item>
     </style>
 
+    <style name="MyDisabledEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@android:color/black</item>
+        <!-- İsteğinize göre diğer özellikleri de ekleyebilirsiniz -->
+    </style>
+
+
 
 
 

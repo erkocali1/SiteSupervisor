@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8sp"
     tools:context=".feature.fragment.statisticsFragment.StatisticsFragment">
 
     <androidx.core.widget.NestedScrollView
@@ -15,11 +14,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
             <LinearLayout
                 android:id="@+id/text_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/example_3_blue_light"
+                android:background="@color/colorPurple"
                 android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -36,7 +36,7 @@
                         android:layout_height="wrap_content"
                         android:padding="4sp"
                         android:text="Son Kayıtlar"
-                        android:textColor="@color/example_3_toolbar_color"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:padding="4sp"
                         android:text="Kayıt"
-                        android:textColor="@color/example_3_toolbar_color"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -69,7 +69,7 @@
                         android:layout_marginStart="28sp"
                         android:padding="4sp"
                         android:text="Ekip Adı"
-                        android:textColor="@color/example_3_toolbar_color"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -82,7 +82,7 @@
                         android:layout_marginStart="38sp"
                         android:padding="4sp"
                         android:text="Kayıt Tarihi"
-                        android:textColor="@color/example_3_toolbar_color"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -96,7 +96,7 @@
                         android:layout_marginStart="30sp"
                         android:padding="4sp"
                         android:text="Yev. Miktarı"
-                        android:textColor="@color/example_3_toolbar_color"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -110,6 +110,8 @@
                 android:layout_height="150sp"
                 android:layout_marginTop="8sp"
                 android:orientation="vertical"
+                android:layout_marginStart="8sp"
+                android:layout_marginEnd="8sp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/text_layout"
                 tools:itemCount="6"
@@ -122,10 +124,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6sp"
-                android:layout_marginEnd="6sp"
-                android:backgroundTint="@color/example_3_blue_light"
+                android:layout_marginEnd="8sp"
+                android:backgroundTint="@color/colorPurple"
                 android:text="Yeni Kayıt Ekle"
-                android:textColor="@color/example_3_toolbar_color"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rv_records" />
 
@@ -134,7 +136,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6sp"
-                android:backgroundTint="@color/example_3_blue_light"
+                android:layout_marginStart="8sp"
+                android:backgroundTint="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/bttn">
 
@@ -150,7 +153,9 @@
                 android:id="@+id/cv_bar_chart"
                 android:layout_width="0dp"
                 android:layout_height="250sp"
+                android:layout_marginStart="8sp"
                 android:layout_marginTop="8sp"
+                android:layout_marginEnd="8sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner_layout"
@@ -169,7 +174,9 @@
                 android:id="@+id/cv_pie"
                 android:layout_width="0dp"
                 android:layout_height="250sp"
+                android:layout_marginStart="8sp"
                 android:layout_marginTop="20sp"
+                android:layout_marginEnd="8sp"
                 android:background="@color/example_3_toolbar_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

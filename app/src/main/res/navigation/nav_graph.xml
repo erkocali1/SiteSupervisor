@@ -197,9 +197,6 @@
         <action
             android:id="@+id/action_passwordFragment_to_listingFragment"
             app:destination="@id/listingFragment" />
-        <action
-            android:id="@+id/action_passwordFragment_to_createAreaFragment"
-            app:destination="@id/createAreaFragment" />
     </fragment>
     <fragment
         android:id="@+id/verifyPasswordFragment"
@@ -209,9 +206,6 @@
         <action
             android:id="@+id/action_verifyPasswordFragment_to_listingFragment"
             app:destination="@id/listingFragment" />
-        <action
-            android:id="@+id/action_verifyPasswordFragment_to_joinAreaFragment"
-            app:destination="@id/joinAreaFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsPasswordFragment"

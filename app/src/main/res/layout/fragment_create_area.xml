@@ -20,9 +20,9 @@
             android:layout_height="match_parent">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="250sp"
-                android:layout_height="250sp"
-                app:cardCornerRadius="250sp"
+                android:layout_width="225sp"
+                android:layout_height="225sp"
+                app:cardCornerRadius="225sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

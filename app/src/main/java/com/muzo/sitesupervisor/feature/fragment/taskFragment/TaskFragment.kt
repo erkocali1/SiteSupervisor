@@ -66,7 +66,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addStatusBarColorUpdate(R.color.example_3_statusbar_color)
+        addStatusBarColorUpdate(R.color.colorPurple)
         binding = FragmentTaskBinding.bind(view)
         getSiteInfo()
         viewModel.getTaskDate(siteSupervisor, constructionArea)
@@ -189,7 +189,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     override fun onStart() {
         super.onStart()
         activityToolbar.setBackgroundColor(
-            requireContext().getColorCompat(R.color.example_3_toolbar_color),
+            requireContext().getColorCompat(R.color.colorPurple),
         )
     }
 

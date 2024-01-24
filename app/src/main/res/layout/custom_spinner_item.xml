@@ -4,5 +4,5 @@
     android:layout_height="wrap_content"
     android:textSize="18sp"
     style="@style/montserrat_medium"
-    android:textColor="@color/example_3_toolbar_color"
+    android:textColor="@color/colorPurple"
     android:padding="4dp"/>

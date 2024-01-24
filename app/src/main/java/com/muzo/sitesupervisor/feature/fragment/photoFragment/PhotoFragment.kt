@@ -2,6 +2,7 @@ package com.muzo.sitesupervisor.feature.fragment.photoFragment
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,14 +79,12 @@ class PhotoFragment : Fragment() {
 
         }
     }
-
     private fun sendData(isDelete: Boolean = false) {
         val receivedData = arguments?.getLong("id")
         val bundle = Bundle().apply {
             putString("from", "recyclerview")
             putLong("id", receivedData!!)
             putBoolean("isDelete", isDelete)
-
         }
         findNavController().navigate(R.id.action_photoFragment_to_detailFragment, bundle)
     }
