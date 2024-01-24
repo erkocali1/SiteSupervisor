@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetLocationUseCase
 import com.muzo.sitesupervisor.domain.SaveLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class LocationFragmentViewModel @Inject constructor(
     private val saveLocationUseCase: SaveLocationUseCase,
     private val getLocationUseCase: GetLocationUseCase,
-    private val dataStore: MyDataStore
+    private val dataStore: MyDataStore,
+    authRepository: AuthRepository
 ) : ViewModel() {
 
 
@@ -30,6 +32,7 @@ class LocationFragmentViewModel @Inject constructor(
 
     private val _upLoadState: MutableStateFlow<UpLoadLocationState> = MutableStateFlow(UpLoadLocationState())
     val upLoadState = _upLoadState
+    val currentUser = authRepository.currentUser?.uid.toString()
 
 
 

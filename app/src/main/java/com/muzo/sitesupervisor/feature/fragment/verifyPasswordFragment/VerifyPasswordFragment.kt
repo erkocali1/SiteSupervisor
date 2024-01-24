@@ -162,10 +162,6 @@ class VerifyPasswordFragment : Fragment() {
     }
 
     private fun navigateFragment() {
-
-       // val fragment=getSupportFragmentManager
-
-        // Navigate to ListingFragment
         findNavController().navigate(R.id.action_verifyPasswordFragment_to_listingFragment)
     }
 

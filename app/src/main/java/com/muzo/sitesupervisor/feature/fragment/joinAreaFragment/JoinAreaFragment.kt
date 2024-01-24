@@ -30,6 +30,7 @@ class JoinAreaFragment : Fragment() {
     private lateinit var binding: FragmentJoinAreaBinding
     private val viewModel: JoinFragmentViewModel by viewModels()
     private lateinit var list: List<UserConstructionData>
+    private lateinit var currentUser: String
 
 
     override fun onCreateView(
@@ -37,7 +38,7 @@ class JoinAreaFragment : Fragment() {
     ): View? {
 
         binding = FragmentJoinAreaBinding.inflate(layoutInflater, container, false)
-
+        currentUser = viewModel.currentUser
         infAlert()
         observeData()
 
@@ -108,16 +109,20 @@ class JoinAreaFragment : Fragment() {
             userConstructionData.constructionAreas.contains(constructionName)
         }
 
-        val currentUser = selectedUserConstructionData?.currentUser ?: "Default Current User"
+        val siteSupervisor = selectedUserConstructionData?.currentUser ?: "Default Current User"
 
-        val userConstructionData = UserConstructionData(currentUser, listOf(constructionName))
+        val userConstructionData = UserConstructionData(siteSupervisor, listOf(constructionName))
 
 
         lifecycleScope.launch {
-            viewModel.saveDataStore(currentUser, constructionName)
+            viewModel.saveDataStore(siteSupervisor, constructionName)
             binding.btnJoin.setOnClickListener {
                 Log.d("kontrol", userConstructionData.currentUser)
-                findNavController().navigate(R.id.action_joinAreaFragment_to_verifyPasswordFragment)
+                if (currentUser == siteSupervisor) {
+                    findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment)
+                } else {
+                    findNavController().navigate(R.id.action_joinAreaFragment_to_verifyPasswordFragment)
+                }
             }
         }
     }

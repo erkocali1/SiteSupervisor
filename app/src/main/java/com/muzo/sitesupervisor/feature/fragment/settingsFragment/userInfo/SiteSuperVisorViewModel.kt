@@ -39,8 +39,7 @@ class SiteSuperVisorViewModel @Inject constructor(
     private val _getInfoState: MutableStateFlow<GetInfoState> = MutableStateFlow(GetInfoState())
     val getInfoState = _getInfoState
 
-    val currentUser: FirebaseUser?
-        get() = authRepository.currentUser
+    val currentUser = authRepository.currentUser?.uid.toString()
 
     fun readDataStore(userKey: String): Flow<String?> {
         return dataStore.readDataStore(userKey)

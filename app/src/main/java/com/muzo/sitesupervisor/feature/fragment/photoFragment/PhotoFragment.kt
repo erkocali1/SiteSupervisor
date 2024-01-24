@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +37,8 @@ class PhotoFragment : Fragment() {
     ): View? {
 
         binding = FragmentPhotoBinding.inflate(layoutInflater, container, false)
+
+        backStackEvent()
         turnBackFragment()
         uri = arguments?.getString("bigPhoto")
         postId = arguments?.getLong("id")
@@ -48,7 +51,7 @@ class PhotoFragment : Fragment() {
                 }
             }
         }
-        currentUser=viewModel.currentUser
+        currentUser = viewModel.currentUser
 
         deleteThisPhoto(postId!!, uri!!)
         binding.mBigImage.showImage(Uri.parse(uri))
@@ -79,6 +82,7 @@ class PhotoFragment : Fragment() {
 
         }
     }
+
     private fun sendData(isDelete: Boolean = false) {
         val receivedData = arguments?.getLong("id")
         val bundle = Bundle().apply {
@@ -105,11 +109,18 @@ class PhotoFragment : Fragment() {
                 }
             }
         }
-
     }
-    private fun hideBtn(){
-        if (siteSupervisor!=currentUser){
+
+    private fun hideBtn() {
+        if (siteSupervisor != currentUser) {
             binding.deleteIc.hide()
+        }
+    }
+
+    private fun backStackEvent() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            sendData()
+
         }
     }
 }

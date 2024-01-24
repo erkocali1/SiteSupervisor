@@ -47,6 +47,8 @@ class LocationFragment : Fragment() {
     private lateinit var siteSupervisor: String
     private lateinit var updateItJob: Job
     private var firstEnter = false
+    private lateinit var currentUser: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -55,6 +57,8 @@ class LocationFragment : Fragment() {
         getSiteInfo()
         viewModel.upLoad(siteSupervisor, constructionArea)
         observeData("file")
+        currentUser = viewModel.currentUser
+        setUIForUser()
         return binding.root
 
     }
@@ -86,10 +90,12 @@ class LocationFragment : Fragment() {
                                 when {
                                     upLoadState.loading -> {
                                         binding.progressBar.show()
+                                        binding.constraint.hide()
                                     }
 
                                     upLoadState.resultList != null -> {
                                         binding.progressBar.hide()
+                                        binding.constraint.show()
                                         val latLng = upLoadState.resultList
                                         val location = convertToLatLng(latLng)
                                         currentLocation = location
@@ -258,6 +264,17 @@ class LocationFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         binding.mapView.onSaveInstanceState(outState)
+    }
+    private fun setUIForUser(){
+        if (siteSupervisor!=currentUser){
+            binding.setLocation.hide()
+            binding.textSet.hide()
+            binding.textReset.hide()
+            binding.resetLocation.hide()
+            binding.textInfo.show()
+            binding.ivLocation.show()
+            binding.icLocation.show()
+        }
     }
 
 

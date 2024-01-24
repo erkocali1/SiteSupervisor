@@ -31,6 +31,8 @@ class SiteSuperVisorFragment : Fragment() {
     private lateinit var constructionArea: String
     private lateinit var siteSupervisor: String
     private lateinit var updateItJob: Job
+    private lateinit var currentUser: String
+
 
 
     override fun onCreateView(
@@ -45,6 +47,8 @@ class SiteSuperVisorFragment : Fragment() {
         changePhoto()
         observeData("getData")
         editData()
+        currentUser = viewModel.currentUser
+        validationUser()
         return binding.root
     }
 
@@ -92,7 +96,6 @@ class SiteSuperVisorFragment : Fragment() {
                     startForProfileImageResult.launch(intent)
                 }
         }
-
     }
 
     private fun observeData(observedState: String) {
@@ -148,12 +151,12 @@ class SiteSuperVisorFragment : Fragment() {
                             viewModel.getInfoState.collect { getInfoState ->
                                 when {
                                     getInfoState.loading -> {
-                                        binding.linear.hide()
+                                        binding.constraintLayout.hide()
                                         binding.progressBar.show()
                                     }
 
                                     getInfoState.userInfoList != null -> {
-                                        binding.linear.show()
+                                        binding.constraintLayout.show()
                                         binding.progressBar.hide()
                                         showKnownData(getInfoState.userInfoList)
                                     }
@@ -235,6 +238,13 @@ class SiteSuperVisorFragment : Fragment() {
                 .into(binding.personPhoto)
         } else {
             binding.personPhoto.setImageResource(R.drawable.ic_person)
+        }
+    }
+    private fun validationUser(){
+        if (currentUser!=siteSupervisor){
+            binding.icEditPhone.isEnabled=false
+            binding.icMailEdit.isEnabled=false
+            binding.icEditSiteSupervisor.isEnabled=false
         }
     }
 

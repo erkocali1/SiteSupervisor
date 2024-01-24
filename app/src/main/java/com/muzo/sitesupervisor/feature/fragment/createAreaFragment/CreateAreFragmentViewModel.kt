@@ -90,8 +90,8 @@ class CreateAreFragmentViewModel @Inject constructor(
     }
 
     suspend fun saveRoom(saveList: DataModel): Long {
-        val baba = localPostRepository.savePost(saveList)
-        return baba
+        val room = localPostRepository.savePost(saveList)
+        return room
     }
 
     suspend fun saveDataStore(currentUser: String, constructionArea: String) {

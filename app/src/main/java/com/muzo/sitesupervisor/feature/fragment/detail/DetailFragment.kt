@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -65,7 +66,7 @@ class DetailFragment : Fragment() {
         }
 
         currentUser = viewModel.currentUser
-
+        backStackEvent()
         isDeleteChange()
         getFromLocation()
         showDayAndTime()
@@ -506,6 +507,16 @@ class DetailFragment : Fragment() {
             binding.etTitle.isEnabled=false
         }
     }
+
+    private fun backStackEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
+            findNavController().popBackStack(R.id.listingFragment, false)
+        }
+    }
+
+
+
 
 
 }

@@ -7,6 +7,7 @@ import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.constans.Constants
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.UserConstructionData
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetAreaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +18,15 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class JoinFragmentViewModel @Inject constructor(private val useCase: GetAreaUseCase, private val myDataStore: MyDataStore,) : ViewModel() {
+class JoinFragmentViewModel @Inject constructor(
+    private val useCase: GetAreaUseCase, private val myDataStore: MyDataStore,
+    authRepository: AuthRepository
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<GetAreaState> = MutableStateFlow(GetAreaState())
     val uiState = _uiState
+
+    val currentUser = authRepository.currentUser?.uid.toString()
 
 
     init {
@@ -42,6 +48,7 @@ class JoinFragmentViewModel @Inject constructor(private val useCase: GetAreaUseC
                             loading = false, message = result.exception?.message
                         )
                     }
+
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
                             loading = false,
@@ -61,6 +68,7 @@ class JoinFragmentViewModel @Inject constructor(private val useCase: GetAreaUseC
     }
 
 }
+
 data class GetAreaState(
     val loading: Boolean = false,
     val message: String? = null,

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -34,11 +35,10 @@ class ListingFragment : Fragment() {
     ): View? {
 
         binding = FragmentListingBinding.inflate(layoutInflater, container, false)
-
+        backPressEvent()
         getConstruction()
         observeData()
         navigateDetailFragment()
-
 
         return binding.root
     }
@@ -56,7 +56,6 @@ class ListingFragment : Fragment() {
                         binding.progressBar.hide()
                         list = uiState.resultList
                         setupAdapter()
-
                     }
                 }
             }
@@ -70,7 +69,7 @@ class ListingFragment : Fragment() {
             val bundle = Bundle().apply {
                 putParcelable("dataList", postList)
                 putString("from", "recyclerview")
-                putLong("id",data.id!!)
+                putLong("id", data.id!!)
             }
             findNavController().navigate(R.id.action_listingFragment_to_detailFragment, bundle)
         }
@@ -88,7 +87,6 @@ class ListingFragment : Fragment() {
             findNavController().navigate(R.id.action_listingFragment_to_detailFragment, bundleFab)
         }
     }
-
 
     private fun getConstruction() {
         lifecycleScope.launch {
@@ -114,7 +112,6 @@ class ListingFragment : Fragment() {
         }
     }
 
-
     private fun validationUser(currentUser: String, superVisorUser: String?) {
         if (currentUser == superVisorUser) {
             binding.fabBtn.show()
@@ -135,4 +132,13 @@ class ListingFragment : Fragment() {
             photoUrl = item.photoUrl
         )
     }
+
+    private fun backPressEvent() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
+            findNavController().popBackStack(R.id.selectionFragment, false)
+        }
+    }
+
+
 }
