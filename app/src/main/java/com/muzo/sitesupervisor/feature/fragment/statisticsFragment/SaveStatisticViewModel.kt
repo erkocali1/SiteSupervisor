@@ -6,6 +6,7 @@ import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetStatisticForVocationUseCase
 import com.muzo.sitesupervisor.domain.GetTeamUseCase
 import com.muzo.sitesupervisor.feature.fragment.taskFragment.TeamTaskState
@@ -22,6 +23,7 @@ class SaveStatisticViewModel @Inject constructor(
     private val getStatisticForVocationUseCase: GetStatisticForVocationUseCase,
     private val dataStore: MyDataStore,
     private val getTeamUseCase: GetTeamUseCase,
+    authRepository: AuthRepository
 ) : ViewModel() {
 
 
@@ -30,6 +32,8 @@ class SaveStatisticViewModel @Inject constructor(
 
     private val _teamStatisticState: MutableStateFlow<TeamStaticState> = MutableStateFlow(TeamStaticState())
     val teamStatisticState = _teamStatisticState
+
+    val currentUser = authRepository.currentUser?.uid.toString()
 
 
     fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String

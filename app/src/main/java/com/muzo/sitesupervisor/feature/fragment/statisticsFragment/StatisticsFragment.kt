@@ -53,7 +53,7 @@ class StatisticsFragment : Fragment() {
     private lateinit var adapter: StatisticsAdapter
     private lateinit var updateItJob: Job
     private lateinit var workerTeamList: List<String>
-
+    private lateinit var currentUser: String
 
 
     override fun onCreateView(
@@ -62,12 +62,12 @@ class StatisticsFragment : Fragment() {
         binding = FragmentStatisticsBinding.inflate(layoutInflater, container, false)
 
 
-        binding.bttn.setOnClickListener {
-            findNavController().navigate(R.id.action_statisticsFragment_to_bottomSheetDialogFragment)
-        }
+        navigateToBottomSheet()
         getSiteInfo()
-        viewModel.getTeam(siteSupervisor,constructionArea)
+        viewModel.getTeam(siteSupervisor, constructionArea)
         observeData("getTeam")
+        currentUser = viewModel.currentUser
+        validationUser()
         return binding.root
     }
 
@@ -194,28 +194,38 @@ class StatisticsFragment : Fragment() {
                                     uiState.resultList != null -> {
                                         binding.progressBar.hide()
                                         list = uiState.resultList
-                                        val monthList = extractTime(list)
-                                        val operationDuration = extractWokDay(list)
-                                        val cost = extractCost(list)
-                                        val amountPaid = extractAmountPaid(list)
-                                        setupAdapter()
-                                        setBarChartData(monthList, operationDuration)
-                                        setPieChartData(cost, amountPaid)
-                                        updateItJob.cancel()
+                                        if (list.isEmpty()) {
+                                            updateViewVisibility(false)
+                                        } else {
+                                            updateViewVisibility(true)
+                                            val monthList = extractTime(list)
+                                            val operationDuration = extractWokDay(list)
+                                            val cost = extractCost(list)
+                                            val amountPaid = extractAmountPaid(list)
+                                            setupAdapter()
+                                            setBarChartData(monthList, operationDuration)
+                                            setPieChartData(cost, amountPaid)
+                                            updateItJob.cancel()
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                    "getTeam"->{
+
+                    "getTeam" -> {
                         launch {
                             viewModel.teamStatisticState.collect { teamStatisticState ->
                                 when {
                                     teamStatisticState.loading -> {
-
+                                        binding.progressBar.show()
+                                        binding.allLayout.hide()
                                     }
 
                                     teamStatisticState.resultList != null -> {
+                                        binding.progressBar.hide()
+                                        binding.allLayout.show()
+
                                         workerTeamList = teamStatisticState.resultList
                                         setList()
                                     }
@@ -242,7 +252,7 @@ class StatisticsFragment : Fragment() {
         val adapter = ArrayAdapter(
             requireContext(),
             R.layout.custom_spinner_item,
-           workerTeamList
+            workerTeamList
         )
         binding.spinner.adapter = adapter
 
@@ -301,64 +311,37 @@ class StatisticsFragment : Fragment() {
         return operationAmountPaid
     }
 
+    private fun navigateToBottomSheet() {
+        binding.bttn.setOnClickListener {
+            findNavController().navigate(R.id.action_statisticsFragment_to_bottomSheetDialogFragment)
+        }
+    }
+
+    private fun validationUser() {
+        if (currentUser != siteSupervisor) {
+            binding.bttn.hide()
+        }
+    }
+
+    private fun updateViewVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            binding.cvBarChart.show()
+            binding.cvPie.show()
+            binding.rvRecords.show()
+            binding.ivEmpty.hide()
+            binding.textEmpty.hide()
+            binding.textLayout.show()
+        } else {
+            binding.cvBarChart.hide()
+            binding.cvPie.hide()
+            binding.rvRecords.hide()
+            binding.ivEmpty.show()
+            binding.textEmpty.show()
+            binding.textLayout.hide()
+        }
+    }
 
 }
 
-
-//        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-//            override fun onValueSelected(e: Entry?, h: Highlight?) {
-//                if (e != null) {
-//                    val xValue = e.x.toInt()
-//                    val month = months.getOrNull(xValue)
-//                    if (month != null) {
-//                        toastMessage(month, requireContext())
-//
-//                    }
-//                }
-//            }
-//
-//            override fun onNothingSelected() {
-//                onNothingSelected()
-//            }
-//
-//
-//        })
-/*
-private fun setData() {
-    val chart = binding.barChart
-    val months = arrayOf(
-        "Ocak",
-        "Şubat",
-        "Mart",
-        "Nisan",
-        "Mayıs",
-        "Haziran",
-        "Temmuz",
-        "Ağustos",
-        "Eylül",
-        "Ekim",
-        "Kasım",
-        "Aralık",
-    )
-
-    barList = ArrayList()
-    for (i in months.indices) {
-        val value = (i + 1) * 10 // Örnek değer hesaplaması, isteğe bağlı
-        val entry = BarEntry(i.toFloat(), value.toFloat()) // X olarak ay ismi, Y olarak örnek bir değer
-        barList.add(entry)
-    }
-
-    barDataSet = BarDataSet(barList, "Aylar")
-    barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 250)
-    barDataSet.valueTextSize = 15f
-    barData = BarData(barDataSet)
-    chart.data = barData
-
-    val xAxis = chart.xAxis
-    xAxis.valueFormatter = IndexAxisValueFormatter(months)
-    xAxis.position = XAxis.XAxisPosition.BOTTOM
-
-    chart.invalidate()
-}*/
 
 

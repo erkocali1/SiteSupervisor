@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="18sp"
+    android:gravity="center"
     style="@style/montserrat_medium"
     android:textColor="@color/colorPurple"
     android:padding="4dp"/>

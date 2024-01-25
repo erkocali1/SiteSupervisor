@@ -73,7 +73,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:background="@color/brownDark"
-        app:layout_constraintTop_toBottomOf="@+id/ok_delete"
+        app:layout_constraintTop_toBottomOf="@+id/back_text"
         tools:layout_editor_absoluteX="16dp" />
 
 
@@ -82,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16sp"
-        android:backgroundTint="@color/example_3_blue_light"
+        android:backgroundTint="@color/colorPurple"
         android:elevation="5sp"
         app:cardCornerRadius="30sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -96,6 +96,7 @@
             android:layout_gravity="center"
             android:padding="6sp"
             android:text="@string/_date"
+            android:textColor="@color/white"
             android:textSize="24sp" />
     </androidx.cardview.widget.CardView>
 
@@ -142,9 +143,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_title"
+            style="@style/MyDisabledEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Konu Başlığı Giriniz"
+            android:hint="Konu Başlığı "
             android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -162,10 +164,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_des"
+            style="@style/MyDisabledEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="top|left"
-            android:hint="Açıklama Giriniz"
+            android:hint="Açıklama "
             android:inputType="textMultiLine" />
     </com.google.android.material.textfield.TextInputLayout>
 

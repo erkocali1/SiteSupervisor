@@ -63,6 +63,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private val startMonth = currentMonth.minusMonths(50)
     private val endMonth = currentMonth.plusMonths(50)
     private lateinit var workerTeamList: List<String>
+    private lateinit var currentUser: String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,13 +71,15 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         binding = FragmentTaskBinding.bind(view)
         getSiteInfo()
         viewModel.getTaskDate(siteSupervisor, constructionArea)
-        viewModel.getTeam(siteSupervisor,constructionArea)
+        currentUser = viewModel.currentUser
+        viewModel.getTeam(siteSupervisor, constructionArea)
         observe(ObservedState.DATE_STATE)
         observe(ObservedState.GET_TEAM_STATE)
         searchEvent()
         config()
         configureToolbarTitle()
         navigateAddTask()
+        validationUser()
 
         if (savedInstanceState == null) {
             // Show today's events initially.
@@ -229,7 +232,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                                         setupAdapter()
                                         if (list!!.isNotEmpty()) {
                                             binding.emptyLayout.hide()
-                                        }else{
+                                        } else {
                                             binding.emptyLayout.show()
                                         }
                                     }
@@ -262,6 +265,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                             }
                         }
                     }
+
                     ObservedState.SEARCH_STATE -> {
                         launch {
                             viewModel.workerState.collect { workerState ->
@@ -269,13 +273,14 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                                     workerState.loading -> {
                                         binding.progressBar.show()
                                     }
+
                                     workerState.resulListWithWorker != null -> {
                                         binding.progressBar.hide()
                                         list = workerState.resulListWithWorker
                                         setupAdapter()
                                         if (list!!.isNotEmpty()) {
                                             binding.emptyLayout.hide()
-                                        }else{
+                                        } else {
                                             binding.emptyLayout.show()
                                         }
                                     }
@@ -283,7 +288,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                             }
                         }
                     }
-                    ObservedState.GET_TEAM_STATE->{
+
+                    ObservedState.GET_TEAM_STATE -> {
                         launch {
                             viewModel.teamTaskState.collect { teamTaskState ->
                                 when {
@@ -399,15 +405,21 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             }
         }
     }
-    private fun setList(){
 
+    private fun setList() {
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item, workerTeamList)
         binding.listConstruction.setAdapter(adapter)
+    }
+
+    private fun validationUser() {
+        if (currentUser != siteSupervisor) {
+            binding.exThreeAddButton.hide()
+        }
     }
 }
 
 enum class ObservedState {
-    UI_STATE, DATE_STATE, SEARCH_STATE,GET_TEAM_STATE
+    UI_STATE, DATE_STATE, SEARCH_STATE, GET_TEAM_STATE
 }
 
 

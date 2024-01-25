@@ -8,6 +8,7 @@ import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.TaskModel
+import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.GetAllTaskUseCase
 import com.muzo.sitesupervisor.domain.GetTaskDateUseCase
 import com.muzo.sitesupervisor.domain.GetTasksWithWorkerUseCase
@@ -28,7 +29,8 @@ class TaskFragmentViewModel @Inject constructor(
     private val getTaskDateUseCase: GetTaskDateUseCase,
     private val getTasksWithWorkerUseCase: GetTasksWithWorkerUseCase,
     private val getTeamUseCase: GetTeamUseCase,
-    private val dataStore: MyDataStore
+    private val dataStore: MyDataStore,
+    authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<TaskState> = MutableStateFlow(TaskState())
@@ -42,6 +44,8 @@ class TaskFragmentViewModel @Inject constructor(
 
     private val _teamTaskState: MutableStateFlow<TeamTaskState> = MutableStateFlow(TeamTaskState())
     val teamTaskState = _teamTaskState
+
+    val currentUser = authRepository.currentUser?.uid.toString()
 
 
     fun getAllTask(currentUser: String, constructionName: String, date: String) {

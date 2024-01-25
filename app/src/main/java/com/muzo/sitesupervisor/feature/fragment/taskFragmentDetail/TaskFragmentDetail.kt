@@ -44,6 +44,7 @@ class TaskFragmentDetail : Fragment() {
     private var sendData: Boolean = false
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", turkishLocale)
     private lateinit var workerTeamList: List<String>
+    private lateinit var currentUser: String
 
 
     override fun onCreateView(
@@ -56,8 +57,9 @@ class TaskFragmentDetail : Fragment() {
         getSiteInfo()
         viewModel.getTeam(siteSupervisor, constructionArea)
         observeData("getITem")
-//        addItemFromEditText()
+        currentUser = viewModel.currentUser
         sendData()
+        validationUser()
         backButtonEvent()
 
         return binding.root
@@ -146,7 +148,9 @@ class TaskFragmentDetail : Fragment() {
 
     private fun setupAdapter() {
         adapter = SmallTextAdapter(stringList) {
-            deleteFromList(it)
+            if (siteSupervisor == currentUser) {
+                deleteFromList(it)
+            }
         }
         binding.rvWorkerPicker.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -241,6 +245,17 @@ class TaskFragmentDetail : Fragment() {
     private fun backButtonEvent() {
         binding.back.setOnClickListener {
             navigateFragment()
+        }
+    }
+
+    private fun validationUser() {
+        if (currentUser != siteSupervisor) {
+            binding.okBtn.hide()
+            binding.okDelete.hide()
+            binding.etDes.isEnabled = false
+            binding.etTitle.isEnabled = false
+            binding.list.visibility = View.GONE
+            binding.rvWorkerPicker.isEnabled = false
         }
     }
 

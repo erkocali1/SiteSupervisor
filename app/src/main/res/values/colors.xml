@@ -27,6 +27,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPurple">#6770B5</color>
     <color name="snowWhite">#FFFFFF</color>
+    <color name="whitePurple">#EEE8FF</color>
 
 
 </resources>

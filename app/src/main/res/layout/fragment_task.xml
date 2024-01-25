@@ -134,7 +134,7 @@
         android:id="@+id/empty_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="60sp"
+        android:layout_marginBottom="80sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/linearNestedLayout">
@@ -142,41 +142,39 @@
         <ImageView
             android:id="@+id/iv_state"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-30sp"
-            android:layout_marginTop="-70sp"
-            android:padding="60sp"
+            android:layout_height="0dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/iv_empty"
+            android:src="@drawable/amigo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/text_empty"
+            android:layout_marginBottom="8sp"/>
 
         <TextView
             android:id="@+id/text_empty"
             style="@style/montserrat_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-60sp"
             android:text="Boş Liste"
             android:textColor="@color/example_3_toolbar_color"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_state" />
+            android:layout_marginBottom="6sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_empty_des"/>
 
         <TextView
             android:id="@+id/text_empty_des"
             style="@style/montserrat_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-35sp"
             android:text="Bügüne ait hiç kayıt girilmedi."
             android:textColor="@color/example_3_toolbar_color"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_state" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

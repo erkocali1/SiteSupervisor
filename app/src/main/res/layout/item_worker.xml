@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2sp"
-        android:backgroundTint="@color/example_3_blue_light"
+        android:backgroundTint="@color/colorPurple"
         app:cardCornerRadius="8sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8sp"
+            android:textColor="@color/white"
             android:text="@string/workerName"
             android:textSize="12sp" />
 

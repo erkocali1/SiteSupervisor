@@ -72,9 +72,13 @@ class LocationFragment : Fragment() {
 
     private fun initView() {
         if (currentLocation?.latitude == 0.0 && currentLocation?.longitude == 0.0) {
-            showCurrentLocation()
-            infAlert()
-            firstEnter = true
+            if (currentUser==siteSupervisor){
+                showCurrentLocation()
+                infAlert()
+                firstEnter = true
+            }else{
+                infAlertForGuest()
+            }
         } else {
             showSpecifiedLocation()
         }
@@ -220,13 +224,25 @@ class LocationFragment : Fragment() {
 
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
-            .setTitle("Şantiye Konum Bilgisi Henüz Girilmedi").setCancelable(false)
+            .setTitle("Şantiye Konum Bilgisi  Girilmedi").setCancelable(false)
             .setMessage("Eğer Şuanki Konumunuz Şantiye ise Konum Seç Diyerek Konum Ekleyebilirsiniz")
             .setDarkMode(false).setGravity(Gravity.CENTER).setAnimation(DialogAnimation.DEFAULT)
             .setOnClickListener(object : OnDialogClickListener {
                 override fun onClick(dialog: AestheticDialog.Builder) {
                     dialog.dismiss()
                     //actions...
+                }
+            }).show()
+    }
+    private fun infAlertForGuest() {
+        AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
+            .setTitle("Şantiye Konum Bilgisi  Girilmedi").setCancelable(false)
+            .setMessage("Şantiye şefi tarafından konum bilgisi henüz girilmedi konum girildikten sonra tekrar deneyiniz.")
+            .setDarkMode(false).setGravity(Gravity.CENTER).setAnimation(DialogAnimation.DEFAULT)
+            .setOnClickListener(object : OnDialogClickListener {
+                override fun onClick(dialog: AestheticDialog.Builder) {
+                    dialog.dismiss()
+                    findNavController().navigate(R.id.action_locationFragment_to_settingsFragment)
                 }
             }).show()
     }
