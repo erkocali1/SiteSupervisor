@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.statisticsFragment
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -67,6 +69,15 @@ class StatisticsFragment : Fragment() {
         viewModel.getTeam(siteSupervisor, constructionArea)
         observeData("getTeam")
         currentUser = viewModel.currentUser
+
+        setFragmentResultListener("saveResult") { _, bundle ->
+            val saved = bundle.getBoolean("saved", false)
+            val savedVocation=bundle.getString("savedVocation","Kalıpçılar")
+            if (saved) {
+                viewModel.getStatisticForVocation(siteSupervisor, constructionArea, savedVocation!!)
+                observeData("file")
+            }
+        }
         validationUser()
         return binding.root
     }
@@ -190,10 +201,9 @@ class StatisticsFragment : Fragment() {
                                     uiState.loading -> {
                                         binding.progressBar.show()
                                     }
-
                                     uiState.resultList != null -> {
                                         binding.progressBar.hide()
-                                        list = uiState.resultList
+                                        list = uiState.resultList!!
                                         if (list.isEmpty()) {
                                             updateViewVisibility(false)
                                         } else {
@@ -205,6 +215,7 @@ class StatisticsFragment : Fragment() {
                                             setupAdapter()
                                             setBarChartData(monthList, operationDuration)
                                             setPieChartData(cost, amountPaid)
+                                            uiState.resultList= emptyList()
                                             updateItJob.cancel()
                                         }
                                     }
@@ -340,7 +351,6 @@ class StatisticsFragment : Fragment() {
             binding.textLayout.hide()
         }
     }
-
 }
 
 

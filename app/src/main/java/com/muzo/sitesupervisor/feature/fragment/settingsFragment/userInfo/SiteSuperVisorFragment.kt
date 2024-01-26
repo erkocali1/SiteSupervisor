@@ -34,7 +34,6 @@ class SiteSuperVisorFragment : Fragment() {
     private lateinit var currentUser: String
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -198,7 +197,11 @@ class SiteSuperVisorFragment : Fragment() {
         }
         binding.icDonePhoneNumber.setOnClickListener {
             val editPhoneNumber = binding.etPhone.text.toString()
-            viewModel.addItemValueToFireBase(editPhoneNumber, siteSupervisor, ItemType.PHONE_NUMBER.key)
+            viewModel.addItemValueToFireBase(
+                editPhoneNumber,
+                siteSupervisor,
+                ItemType.PHONE_NUMBER.key
+            )
             binding.icDonePhoneNumber.hide()
             binding.icEditPhone.show()
             binding.etPhone.hide()
@@ -240,11 +243,12 @@ class SiteSuperVisorFragment : Fragment() {
             binding.personPhoto.setImageResource(R.drawable.ic_person)
         }
     }
-    private fun validationUser(){
-        if (currentUser!=siteSupervisor){
-            binding.icEditPhone.isEnabled=false
-            binding.icMailEdit.isEnabled=false
-            binding.icEditSiteSupervisor.isEnabled=false
+
+    private fun validationUser() {
+        if (currentUser != siteSupervisor) {
+            binding.icEditPhone.hide()
+            binding.icMailEdit.hide()
+            binding.icEditSiteSupervisor.hide()
         }
     }
 

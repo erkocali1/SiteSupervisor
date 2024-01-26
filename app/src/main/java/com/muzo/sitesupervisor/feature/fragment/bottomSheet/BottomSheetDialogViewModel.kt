@@ -83,8 +83,7 @@ class BottomSheetDialogViewModel @Inject constructor(
 }
 data class SaveStatisticState(
     val loading: Boolean = false,
-    val message: String? = null,
-    val isSuccessful: Boolean = false,
+    var isSuccessful: Boolean = false,
 )
 
 data class TeamBottomState(

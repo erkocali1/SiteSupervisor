@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -80,6 +81,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
         configureToolbarTitle()
         navigateAddTask()
         validationUser()
+        backStackEvent()
 
         if (savedInstanceState == null) {
             // Show today's events initially.
@@ -247,7 +249,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                                 when {
                                     dateState.loading -> {
                                         binding.progressBar.show()
-                                        binding.exThreeCalendar.hide()
+                                        binding.cvCalendar.hide()
+                                        binding.linearLayout.hide()
                                     }
 
                                     dateState.dateList != null || dateState.isSuccessful -> {
@@ -259,7 +262,8 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
                                             }
                                         }
                                         binding.exThreeCalendar.notifyCalendarChanged()
-                                        binding.exThreeCalendar.show()
+                                        binding.cvCalendar.show()
+                                        binding.linearLayout.show()
                                     }
                                 }
                             }
@@ -414,6 +418,12 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     private fun validationUser() {
         if (currentUser != siteSupervisor) {
             binding.exThreeAddButton.hide()
+        }
+    }
+    private fun backStackEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
+            findNavController().popBackStack(R.id.listingFragment, false)
         }
     }
 }

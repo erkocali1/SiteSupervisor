@@ -10,6 +10,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.EditText
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +39,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
     private lateinit var siteSupervisor: String
     private lateinit var updateItJob: Job
     private lateinit var workerTeamList: List<String>
+    private lateinit var data: WorkInfoModel
 
 
     override fun onCreateView(
@@ -48,6 +51,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
         viewModel.getTeam(siteSupervisor, constructionArea)
         observeData("getTeam")
         sendData()
+
 
         return binding.root
     }
@@ -104,7 +108,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun sendData() {
         binding.saveBtn.setOnClickListener {
             if (isCheckBlankItem()) {
-                val data = getData()
+                data = getData()
                 viewModel.saveStatistic(data)
                 observeData("file")
             } else {
@@ -112,6 +116,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
             }
         }
     }
+
 
     private fun observeData(observedState: String) {
         updateItJob = lifecycleScope.launch {
@@ -128,6 +133,8 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
                                             "Kayıt Başarı Bir Şekilde Eklenmiştir",
                                             requireContext()
                                         )
+                                        sendDataToStaticFragment()
+                                        uiState.isSuccessful = false
                                         updateItJob.cancel()
                                     }
 
@@ -207,6 +214,14 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
         binding.etCoastMoney.setText("")
         binding.etAvailableBalance.setText("")
     }
+
+    private fun sendDataToStaticFragment() {
+        setFragmentResult("saveResult", Bundle().apply {
+            putBoolean("saved", true)
+            putString("savedVocation", data.vocation)
+        })
+    }
+
 }
 
 

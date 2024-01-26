@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="140sp"
-    android:padding="4sp">
+    android:layout_height="120sp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
+        android:layout_margin="6sp"
         android:layout_height="match_parent"
-        android:backgroundTint="@color/cardBackground"
+        android:backgroundTint="@color/whitePurple"
         android:elevation="5dp"
         app:cardCornerRadius="12dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,11 +21,11 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="6sp">
+            android:padding="4sp">
 
             <TextView
                 android:id="@+id/text_Title"
-                style="@style/titillium_web_black"
+                style="@style/montserrat_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8sp"
@@ -31,7 +33,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:text="TİTLE"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,13 +60,13 @@
 
             <TextView
                 android:id="@+id/text_desc"
-                style="@style/titillium_web_bold"
+                style="@style/montserrat_semi_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8sp"
                 android:layout_marginTop="6sp"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:text="TEXT YOUR DESC"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"

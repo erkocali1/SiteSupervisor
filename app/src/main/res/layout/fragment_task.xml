@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/all_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -97,7 +99,7 @@
         android:id="@+id/linearNestedLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="24sp"
+        android:layout_marginTop="18sp"
         android:layout_marginBottom="80sp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -113,6 +115,7 @@
                 android:id="@+id/exThreeRv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:listitem="@layout/task_events"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.core.widget.NestedScrollView>
@@ -122,9 +125,9 @@
         android:id="@+id/exThreeAddButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20sp"
-        android:layout_marginBottom="80sp"
-        app:backgroundTint="@color/colorAccent"
+        android:layout_marginEnd="15sp"
+        android:layout_marginBottom="95sp"
+        app:backgroundTint="@color/colorPurple"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add"
@@ -161,7 +164,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="6sp"
+            android:layout_marginBottom="4sp"
             app:layout_constraintBottom_toTopOf="@+id/text_empty_des"/>
 
         <TextView
@@ -169,7 +172,7 @@
             style="@style/montserrat_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bügüne ait hiç kayıt girilmedi."
+            android:text="Henüz hiç görev girilmedi."
             android:textColor="@color/example_3_toolbar_color"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"

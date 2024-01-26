@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,7 +43,7 @@ class VerifyPasswordFragment : Fragment() {
     ): View? {
 
         binding = FragmentVerifyPasswordBinding.inflate(layoutInflater, container, false)
-        Log.d("sellamn","burasıo çalıştuı")
+        Log.d("sellamn", "burasıo çalıştuı")
         infAlert()
         getSiteInfo()
         viewModel.getPassword(siteSupervisor, constructionArea)
@@ -57,8 +58,10 @@ class VerifyPasswordFragment : Fragment() {
             )
         )
         clearEditTexts()
+        backPressEvent()
         return binding.root
     }
+
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
             .setTitle("Şantiye Şifresini Girin").setCancelable(false)
@@ -163,6 +166,13 @@ class VerifyPasswordFragment : Fragment() {
 
     private fun navigateFragment() {
         findNavController().navigate(R.id.action_verifyPasswordFragment_to_listingFragment)
+    }
+
+    private fun backPressEvent() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
+            findNavController().popBackStack(R.id.selectionFragment, false)
+        }
     }
 
 }

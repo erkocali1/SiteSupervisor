@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -61,6 +62,7 @@ class TaskFragmentDetail : Fragment() {
         sendData()
         validationUser()
         backButtonEvent()
+        backStackEvent()
 
         return binding.root
     }
@@ -256,6 +258,12 @@ class TaskFragmentDetail : Fragment() {
             binding.etTitle.isEnabled = false
             binding.list.visibility = View.GONE
             binding.rvWorkerPicker.isEnabled = false
+        }
+    }
+    private fun backStackEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
+            findNavController().popBackStack(R.id.taskFragment, false)
         }
     }
 

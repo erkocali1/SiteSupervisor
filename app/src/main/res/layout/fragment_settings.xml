@@ -81,7 +81,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Kullanıcı Bilgisi"
+                        android:text="Şantiye Şefi Bilgisi"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="@+id/ic_person"
                         app:layout_constraintStart_toEndOf="@+id/ic_person"
@@ -190,50 +190,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24sp"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                app:strokeColor="@color/black"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="4sp">
-
-                    <ImageView
-                        android:id="@+id/ic_theme"
-                        style="@style/montserrat_bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_theme"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tema Ayarları"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/ic_theme"
-                        app:layout_constraintStart_toEndOf="@+id/ic_theme"
-                        app:layout_constraintTop_toTopOf="@+id/ic_theme" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_arrow_right"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_pdf"

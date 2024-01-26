@@ -61,7 +61,6 @@ class SaveStatisticViewModel @Inject constructor(
                 }
             }.launchIn(this)
         }
-
     }
 
     fun getTeam(currentUser: String, constructionName: String) {
@@ -85,19 +84,16 @@ class SaveStatisticViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
-
     fun readDataStore(userKey: String): Flow<String?> {
         return dataStore.readDataStore(userKey)
     }
-
-
 }
 
 data class GetStatisticState(
     val loading: Boolean = false,
     val message: String? = null,
     val isSuccessful: Boolean = false,
-    val resultList: List<WorkInfoModel>? = null
+    var resultList: List<WorkInfoModel>? = null
 )
 
 data class TeamStaticState(

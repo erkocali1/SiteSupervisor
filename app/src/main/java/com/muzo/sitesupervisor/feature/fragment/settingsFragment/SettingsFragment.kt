@@ -10,14 +10,24 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
+import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.toastMessage
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.REQUEST_CODE_LOCATION_PERMISSION
 import com.muzo.sitesupervisor.databinding.FragmentSettingsBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
+    private lateinit var currentUser: String
+    private val viewModel: SettingsFragmentViewModel by viewModels()
+    private lateinit var constructionArea: String
+    private lateinit var siteSupervisor: String
 
 
     override fun onCreateView(
@@ -28,22 +38,10 @@ class SettingsFragment : Fragment() {
         binding = FragmentSettingsBinding.inflate(layoutInflater, container, false)
 
         binding.toolbar.title = "AYARLAR"
-
-        binding.cvLocation.setOnClickListener {
-            locationEvent()
-        }
-
-        binding.cvPerson.setOnClickListener {
-            findNavController().navigate(R.id.action_settingsFragment_to_siteSuperVisorFragment)
-        }
-
-        binding.cvPasswordSettings.setOnClickListener {
-            findNavController().navigate(R.id.action_settingsFragment_to_settingsPasswordFragment)
-        }
-        binding.cvTeam.setOnClickListener {
-            findNavController().navigate(R.id.action_settingsFragment_to_teamFragment)
-        }
-
+        clickEvents()
+        currentUser = viewModel.currentUser
+        getSiteInfo()
+        validationUser()
         return binding.root
     }
 
@@ -89,6 +87,41 @@ class SettingsFragment : Fragment() {
                 ),
                 REQUEST_CODE_LOCATION_PERMISSION
             )
+        }
+    }
+
+    private fun clickEvents() {
+        binding.cvLocation.setOnClickListener {
+            locationEvent()
+        }
+        binding.cvPerson.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_siteSuperVisorFragment)
+        }
+
+        binding.cvPasswordSettings.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_settingsPasswordFragment)
+
+        }
+        binding.cvTeam.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_teamFragment)
+        }
+    }
+
+    private fun getSiteInfo() {
+        lifecycleScope.launch {
+            viewModel.readDataStore("construction_key").collect { area ->
+                constructionArea = area!!
+                viewModel.readDataStore("user_key").collect { supervisor ->
+                    siteSupervisor = supervisor!!
+                }
+            }
+        }
+    }
+    private fun validationUser(){
+        if (siteSupervisor!=currentUser){
+            binding.cvTeam.hide()
+            binding.cvPdf.hide()
+            binding.cvPasswordSettings.hide()
         }
     }
 }
