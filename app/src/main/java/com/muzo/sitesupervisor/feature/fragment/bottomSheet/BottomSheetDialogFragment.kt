@@ -129,10 +129,7 @@ class BottomSheetDialogFragment : BottomSheetDialogFragment() {
                                     uiState.isSuccessful -> {
                                         binding.progressBar.hide()
                                         clearFields()
-                                        toastMessage(
-                                            "Kayıt Başarı Bir Şekilde Eklenmiştir",
-                                            requireContext()
-                                        )
+                                        toastMessage("Kayıt Başarı Bir Şekilde Eklenmiştir", requireContext())
                                         sendDataToStaticFragment()
                                         uiState.isSuccessful = false
                                         updateItJob.cancel()

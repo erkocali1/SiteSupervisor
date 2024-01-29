@@ -109,13 +109,13 @@ class CreateAreaFragment : Fragment() {
     private fun createDataModel(constructionName: String): DataModel {
 
         val currentUser = viewModel.currentUser?.uid.toString()
+        val (currentDate, currentTime) = viewModel.getCurrentDateAndTime()
         return DataModel(
             id = postId,
-            message = "Lets start",
-            title = "First Commit",
-            photoUrl = listOf("", ""),
-            day = "1234",
-            time = "123",
+            message = "Şantiye Defteri Oluşturuldu Günlük Kayıtları Girebilirsiniz",
+            title = "Şantiye  Oluşturuldu",
+            day = currentDate,
+            time = currentTime,
             currentUser = currentUser,
             constructionArea = constructionName
         )
@@ -123,7 +123,7 @@ class CreateAreaFragment : Fragment() {
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
             .setTitle("Şantiye bilgilerini doldurun").setCancelable(false)
-            .setMessage("Şantiye bilgilerinizi 123-43 soldaki formata uygun olucak şekilde giriniz")
+            .setMessage("Şantiye bilgilerinizi Ada-Parsel  formata uygun olucak şekilde giriniz")
             .setDarkMode(false).setGravity(Gravity.CENTER).setAnimation(DialogAnimation.DEFAULT)
             .setOnClickListener(object : OnDialogClickListener {
                 override fun onClick(dialog: AestheticDialog.Builder) {

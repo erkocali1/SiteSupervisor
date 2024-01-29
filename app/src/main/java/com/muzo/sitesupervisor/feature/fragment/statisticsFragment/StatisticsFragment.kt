@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.statisticsFragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -56,6 +57,7 @@ class StatisticsFragment : Fragment() {
     private lateinit var updateItJob: Job
     private lateinit var workerTeamList: List<String>
     private lateinit var currentUser: String
+    private lateinit var vocation: String
 
 
     override fun onCreateView(
@@ -72,7 +74,7 @@ class StatisticsFragment : Fragment() {
 
         setFragmentResultListener("saveResult") { _, bundle ->
             val saved = bundle.getBoolean("saved", false)
-            val savedVocation=bundle.getString("savedVocation","Kalıpçılar")
+            val savedVocation = bundle.getString("savedVocation", "Kalıpçılar")
             if (saved) {
                 viewModel.getStatisticForVocation(siteSupervisor, constructionArea, savedVocation!!)
                 observeData("file")
@@ -177,8 +179,6 @@ class StatisticsFragment : Fragment() {
         binding.pieChart.highlightValues(null)
         binding.pieChart.invalidate()
     }
-
-
     private fun getSiteInfo() {
         lifecycleScope.launch {
             viewModel.readDataStore("construction_key").collect { area ->
@@ -189,7 +189,6 @@ class StatisticsFragment : Fragment() {
             }
         }
     }
-
     private fun observeData(observedState: String) {
         updateItJob = lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -199,6 +198,10 @@ class StatisticsFragment : Fragment() {
                             viewModel.uiState.collect { uiState ->
                                 when {
                                     uiState.loading -> {
+                                        binding.cvPie.hide()
+                                        binding.cvBarChart.hide()
+                                        binding.rvRecords.hide()
+                                        binding.textLayout.hide()
                                         binding.progressBar.show()
                                     }
                                     uiState.resultList != null -> {
@@ -215,7 +218,7 @@ class StatisticsFragment : Fragment() {
                                             setupAdapter()
                                             setBarChartData(monthList, operationDuration)
                                             setPieChartData(cost, amountPaid)
-                                            uiState.resultList= emptyList()
+                                            uiState.resultList= null
                                             updateItJob.cancel()
                                         }
                                     }
@@ -223,7 +226,6 @@ class StatisticsFragment : Fragment() {
                             }
                         }
                     }
-
                     "getTeam" -> {
                         launch {
                             viewModel.teamStatisticState.collect { teamStatisticState ->
@@ -236,9 +238,26 @@ class StatisticsFragment : Fragment() {
                                     teamStatisticState.resultList != null -> {
                                         binding.progressBar.hide()
                                         binding.allLayout.show()
-
                                         workerTeamList = teamStatisticState.resultList
                                         setList()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    "deleteEvent" -> {
+                        launch {
+                            viewModel.deleteState.collect { deleteState ->
+                                when {
+                                    deleteState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    deleteState.isDelete  -> {
+                                        binding.progressBar.hide()
+                                        viewModel.getStatisticForVocation(siteSupervisor, constructionArea, vocation)
+                                        observeData("file")
+                                        deleteState.isDelete=false
                                     }
                                 }
                             }
@@ -248,10 +267,11 @@ class StatisticsFragment : Fragment() {
             }
         }
     }
-
     private fun setupAdapter() {
 
-        adapter = StatisticsAdapter(list)
+        adapter = StatisticsAdapter(list){
+            showDeleteConfirmationDialog(vocation, randomId =it)
+        }
 
         binding.rvRecords.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -277,7 +297,7 @@ class StatisticsFragment : Fragment() {
                 val selectedItem = parent.getItemAtPosition(position).toString()
                 viewModel.getStatisticForVocation(siteSupervisor, constructionArea, selectedItem)
                 observeData("file")
-                // Seçilen öğeyle bir şeyler yapabilirsiniz
+                vocation=selectedItem
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -333,7 +353,6 @@ class StatisticsFragment : Fragment() {
             binding.bttn.hide()
         }
     }
-
     private fun updateViewVisibility(isVisible: Boolean) {
         if (isVisible) {
             binding.cvBarChart.show()
@@ -350,6 +369,26 @@ class StatisticsFragment : Fragment() {
             binding.textEmpty.show()
             binding.textLayout.hide()
         }
+    }
+
+    private fun deleteStatistic(infoVocation:String, randomId:String){
+        viewModel.deleteStatistic(siteSupervisor,constructionArea,infoVocation,randomId)
+        observeData("deleteEvent")
+    }
+
+    private fun showDeleteConfirmationDialog(infoVocation:String, randomId:String) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setTitle("Kaydı Sil")
+        alertDialogBuilder.setMessage("Bu kaydı silmek istiyor musunuz?")
+        alertDialogBuilder.setPositiveButton("Evet") { _, _ ->
+            deleteStatistic(infoVocation, randomId)
+        }
+        alertDialogBuilder.setNegativeButton("Hayat") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }
 

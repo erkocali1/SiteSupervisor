@@ -9,6 +9,8 @@ class Constants {
         const val ERROR_MESSAGE = "Registration failed"
         const val OK_MESSAGE = "Your application is okey"
         const val DATABASE_NAME = "news_db"
+        const val PREF_NAME = "login_event"
+        const val KEY_IS_ENTERED = "isEntered"
 
         object ConstructionTeams {
             val TEAMS = listOf(

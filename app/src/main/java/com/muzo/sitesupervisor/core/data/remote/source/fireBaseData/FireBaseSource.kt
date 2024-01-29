@@ -43,6 +43,8 @@ interface FireBaseSource {
 
     suspend fun getStatisticForVocation(infoCurrentUser: String, constructionName: String, infoVocation: String): Result<List<WorkInfoModel>>
 
+    suspend fun deleteStatisticWithRandomId(siteSuperVisor: String, constructionName: String, infoVocation: String, randomId: String): Result<Unit>
+
 
     //-----------------Location------------//
      suspend fun saveLocation(latLng: LatLng, currentUser: String, constructionName: String): Result<Unit>

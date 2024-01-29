@@ -68,8 +68,8 @@ class JoinAreaFragment : Fragment() {
 
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
-            .setTitle("Select the construction site you want to Investigate").setCancelable(false)
-            .setMessage("").setDarkMode(false).setGravity(Gravity.CENTER)
+            .setTitle("Şantiye Seçin").setCancelable(false)
+            .setMessage("Görüntülemek istediğiniz şantiyeyi seçin.").setDarkMode(false).setGravity(Gravity.CENTER)
             .setAnimation(DialogAnimation.DEFAULT)
             .setOnClickListener(object : OnDialogClickListener {
                 override fun onClick(dialog: AestheticDialog.Builder) {

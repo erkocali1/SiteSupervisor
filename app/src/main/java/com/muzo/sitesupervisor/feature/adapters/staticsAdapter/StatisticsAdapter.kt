@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import com.muzo.sitesupervisor.databinding.ItemStatisticBinding
 
-class StatisticsAdapter(private var list: List<WorkInfoModel>) :
+class StatisticsAdapter(private var list: List<WorkInfoModel>, val onClick: (item: String) -> Unit) :
     RecyclerView.Adapter<StatisticsAdapter.ViewHolder>() {
     private var number = 1
 
@@ -17,10 +17,13 @@ class StatisticsAdapter(private var list: List<WorkInfoModel>) :
         fun bind(item: WorkInfoModel) {
 
             binding.apply {
-                textDate.text = number.toString()
+                textDate.text = item.operationTime
                 textVocation.text = item.vocation
-                textRecordTime.text = item.operationTime
+                textRecordTime.text = number.toString()
                 textAmount.text = item.operationDuration.toString()
+                icRv.setOnClickListener {
+                    onClick(item.randomId!!)
+                }
 
             }
             number += 1

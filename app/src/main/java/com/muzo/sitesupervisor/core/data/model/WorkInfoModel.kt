@@ -13,4 +13,5 @@ data class WorkInfoModel(
     val specifiedMonth:String,
     val cost:String,
     val amountPaid:String,
+    val randomId:String?=null
 ) : Parcelable

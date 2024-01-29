@@ -7,6 +7,7 @@ import com.muzo.sitesupervisor.core.common.asReSource
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.model.WorkInfoModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
+import com.muzo.sitesupervisor.domain.DeleteStatisticUseCase
 import com.muzo.sitesupervisor.domain.GetStatisticForVocationUseCase
 import com.muzo.sitesupervisor.domain.GetTeamUseCase
 import com.muzo.sitesupervisor.feature.fragment.taskFragment.TeamTaskState
@@ -23,6 +24,7 @@ class SaveStatisticViewModel @Inject constructor(
     private val getStatisticForVocationUseCase: GetStatisticForVocationUseCase,
     private val dataStore: MyDataStore,
     private val getTeamUseCase: GetTeamUseCase,
+    private val deleteStatisticUseCase: DeleteStatisticUseCase,
     authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -32,6 +34,9 @@ class SaveStatisticViewModel @Inject constructor(
 
     private val _teamStatisticState: MutableStateFlow<TeamStaticState> = MutableStateFlow(TeamStaticState())
     val teamStatisticState = _teamStatisticState
+
+    private val _deleteState: MutableStateFlow<DeleteState> = MutableStateFlow(DeleteState())
+    val deleteState = _deleteState
 
     val currentUser = authRepository.currentUser?.uid.toString()
 
@@ -84,6 +89,30 @@ class SaveStatisticViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
+
+    fun deleteStatistic(siteSuperVisor: String, constructionName: String, infoVocation: String, randomId: String) {
+        viewModelScope.launch {
+            deleteStatisticUseCase(siteSuperVisor, constructionName, infoVocation, randomId).asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _deleteState.value = _deleteState.value.copy(loading = true)
+                    }
+
+                    is Resource.Error -> {
+                        _deleteState.value = _deleteState.value.copy(loading = false)
+                    }
+
+                    is Resource.Success -> {
+                        _deleteState.value = _deleteState.value.copy(loading = false, isDelete = true)
+
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+
+
     fun readDataStore(userKey: String): Flow<String?> {
         return dataStore.readDataStore(userKey)
     }
@@ -98,4 +127,9 @@ data class GetStatisticState(
 
 data class TeamStaticState(
     val resultList: List<String>? = null, val loading: Boolean = false
+)
+
+data class DeleteState(
+    val loading: Boolean = false,
+    var isDelete:Boolean=false
 )

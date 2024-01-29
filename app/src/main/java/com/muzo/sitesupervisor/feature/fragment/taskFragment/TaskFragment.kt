@@ -422,7 +422,6 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
     }
     private fun backStackEvent(){
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
             findNavController().popBackStack(R.id.listingFragment, false)
         }
     }

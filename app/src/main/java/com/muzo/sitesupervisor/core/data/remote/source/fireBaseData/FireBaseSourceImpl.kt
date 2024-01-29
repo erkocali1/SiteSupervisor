@@ -410,12 +410,29 @@ class FireBaseSourceImpl @Inject constructor(
                 "specifiedMonth" to workerInfoModel.specifiedMonth,
                 "cost" to workerInfoModel.cost,
                 "amountPaid" to workerInfoModel.amountPaid,
+                "randomId" to fileName.toString()
             )
 
             statisticRef.set(post).await()
 
         }
     }
+
+   override suspend fun deleteStatisticWithRandomId(siteSuperVisor: String, constructionName: String, infoVocation: String, randomId: String): Result<Unit> {
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("Users").document(siteSuperVisor)
+            val constructionSiteRef =
+                currentUserRef.collection("construcitonName").document(constructionName)
+            val postsRef = constructionSiteRef.collection("statistic").document(infoVocation)
+            val statisticSnapshot = postsRef.collection("randomId").get().await()
+
+            for (document in statisticSnapshot.documents) {
+                postsRef.collection("randomId").document(randomId).delete().await()
+            }
+
+        }
+    }
+
 
     override suspend fun getStatisticForVocation(
         infoCurrentUser: String,
@@ -440,6 +457,7 @@ class FireBaseSourceImpl @Inject constructor(
                 val specifiedMonth = data?.get("specifiedMonth") as? String ?: ""
                 val cost = data?.get("cost") as? String ?: ""
                 val amountPaid = data?.get("amountPaid") as? String ?: ""
+                val randomId = data?.get("randomId") as? String ?: ""
 
                 val workInfoModel = WorkInfoModel(
                     vocation = infoVocation,
@@ -450,6 +468,7 @@ class FireBaseSourceImpl @Inject constructor(
                     specifiedMonth = specifiedMonth,
                     cost = cost,
                     amountPaid = amountPaid,
+                    randomId = randomId,
                 )
                 workInfoModels.add(workInfoModel)
             }

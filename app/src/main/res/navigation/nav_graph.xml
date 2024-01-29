@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_enterFragment_to_selectionFragment"
             app:destination="@id/selectionFragment" />
+        <action
+            android:id="@+id/action_enterFragment_to_listingFragment"
+            app:destination="@id/listingFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -91,6 +94,9 @@
         <action
             android:id="@+id/action_listingFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_listingFragment_to_selectionFragment"
+            app:destination="@id/selectionFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"

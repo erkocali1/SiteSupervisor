@@ -69,9 +69,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_add"
-        app:tint="@color/brownLight"
+        app:tint="@color/white"
         android:layout_marginBottom="95sp"
-        app:backgroundTint="@color/brownExtraLight"
+        app:backgroundTint="@color/colorPurple"
         android:layout_marginEnd="15sp"
         app:layout_constraintCircleRadius="85dp"/>
 

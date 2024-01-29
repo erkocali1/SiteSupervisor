@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.settingsFragment.team
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -61,7 +62,7 @@ class TeamFragment : Fragment() {
 
                                     addItemState.result -> {
                                         binding.progressBar.hide()
-                                        toastMessage("İşlem Başarılı Bir Şekilde Eklendi", requireContext())
+                                        toastMessage("İşlem Başarılı Bir Şekilde Gerçekleşti", requireContext())
                                         updateJob.cancel()
                                     }
                                 }
@@ -107,20 +108,40 @@ class TeamFragment : Fragment() {
 
     private fun setupAdapter(list: List<String>) {
         adapter = TextAdapter(list) { deletedItem ->
-            // Tıklanan öğeyi listeden çıkar
-            val updatedList = workerTeamList.toMutableList().apply {
-                remove(deletedItem)
-            }
-            workerTeamList = updatedList
-            setupAdapter(updatedList)
-
-            viewModel.updateItem(siteSupervisor,updatedList,constructionArea)
-            observeData("change")
+            showDeleteConfirmationDialog(deletedItem)
         }
         binding.rv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rv.adapter = adapter
     }
+
+    private fun showDeleteConfirmationDialog(deletedItem: String) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Bu Ekibi Sil")
+        alertDialogBuilder.setMessage("Bu ekip silindiğinde ekibe ait tüm veriler silinicektir.Onaylıyor musunuz?")
+        alertDialogBuilder.setPositiveButton("Evet") { _, _ ->
+            deleteItem(deletedItem)
+        }
+        alertDialogBuilder.setNegativeButton("Hayır") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun deleteItem(deletedItem: String) {
+        // Tıklanan öğeyi listeden çıkar
+        val updatedList = workerTeamList.toMutableList().apply {
+            remove(deletedItem)
+        }
+        workerTeamList = updatedList
+        setupAdapter(updatedList)
+
+        viewModel.updateItem(siteSupervisor, updatedList, constructionArea)
+        observeData("change")
+    }
+
 
     private fun getSiteInfo() {
         lifecycleScope.launch {

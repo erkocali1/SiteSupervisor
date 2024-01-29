@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -87,6 +90,15 @@ class CreateAreFragmentViewModel @Inject constructor(
         }
 
 
+    }
+
+    fun getCurrentDateAndTime(): Pair<String, String> {
+        val calendar = Calendar.getInstance()
+        val turkishLocale = Locale("tr", "TR")
+        val currentDate =
+            DateFormat.getDateInstance(DateFormat.FULL, turkishLocale).format(calendar.time)
+        val currentTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
+        return Pair(currentDate, currentTime)
     }
 
     suspend fun saveRoom(saveList: DataModel): Long {

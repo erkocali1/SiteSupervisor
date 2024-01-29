@@ -1,5 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.enterfragment
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.Resource
+import com.muzo.sitesupervisor.core.constans.Constants.Companion.KEY_IS_ENTERED
+import com.muzo.sitesupervisor.core.constans.Constants.Companion.PREF_NAME
 import com.muzo.sitesupervisor.databinding.FragmentEnterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -20,14 +24,17 @@ class EnterFragment : Fragment() {
     private val viewModel: EnterFragmentViewModel by viewModels()
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentEnterBinding.inflate(layoutInflater, container, false)
 
-        checkLogin()
+        if (isEntered()) {
+            findNavController().navigate(R.id.action_enterFragment_to_listingFragment)
+        } else {
+            checkLogin()
+        }
         setButtonClickListeners()
 
 
@@ -62,5 +69,11 @@ class EnterFragment : Fragment() {
 
     private fun navigateToSelectionFragment() {
         findNavController().navigate(R.id.action_enterFragment_to_selectionFragment)
+    }
+
+    private fun isEntered(): Boolean {
+        val sharedPreferences: SharedPreferences =
+            requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(KEY_IS_ENTERED, false)
     }
 }

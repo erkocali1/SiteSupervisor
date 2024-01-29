@@ -242,7 +242,8 @@ class LocationFragment : Fragment() {
             .setOnClickListener(object : OnDialogClickListener {
                 override fun onClick(dialog: AestheticDialog.Builder) {
                     dialog.dismiss()
-                    findNavController().navigate(R.id.action_locationFragment_to_settingsFragment)
+                    findNavController().popBackStack(R.id.settingsFragment, false)
+                   // navigateFragment()
                 }
             }).show()
     }

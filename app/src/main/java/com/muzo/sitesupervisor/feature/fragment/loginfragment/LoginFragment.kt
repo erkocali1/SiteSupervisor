@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.Resource
+import com.muzo.sitesupervisor.core.common.hide
+import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -38,10 +40,14 @@ class LoginFragment : Fragment() {
             viewModel.loginFlow.collect {
                 when (it) {
                     is Resource.Error -> toastMessage(it.exception?.message!!)
-                    Resource.Loading -> {}
-                    is Resource.Success -> navigateFragment()
+                    Resource.Loading -> {
+                        binding.progressBar.show()
+                    }
+                    is Resource.Success -> {
+                        binding.progressBar.hide()
+                        navigateFragment()
+                    }
                     else -> {}
-
                 }
             }
         }
@@ -57,7 +63,7 @@ class LoginFragment : Fragment() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 viewModel.login(email, password)
             } else {
-                toastMessage("Name and password cannot be empty")
+                toastMessage("İsim ve şifre boş olamaz")
             }
         }
     }

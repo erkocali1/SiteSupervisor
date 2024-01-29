@@ -1,5 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.listingNotes
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
+import com.muzo.sitesupervisor.core.constans.Constants.Companion.KEY_IS_ENTERED
+import com.muzo.sitesupervisor.core.constans.Constants.Companion.PREF_NAME
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.FragmentListingBinding
 import com.muzo.sitesupervisor.feature.adapters.ListingAdapter
@@ -28,6 +32,7 @@ class ListingFragment : Fragment() {
     private lateinit var binding: FragmentListingBinding
     private lateinit var adapter: ListingAdapter
     private lateinit var list: List<DataModel>
+    private lateinit var sp:SharedPreferences
 
 
     override fun onCreateView(
@@ -39,6 +44,7 @@ class ListingFragment : Fragment() {
         getConstruction()
         observeData()
         navigateDetailFragment()
+        loginEvent()
 
         return binding.root
     }
@@ -135,9 +141,19 @@ class ListingFragment : Fragment() {
 
     private fun backPressEvent() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
-            findNavController().popBackStack(R.id.selectionFragment, false)
+            sp= requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            val editor=sp.edit()
+            editor.putBoolean(KEY_IS_ENTERED,false)
+            editor.apply()
+            findNavController().navigate(R.id.action_listingFragment_to_selectionFragment)
         }
+    }
+
+    private fun loginEvent(){
+        sp= requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val editor=sp.edit()
+        editor.putBoolean(KEY_IS_ENTERED,true)
+        editor.apply()
     }
 
 

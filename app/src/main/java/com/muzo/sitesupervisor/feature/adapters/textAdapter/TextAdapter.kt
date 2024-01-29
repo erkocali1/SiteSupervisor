@@ -5,8 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.muzo.sitesupervisor.databinding.ItemTeamBinding
 
-class TextAdapter(private var list: List<String>?, val onClick: (item: String) -> Unit) :
-    RecyclerView.Adapter<TextAdapter.ViewHolder>() {
+class TextAdapter(private var list: List<String>?, val onClick: (item: String) -> Unit) : RecyclerView.Adapter<TextAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemTeamBinding) :
         RecyclerView.ViewHolder(binding.root) {

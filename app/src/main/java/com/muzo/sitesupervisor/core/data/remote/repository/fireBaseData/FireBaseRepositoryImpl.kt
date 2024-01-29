@@ -118,6 +118,10 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         )
     }
 
+    override suspend fun deleteStatisticWithRandomId(siteSuperVisor: String, constructionName: String, infoVocation: String, randomId: String): Result<Unit> {
+        return fireBaseSource.deleteStatisticWithRandomId(siteSuperVisor, constructionName, infoVocation, randomId)
+    }
+
     override suspend fun saveLocation(
         latLng: LatLng,
         currentUser: String,
