@@ -45,6 +45,10 @@ class SiteSuperVisorViewModel @Inject constructor(
         return dataStore.readDataStore(userKey)
     }
 
+    fun logOut() {
+        authRepository.logOut()
+    }
+
     fun addUserPhoto(fileUri: Uri, siteSuperVisor: String) {
         viewModelScope.launch {
             addUserImageUseCase(fileUri, siteSuperVisor).asReSource().onEach { result ->
@@ -107,7 +111,6 @@ class SiteSuperVisorViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
-
 
 
 }

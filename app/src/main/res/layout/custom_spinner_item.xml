@@ -2,8 +2,10 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="18sp"
-    android:gravity="center"
+    android:textSize="14sp"
+    android:gravity="start"
     style="@style/montserrat_medium"
-    android:textColor="@color/colorPurple"
-    android:padding="4dp"/>
+    android:paddingLeft="4sp"
+    android:paddingRight="4sp"
+    android:paddingTop="6sp"
+    android:paddingBottom="6sp"/>

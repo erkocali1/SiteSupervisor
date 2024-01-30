@@ -12,7 +12,6 @@
     <string name="google_map_api_key">AIzaSyBAOgha8Vjr2cLWsChsjz01Moy0Sy3Pmic</string>
 
 
-
     <string name="enter_fragment_welcome">Hoşgeldiniz</string>
     <string name="enter_fragment_welcome_desc">Lütfen Bilgilerinizle Giriş Yapın</string>
     <string name="login_bttn">GİRİŞ YAP</string>
@@ -22,7 +21,6 @@
 
 
     <string name="login_fragment_empty_item_alert">İsim ve şifre boş olamaz</string>
-
 
 
 </resources>

@@ -95,12 +95,20 @@ class TeamFragment : Fragment() {
     private fun addItemEvent(){
         binding.icAddTeam.setOnClickListener {
             val item= binding.etTeamName.text.toString()
-            val list=listOf(item)+workerTeamList
-            workerTeamList=list
-            setupAdapter(workerTeamList)
             if (item.isNotEmpty()){
-                viewModel.updateItem(siteSupervisor,list,constructionArea)
-                observeData("change")
+                if (item.length<20){
+                    val list=listOf(item)+workerTeamList
+                    workerTeamList=list
+                    setupAdapter(workerTeamList)
+
+                    viewModel.updateItem(siteSupervisor,list,constructionArea)
+                    observeData("change")
+                }else{
+                    toastMessage("Karakter Sayısı 20 den fazla Olamaz",requireContext())
+                }
+            }
+            else{
+                toastMessage("Boş Karaktere İzin Verilmez",requireContext())
             }
         }
     }
@@ -125,6 +133,7 @@ class TeamFragment : Fragment() {
         alertDialogBuilder.setNegativeButton("Hayır") { dialog, _ ->
             dialog.dismiss()
         }
+
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }

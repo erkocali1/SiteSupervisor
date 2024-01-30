@@ -61,7 +61,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:src="@drawable/rafiki" />
+                            android:src="@drawable/pana" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <androidx.cardview.widget.CardView
@@ -83,7 +83,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="8sp"
-                            android:text="Ekip Pursantaj Kayıtları:"
+                            android:text="Ekip Pursantaj Kayıtları"
                             android:textColor="@color/white"
                             android:textSize="14sp" />
 
@@ -92,12 +92,15 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/spinner_layout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4sp"
+                        android:layout_marginEnd="4sp"
                         android:layout_marginTop="42sp"
                         android:backgroundTint="@color/white"
                         app:layout_constraintStart_toEndOf="@id/iv_worker_photo"
+                        app:layout_constraintEnd_toEndOf="parent"
+
                         app:layout_constraintTop_toTopOf="@+id/iv_worker_photo">
 
                         <Spinner

@@ -145,7 +145,7 @@ class ListingFragment : Fragment() {
             val editor=sp.edit()
             editor.putBoolean(KEY_IS_ENTERED,false)
             editor.apply()
-            findNavController().navigate(R.id.action_listingFragment_to_selectionFragment)
+            findNavController().popBackStack(R.id.selectionFragment, false)
         }
     }
 

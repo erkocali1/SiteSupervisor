@@ -1,6 +1,8 @@
 package com.muzo.sitesupervisor.feature.fragment.settingsFragment.userInfo
 
 import android.app.Activity
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +14,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.common.toastMessage
+import com.muzo.sitesupervisor.core.constans.Constants
 import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.databinding.FragmentSiteSuperVisorBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +36,8 @@ class SiteSuperVisorFragment : Fragment() {
     private lateinit var siteSupervisor: String
     private lateinit var updateItJob: Job
     private lateinit var currentUser: String
+    private lateinit var sp: SharedPreferences
+
 
 
     override fun onCreateView(
@@ -48,6 +54,7 @@ class SiteSuperVisorFragment : Fragment() {
         editData()
         currentUser = viewModel.currentUser
         validationUser()
+        logOutEvent()
         return binding.root
     }
 
@@ -249,6 +256,18 @@ class SiteSuperVisorFragment : Fragment() {
             binding.icEditPhone.hide()
             binding.icMailEdit.hide()
             binding.icEditSiteSupervisor.hide()
+            binding.btn.hide()
+        }
+    }
+
+    private fun logOutEvent(){
+        binding.btn.setOnClickListener {
+            viewModel.logOut()
+            sp= requireActivity().getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
+            val editor=sp.edit()
+            editor.putBoolean(Constants.KEY_IS_ENTERED,false)
+            editor.apply()
+            findNavController().popBackStack(R.id.enterFragment, false)
         }
     }
 

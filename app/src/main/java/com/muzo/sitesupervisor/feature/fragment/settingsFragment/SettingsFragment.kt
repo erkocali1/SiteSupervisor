@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
+import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.common.toastMessage
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.REQUEST_CODE_LOCATION_PERMISSION
 import com.muzo.sitesupervisor.databinding.FragmentSettingsBinding
@@ -95,6 +96,9 @@ class SettingsFragment : Fragment() {
         binding.cvTeam.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_teamFragment)
         }
+        binding.cvUser.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_userFragment)
+        }
     }
 
     private fun getSiteInfo() {
@@ -112,6 +116,7 @@ class SettingsFragment : Fragment() {
             binding.cvTeam.hide()
             binding.cvPdf.hide()
             binding.cvPasswordSettings.hide()
+            binding.cvUser.show()
         }
     }
 

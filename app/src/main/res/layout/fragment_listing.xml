@@ -8,43 +8,92 @@
     tools:context=".feature.fragment.listingNotes.ListingFragment">
 
 
-    <TextView
-        android:id="@+id/text_Title"
-        style="@style/titillium_web_black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12sp"
-        android:layout_marginTop="12sp"
-        android:text="Hello"
-        android:textColor="@color/brownDark"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_top"
+        android:layout_width="match_parent"
+        android:layout_height="150sp"
+        android:layout_marginTop="-40sp"
+        android:backgroundTint="@color/colorPurple"
+        app:cardCornerRadius="28dp"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/text_constant"
-        style="@style/titillium_web_regular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12sp"
-        android:layout_marginTop="12sp"
-        android:text="Let's plan the construction site"
-        android:textColor="@color/brownLight"
-        android:textSize="16sp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_worker"
+        android:layout_width="match_parent"
+        android:layout_height="220sp"
+        android:layout_marginStart="24sp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="24sp"
+        android:background="@color/dark_background"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_Title" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/iv_worker_photo"
+                android:layout_width="250sp"
+                android:layout_height="140sp"
+                android:elevation="6sp"
+                app:cardCornerRadius="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cv_text"
+                app:strokeColor="@color/colorPurple"
+                app:strokeWidth="1dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/build" />
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:layout_marginTop="12sp"
+                android:backgroundTint="@color/colorPurple"
+                android:elevation="6sp"
+                app:cardCornerRadius="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/text_constant"
+                    style="@style/montserrat_bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8sp"
+                    android:text="Günlük Şantiye Kayıtları"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8sp"
+        android:layout_marginTop="4sp"
         android:layout_marginBottom="80sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_constant"
+        app:layout_constraintTop_toBottomOf="@id/cv_worker"
         tools:listitem="@layout/item_row" />
 
     <androidx.cardview.widget.CardView
+        android:visibility="invisible"
         android:id="@+id/search"
         android:layout_width="50sp"
         android:layout_height="50sp"

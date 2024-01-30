@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/all_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.fragment.settingsFragment.userInfo.SiteSuperVisorFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".feature.fragment.userFragment.UserFragment">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_top"
@@ -23,14 +24,14 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_person"
-                android:layout_width="160sp"
+                android:layout_width="200sp"
                 android:layout_height="200sp"
-                app:cardCornerRadius="15sp"
+                app:cardCornerRadius="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/black"
+                app:strokeColor="@color/colorPurple"
                 app:strokeWidth="1dp">
 
                 <ImageView
@@ -38,34 +39,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_person" />
+                    android:src="@drawable/rafiki" />
 
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:layout_marginEnd="-10sp"
-                android:layout_marginTop="-10sp"
-                app:cardCornerRadius="30sp"
-                app:layout_constraintEnd_toEndOf="@id/cv_person"
-                app:layout_constraintTop_toTopOf="@id/cv_person"
-                app:strokeColor="@color/example_3_blue"
-                app:strokeWidth="1dp">
-
-                <ImageView
-                    android:id="@+id/load_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fitsSystemWindows="true"
-                    android:src="@drawable/ic_add_photo"
-                    app:tint="@color/md_blue_grey_500" />
             </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="12sp"
@@ -111,7 +93,7 @@
                         android:id="@+id/ic_constant_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Şantiye Şefi:"
+                        android:text="Kullanıcı Adı:"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="@+id/ic_person"
                         app:layout_constraintStart_toEndOf="@+id/ic_person"
@@ -129,7 +111,7 @@
                         app:layout_constraintTop_toTopOf="@+id/ic_person" />
 
                     <EditText
-                        android:id="@+id/et_siteSupervisor"
+                        android:id="@+id/et_userName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:maxLength="20"
@@ -143,10 +125,9 @@
                     <ImageView
                         android:id="@+id/ic_edit_siteSupervisor"
                         android:layout_width="wrap_content"
+                        android:visibility="invisible"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="4sp"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
                         android:src="@drawable/ic_edit"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -170,96 +151,12 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32sp"
-                app:strokeColor="@color/black"
-                app:strokeWidth="1dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="4sp">
-
-                    <ImageView
-                        android:id="@+id/ic_phone"
-                        style="@style/montserrat_bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_phone"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/ic_phone_constant"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Telefon Nu:"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/ic_phone"
-                        app:layout_constraintStart_toEndOf="@+id/ic_phone"
-                        app:layout_constraintTop_toTopOf="@+id/ic_phone" />
-
-                    <TextView
-                        android:id="@+id/phoneNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4sp"
-                        android:text="+90542555555"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/ic_phone_constant"
-                        app:layout_constraintStart_toEndOf="@+id/ic_phone_constant"
-                        app:layout_constraintTop_toTopOf="@+id/ic_phone_constant" />
-
-                    <EditText
-                        android:id="@+id/et_phone"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLength="20"
-                        android:maxLines="1"
-                        android:visibility="invisible"
-                        app:layout_constraintBottom_toBottomOf="@+id/ic_phone_constant"
-                        app:layout_constraintEnd_toStartOf="@+id/ic_edit_phone"
-                        app:layout_constraintStart_toEndOf="@+id/ic_phone_constant"
-                        app:layout_constraintTop_toTopOf="@+id/ic_phone_constant" />
-
-                    <ImageView
-                        android:id="@+id/ic_edit_phone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4sp"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:src="@drawable/ic_edit"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/ic_done_phoneNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4sp"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:src="@drawable/ic_done"
-                        android:visibility="invisible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
+-
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32sp"
-                android:layout_marginBottom="20sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="1dp">
 
@@ -320,8 +217,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="4sp"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
+                        android:visibility="invisible"
                         android:src="@drawable/ic_edit"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -358,6 +254,7 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
 
 
     <ProgressBar

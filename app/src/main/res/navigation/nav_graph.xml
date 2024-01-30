@@ -176,6 +176,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_teamFragment"
             app:destination="@id/teamFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_userFragment"
+            app:destination="@id/userFragment" />
     </fragment>
     <fragment
         android:id="@+id/locationFragment"
@@ -194,6 +197,9 @@
         <action
             android:id="@+id/action_siteSuperVisorFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_siteSuperVisorFragment_to_enterFragment"
+            app:destination="@id/enterFragment" />
     </fragment>
     <fragment
         android:id="@+id/passwordFragment"
@@ -227,6 +233,11 @@
             android:id="@+id/action_teamFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.userFragment.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user" />
 
 
 </navigation>

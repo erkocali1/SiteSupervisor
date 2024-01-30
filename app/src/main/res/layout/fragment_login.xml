@@ -51,44 +51,104 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/login" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/mailLayout"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_mail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10sp"
-                android:layout_marginTop="32sp"
-                android:layout_marginEnd="10sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/loginText">
+                android:layout_marginStart="30sp"
+                android:layout_marginTop="20sp"
+                android:layout_marginEnd="30sp"
+                app:cardCornerRadius="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/loginText"
+                app:strokeColor="@color/black"
+                app:strokeWidth="1dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etMail"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/edittext_background"
-                    android:hint="Mail"
-                    android:inputType="textPersonName" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:padding="8sp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/passwordLayout"
+                    <ImageView
+                        android:id="@+id/ic_mail"
+                        style="@style/montserrat_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_mail"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/et_mail"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="Mail"
+                        android:maxLength="20"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/ic_mail"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/ic_mail"
+                        app:layout_constraintTop_toTopOf="@+id/ic_mail" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10sp"
-                android:layout_marginTop="24sp"
-                android:layout_marginEnd="10sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mailLayout"
-                app:passwordToggleEnabled="true">
+                android:layout_marginStart="30sp"
+                android:layout_marginTop="20sp"
+                android:layout_marginEnd="30sp"
+                app:cardCornerRadius="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/cv_mail"
+                app:strokeColor="@color/black"
+                app:strokeWidth="1dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPassword"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/edittext_background"
-                    android:hint="Şifre"
-                    android:inputType="textPersonName" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:padding="6sp">
+
+                    <ImageView
+                        android:id="@+id/ic_password"
+                        style="@style/montserrat_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_password"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Design.TextInputLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:hintEnabled="false"
+                        app:layout_constraintBottom_toBottomOf="@+id/ic_password"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/ic_password"
+                        app:layout_constraintTop_toTopOf="@+id/ic_password"
+                        app:passwordToggleEnabled="true">
+
+                        <EditText
+                            android:id="@+id/et_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="Şifre"
+                            android:inputType="textPassword"
+                            android:maxLength="20"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <Button
                 android:id="@+id/btnLogin"
@@ -100,7 +160,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
+                app:layout_constraintTop_toBottomOf="@id/cv_password" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
