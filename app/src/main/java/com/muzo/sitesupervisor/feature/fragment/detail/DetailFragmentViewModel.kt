@@ -13,6 +13,7 @@ import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
 import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.AddImageToFirebaseStorageUseCase
+import com.muzo.sitesupervisor.domain.DeletePostUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
 import com.muzo.sitesupervisor.domain.GetDataFromRoomUseCase
 import com.muzo.sitesupervisor.domain.GetDataUseCase
@@ -38,11 +39,15 @@ class DetailFragmentViewModel @Inject constructor(
     private val dataStore: MyDataStore,
     private val getDataFromRoomUseCase: GetDataFromRoomUseCase,
     private val getImageUrlFromFireStoreUseCase: GetImageUrlFromFireStoreUseCase,
-    private val getDataUseCase: GetDataUseCase
+    private val getDataUseCase: GetDataUseCase,
+    private val deletePostUseCase:DeletePostUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
     val uiState = _uiState
+
+    private val _deleteState: MutableStateFlow<DeletePostState> = MutableStateFlow(DeletePostState())
+    val deleteState = _deleteState
 
 
     val currentUser = authRepository.currentUser?.uid.toString()
@@ -69,6 +74,27 @@ class DetailFragmentViewModel @Inject constructor(
                 }
             }.launchIn(this)
 
+        }
+    }
+
+    fun deletePost(currentUser: String, constructionName: String, postId: String) {
+        viewModelScope.launch {
+            deletePostUseCase(currentUser, constructionName, postId).asReSource().onEach { result ->
+
+                when (result) {
+                    Resource.Loading -> {
+                        _deleteState.value = _deleteState.value.copy(loading = true)
+                    }
+
+                    is Resource.Error -> {
+                        _deleteState.value = _deleteState.value.copy(loading = false)
+                    }
+
+                    is Resource.Success -> {
+                        _deleteState.value = _deleteState.value.copy(loading = false,isDelete = true)
+                    }
+                }
+            }.launchIn(this)
         }
     }
 
@@ -146,51 +172,6 @@ class DetailFragmentViewModel @Inject constructor(
     fun readDataStore(userKey: String): Flow<String?> {
         return dataStore.readDataStore(userKey)
     }
-
-    fun getDataFromRoom(postId: Long) {
-        viewModelScope.launch {
-            getDataFromRoomUseCase(postId).asReSource().onEach { result ->
-                when (result) {
-                    is Resource.Loading -> {
-                        _uiState.value = _uiState.value.copy(loading = true)
-                    }
-
-                    is Resource.Error -> {
-
-                        _uiState.value =
-                            _uiState.value.copy(message = ERROR_MESSAGE, loading = false)
-                    }
-
-                    is Resource.Success -> {
-                        _uiState.value =
-                            _uiState.value.copy(loading = false, localData = result.data)
-                    }
-                }
-            }.launchIn(this)
-        }
-    }
-
-    fun getAllPhoto(currentUser: String, constructionName: String, postId: String) {
-
-        viewModelScope.launch {
-            getImageUrlFromFireStoreUseCase(currentUser, constructionName, postId).asReSource()
-                .onEach { result ->
-                    when (result) {
-                        is Resource.Error -> {
-                            _uiState.value = UpdateState(loading = false)
-                        }
-
-                        Resource.Loading -> {
-                            _uiState.value = UpdateState(loading = true)
-                        }
-
-                        is Resource.Success -> {
-                            _uiState.value = UpdateState(loading = false, photoList = result.data)
-                        }
-                    }
-                }.launchIn(this)
-        }
-    }
 }
 
 data class UpdateState(
@@ -203,5 +184,9 @@ data class UpdateState(
     val localData: DataModel? = null,
     val photoList: List<String>? = null,
     val getDataFireBase: DataModel? = null,
-
     )
+
+data class DeletePostState(
+    val loading: Boolean = false,
+    val isDelete:Boolean=false
+)

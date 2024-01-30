@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.taskFragmentDetail
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -63,6 +64,7 @@ class TaskFragmentDetail : Fragment() {
         validationUser()
         backButtonEvent()
         backStackEvent()
+        deletePostEvent()
 
         return binding.root
     }
@@ -97,6 +99,23 @@ class TaskFragmentDetail : Fragment() {
                                     }
 
                                     uiState.isSaveTask && sendData -> {
+                                        binding.progressBar.hide()
+                                        navigateFragment()
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    "deleteTask" -> {
+                        launch {
+                            viewModel.deleteTaskState.collect { deleteTaskState ->
+                                when {
+                                    deleteTaskState.loading -> {
+                                        binding.progressBar.show()
+                                    }
+
+                                    deleteTaskState.isDelete -> {
                                         binding.progressBar.hide()
                                         navigateFragment()
                                     }
@@ -260,11 +279,36 @@ class TaskFragmentDetail : Fragment() {
             binding.rvWorkerPicker.isEnabled = false
         }
     }
-    private fun backStackEvent(){
+
+    private fun backStackEvent() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
             findNavController().popBackStack(R.id.taskFragment, false)
         }
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Görev Sil")
+        alertDialogBuilder.setMessage("Bu görev silindiğinde bu kayıda ait tüm veriler silinicektir.Onaylıyor musunuz?")
+        alertDialogBuilder.setPositiveButton("Evet") { _, _ ->
+            deleteEvent()
+        }
+        alertDialogBuilder.setNegativeButton("Hayır") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun deletePostEvent() {
+        binding.okDelete.setOnClickListener {
+            showDeleteConfirmationDialog()
+        }
+    }
+    private fun deleteEvent(){
+        viewModel.deleteTask(siteSupervisor,constructionArea,specifiedDay!!,taskIdNumber.toString())
+        observeData("deleteTask")
     }
 
 }

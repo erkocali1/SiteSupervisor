@@ -125,7 +125,6 @@ class TeamFragment : Fragment() {
         alertDialogBuilder.setNegativeButton("Hayır") { dialog, _ ->
             dialog.dismiss()
         }
-
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }

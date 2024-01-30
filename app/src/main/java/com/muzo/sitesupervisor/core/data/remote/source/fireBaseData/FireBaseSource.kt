@@ -16,6 +16,8 @@ interface FireBaseSource {
 
     suspend fun fetchData(currentUser: String, constructionName: String,postId:String): Result<DataModel>
 
+    suspend fun deletePost(currentUser: String, constructionName: String, postId: String):Result<Unit>
+
     suspend fun fetchArea(): Result<List<UserConstructionData>>
     suspend fun getAllPost(currentUser: String, constructionName: String):Result<List<DataModel>>
 
@@ -29,6 +31,8 @@ interface FireBaseSource {
 
     //-----------------Task------------//
     suspend fun saveTask(taskModel: TaskModel): Result<Unit>
+
+    suspend fun deleteTask(currentUser: String, constructionName: String, date: String, taskId: String): Result<Unit>
 
     suspend fun getAllTask(currentUser: String, constructionName: String,date:String ): Result<List<TaskModel>>
 

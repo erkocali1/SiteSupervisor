@@ -18,6 +18,10 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.saveArea(data)
     }
 
+    override suspend fun deletePost(currentUser: String, constructionName: String, postId: String): Result<Unit> {
+       return fireBaseSource.deletePost(currentUser, constructionName, postId)
+    }
+
     override suspend fun fetchData(
         currentUser: String,
         constructionName: String,
@@ -83,6 +87,10 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
     //-----------------Task------------------------\\
     override suspend fun saveTask(taskModel: TaskModel): Result<Unit> {
         return fireBaseSource.saveTask(taskModel)
+    }
+
+    override suspend fun deleteTask(currentUser: String, constructionName: String, date: String, taskId: String): Result<Unit> {
+        return fireBaseSource.deleteTask(currentUser, constructionName, date, taskId)
     }
 
     override suspend fun getAllTask(

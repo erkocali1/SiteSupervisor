@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.detail
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,7 @@ import com.muzo.sitesupervisor.databinding.FragmentDetailBinding
 import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -74,7 +76,7 @@ class DetailFragment : Fragment() {
         addPhoto()
         turnBackFragment()
         hideButton()
-
+        deletePostEvent()
         return binding.root
     }
 
@@ -473,11 +475,11 @@ class DetailFragment : Fragment() {
                 val receivedData = arguments?.getLong("id")
                 postId = receivedData!!
                 putString("bigPhoto", uri)
-                Log.d("aslihanerkoc",postId.toString())
-               putLong("id", postId!!)
+                Log.d("aslihanerkoc", postId.toString())
+                putLong("id", postId!!)
 
             }
-            findNavController().navigate(R.id.action_detailFragment_to_photoFragment,bundle)
+            findNavController().navigate(R.id.action_detailFragment_to_photoFragment, bundle)
         }
 
     }
@@ -503,20 +505,53 @@ class DetailFragment : Fragment() {
             binding.okBtn.hide()
             binding.okDelete.hide()
             binding.cvAddPhoto.hide()
-            binding.etDes.isEnabled=false
-            binding.etTitle.isEnabled=false
+            binding.etDes.isEnabled = false
+            binding.etTitle.isEnabled = false
         }
     }
 
-    private fun backStackEvent(){
+    private fun backStackEvent() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // D fragmentından B fragmentına kadar olan tüm fragmentları geri al
             findNavController().popBackStack(R.id.listingFragment, false)
         }
     }
 
-
-
-
-
+    private fun deletePostEvent() {
+        binding.okDelete.setOnClickListener {
+            showDeleteConfirmationDialog()
+        }
+    }
+    private fun observeDelete() {
+        val receivedData = arguments?.getLong("id")
+        postId = receivedData!!
+        viewModel.deletePost(siteSupervisor, constructionArea, postId.toString())
+        lifecycleScope.launch {
+            viewModel.deleteState.collect { deleteState ->
+                when {
+                    deleteState.loading -> {
+                        binding.progressBar.show()
+                    }
+                    deleteState.isDelete -> {
+                        binding.progressBar.hide()
+                        toastMessage("Kayıt Başarılı Bir Şekilde Silindi")
+                        navigateListingFragment()
+                    }
+                }
+            }
+        }
+    }
+    private fun showDeleteConfirmationDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Kayıt Sil")
+        alertDialogBuilder.setMessage("Bu kayıt silindiğinde bu kayıda ait tüm veriler silinicektir.Onaylıyor musunuz?")
+        alertDialogBuilder.setPositiveButton("Evet") { _, _ ->
+            observeDelete()
+        }
+        alertDialogBuilder.setNegativeButton("Hayır") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
 }

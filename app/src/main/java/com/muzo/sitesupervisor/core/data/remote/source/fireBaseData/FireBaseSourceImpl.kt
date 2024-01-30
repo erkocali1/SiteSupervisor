@@ -52,9 +52,22 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun deletePost(
+        currentUser: String,
+        constructionName: String,
+        postId: String
+    ): Result<Unit> {
+        return kotlin.runCatching {
+            database.collection("Users").document(currentUser).collection("construcitonName")
+                .document(constructionName).collection("posts").document(postId).delete().await()
+        }
+    }
+
 
     override suspend fun fetchData(
-        currentUser: String, constructionName: String, postId: String
+        currentUser: String,
+        constructionName: String,
+        postId: String
     ): Result<DataModel> {
         return kotlin.runCatching {
             val documentSnapshot =
@@ -280,6 +293,34 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteTask(
+        currentUser: String,
+        constructionName: String,
+        date: String,
+        taskId: String
+    ): Result<Unit> {
+        return kotlin.runCatching {
+            // Delete the specific task
+            database.collection("Users").document(currentUser)
+                .collection("construcitonName").document(constructionName)
+                .collection("task").document(date)
+                .collection("taskId").document(taskId).delete()
+
+            // Check if there are any remaining tasks under the date
+            val dateCollectionRef = database.collection("Users").document(currentUser)
+                .collection("construcitonName").document(constructionName)
+                .collection("task").document(date).collection("taskId").get().await()
+
+            // If no remaining tasks, delete the entire date document
+            if (dateCollectionRef.isEmpty) {
+                database.collection("Users").document(currentUser)
+                    .collection("construcitonName").document(constructionName)
+                    .collection("task").document(date).delete()
+            }
+        }
+    }
+
+
     override suspend fun getAllTask(
         currentUser: String,
         constructionName: String,
@@ -418,7 +459,12 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-   override suspend fun deleteStatisticWithRandomId(siteSuperVisor: String, constructionName: String, infoVocation: String, randomId: String): Result<Unit> {
+    override suspend fun deleteStatisticWithRandomId(
+        siteSuperVisor: String,
+        constructionName: String,
+        infoVocation: String,
+        randomId: String
+    ): Result<Unit> {
         return kotlin.runCatching {
             val currentUserRef = database.collection("Users").document(siteSuperVisor)
             val constructionSiteRef =
@@ -528,7 +574,8 @@ class FireBaseSourceImpl @Inject constructor(
         return kotlin.runCatching {
             var uploadedUri: Uri? = null // uploadedUri'yi null olarak başlatın
 
-            val fileRef = storage.reference.child("users").child("siteSuperVisor").child(siteSuperVisor)
+            val fileRef =
+                storage.reference.child("users").child("siteSuperVisor").child(siteSuperVisor)
 
             // putFile fonksiyonunu kullanarak dosyayı yükleyin
             fileRef.putFile(fileUri).await()
@@ -543,7 +590,11 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun changeUserItem(itemValue: String, currentUser: String, changedItem: String): Result<Unit> {
+    override suspend fun changeUserItem(
+        itemValue: String,
+        currentUser: String,
+        changedItem: String
+    ): Result<Unit> {
         return kotlin.runCatching {
             val currentUserRef = database.collection("UsersInfo").document(currentUser)
 
@@ -552,29 +603,46 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun changeSitePassword(itemValue: String, siteSuperVisor: String,constructionName: String): Result<Unit> {
+    override suspend fun changeSitePassword(
+        itemValue: String,
+        siteSuperVisor: String,
+        constructionName: String
+    ): Result<Unit> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("UsersInfo").document(siteSuperVisor).collection("constName").document(constructionName)
+            val currentUserRef =
+                database.collection("UsersInfo").document(siteSuperVisor).collection("constName")
+                    .document(constructionName)
 
             val data = hashMapOf("Password" to itemValue)
             currentUserRef.update(data.toMap()).await()
         }
     }
 
-  override  suspend fun getSitePassword(siteSuperVisor: String, constructionName: String): Result<String> {
+    override suspend fun getSitePassword(
+        siteSuperVisor: String,
+        constructionName: String
+    ): Result<String> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("UsersInfo").document(siteSuperVisor).collection("constName").document(constructionName)
+            val currentUserRef =
+                database.collection("UsersInfo").document(siteSuperVisor).collection("constName")
+                    .document(constructionName)
             val documentSnapshot = currentUserRef.get().await()
 
-            val data=documentSnapshot.data
-            val password=data?.get("Password") as String
+            val data = documentSnapshot.data
+            val password = data?.get("Password") as String
             password
         }
     }
 
-    override suspend fun addTeam(currentUser:String, teams: List<String>, constructionName: String):Result<Unit>{
+    override suspend fun addTeam(
+        currentUser: String,
+        teams: List<String>,
+        constructionName: String
+    ): Result<Unit> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("UsersInfo").document(currentUser).collection("constName").document(constructionName)
+            val currentUserRef =
+                database.collection("UsersInfo").document(currentUser).collection("constName")
+                    .document(constructionName)
 
 
             val post = hashMapOf(
@@ -584,9 +652,15 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateTeam(currentUser: String, teams: List<String>, constructionName: String): Result<Unit> {
+    override suspend fun updateTeam(
+        currentUser: String,
+        teams: List<String>,
+        constructionName: String
+    ): Result<Unit> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("UsersInfo").document(currentUser).collection("constName").document(constructionName)
+            val currentUserRef =
+                database.collection("UsersInfo").document(currentUser).collection("constName")
+                    .document(constructionName)
 
             val post = hashMapOf<String, Any>(
                 "teams" to teams as Any
@@ -595,18 +669,23 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTeam(currentUser:String, constructionName: String):Result<List<String>>{
+    override suspend fun getTeam(
+        currentUser: String,
+        constructionName: String
+    ): Result<List<String>> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("UsersInfo").document(currentUser).collection("constName").document(constructionName).get().await()
+            val currentUserRef =
+                database.collection("UsersInfo").document(currentUser).collection("constName")
+                    .document(constructionName).get().await()
 
-            val data=currentUserRef.data
-            val teams=data?.get("teams") as? List<String> ?: emptyList()
+            val data = currentUserRef.data
+            val teams = data?.get("teams") as? List<String> ?: emptyList()
             teams
         }
     }
 
 
-    override suspend fun addUserInfo(currentUser:String, userInfo: UserInfo):Result<Unit>{
+    override suspend fun addUserInfo(currentUser: String, userInfo: UserInfo): Result<Unit> {
         return kotlin.runCatching {
             val currentUserRef = database.collection("UsersInfo").document(currentUser)
 
@@ -620,22 +699,23 @@ class FireBaseSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSiteSuperVisorInfo(siteSuperVisor: String):Result<UserInfo>{
+    override suspend fun getSiteSuperVisorInfo(siteSuperVisor: String): Result<UserInfo> {
         return kotlin.runCatching {
-            val currentUserRef = database.collection("UsersInfo").document(siteSuperVisor).get().await()
+            val currentUserRef =
+                database.collection("UsersInfo").document(siteSuperVisor).get().await()
 
-           val data=currentUserRef.data
+            val data = currentUserRef.data
 
-            val mail=data?.get("email") as String? ?: ""
-            val name=data?.get("name") as String? ?: ""
-            val phone=data?.get("phoneNumber") as String? ?: ""
-            val photoUrl=data?.get("photoUrl") as String? ?: ""
+            val mail = data?.get("email") as String? ?: ""
+            val name = data?.get("name") as String? ?: ""
+            val phone = data?.get("phoneNumber") as String? ?: ""
+            val photoUrl = data?.get("photoUrl") as String? ?: ""
 
-            val userInfo=UserInfo(
+            val userInfo = UserInfo(
                 email = mail,
                 name = name,
                 phoneNumber = phone,
-                photoUrl =photoUrl,
+                photoUrl = photoUrl,
             )
             userInfo
         }
