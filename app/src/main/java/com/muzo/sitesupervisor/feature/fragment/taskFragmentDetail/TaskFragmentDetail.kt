@@ -193,10 +193,12 @@ class TaskFragmentDetail : Fragment() {
         val date = specifiedDay
 
 
-        return if (title.isNotEmpty() && desc.isNotEmpty()) {
+        return if (title.isNotBlank() || desc.isNotBlank() || workerList?.isNotEmpty() == true) {
+            dataEmpty=false
             TaskModel(
                 taskIdNumber, desc, title, date!!, workerList, siteSupervisor, constructionArea
             )
+
         } else {
             dataEmpty = true
             null
@@ -205,6 +207,7 @@ class TaskFragmentDetail : Fragment() {
 
     private fun sendData() {
         binding.ivButtonOK.setOnClickListener {
+            getData()
             if (dataEmpty) {
                 toastMessage("Lütfen bilgilerinizi Doldurunuz", requireContext())
             } else {

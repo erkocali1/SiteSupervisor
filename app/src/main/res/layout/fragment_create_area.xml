@@ -43,7 +43,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="300sp"
+        android:layout_height="320sp"
         android:layout_marginStart="45sp"
         android:layout_marginTop="-55sp"
         android:layout_marginEnd="45sp"
@@ -56,13 +56,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="30sp">
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/join"
+                style="@style/montserrat_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16sp"
+                android:text="Şantiye Oluştur"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/constText"
+                style="@style/montserrat_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8sp"
+                android:text="Şantiye Bilgilerinizle Yeni Bir Şantyie Oluştur "
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/btnCreate" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_marginTop="18sp"
                 android:id="@+id/cv_ada"
                 android:layout_width="match_parent"
+                android:layout_marginStart="25sp"
+                android:layout_marginEnd="25sp"
                 android:layout_height="wrap_content"
                 app:strokeColor="@color/black"
                 app:strokeWidth="1dp">
@@ -103,6 +128,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24sp"
+                android:layout_marginStart="25sp"
+                android:layout_marginEnd="25sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="1dp">
 
@@ -147,16 +174,6 @@
                 android:text="Kaydet"
                 app:layout_constraintTop_toBottomOf="@id/cv_parsel" />
 
-            <TextView
-                android:id="@+id/constText"
-                style="@style/montserrat_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8sp"
-                android:text="Yeni Bir Şantyie Oluştur "
-                android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@id/btnCreate" />
 
 
         </LinearLayout>

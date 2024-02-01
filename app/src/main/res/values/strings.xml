@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SiteSupervisor</string>
+    <string name="app_name">Şantiye Takip</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="example_3_dialog_delete_confirmation">Delete this event?</string>
