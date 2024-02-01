@@ -108,8 +108,8 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
         return fireBaseSource.getTaskDate(currentUser, constructionName)
     }
 
-    override suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
-        return fireBaseSource.getTasksWithWorker(workerName)
+    override suspend fun getTasksWithWorker(siteSuperVisor: String,constructionName: String, workerName: String): Result<List<TaskModel>> {
+        return fireBaseSource.getTasksWithWorker(siteSuperVisor, constructionName, workerName)
     }
 
     override suspend fun saveStatisticInfo(workerInfoModel: WorkInfoModel): Result<Unit> {

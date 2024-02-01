@@ -403,7 +403,7 @@ class TaskFragment : BaseFragment(R.layout.fragment_task), HasBackButton {
             job?.cancel()
             job = MainScope().launch {
                 selectedWorker.let {
-                    viewModel.getWorker(selectedWorker)
+                    viewModel.getWorker(siteSupervisor,constructionArea, selectedWorker)
                     observe(ObservedState.SEARCH_STATE)
                 }
             }

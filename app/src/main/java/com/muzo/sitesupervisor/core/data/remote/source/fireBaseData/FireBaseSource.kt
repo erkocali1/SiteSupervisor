@@ -38,7 +38,7 @@ interface FireBaseSource {
 
     suspend fun getTaskDate(currentUser: String, constructionName: String): Result<List<String>>
 
-    suspend fun getTasksWithWorker(workerName: String):Result<List<TaskModel>>
+    suspend fun getTasksWithWorker(siteSuperVisor: String,constructionName: String, workerName: String):Result<List<TaskModel>>
 
 
     //-----------------Statistic------------//

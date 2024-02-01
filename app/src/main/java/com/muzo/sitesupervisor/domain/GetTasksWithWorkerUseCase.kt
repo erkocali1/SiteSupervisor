@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetTasksWithWorkerUseCase @Inject constructor(private val repository: FireBaseRepository) {
-    suspend operator fun invoke(workerName: String): Flow<List<TaskModel>> {
+    suspend operator fun invoke(siteSuperVisor: String,constructionName: String, workerName: String): Flow<List<TaskModel>> {
 
         return flow {
-            val result = repository.getTasksWithWorker(workerName)
+            val result = repository.getTasksWithWorker(siteSuperVisor, constructionName, workerName)
             (result.getOrNull() ?: throw IllegalArgumentException(ERROR_MESSAGE)).also {
                 emit(it)
             }

@@ -380,52 +380,55 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun getTasksWithWorker(workerName: String): Result<List<TaskModel>> {
+    override suspend fun getTasksWithWorker(
+        siteSuperVisor: String,
+        constructionName: String,
+        workerName: String
+    ): Result<List<TaskModel>> {
         return kotlin.runCatching {
             val tasks = mutableListOf<TaskModel>()
 
-            val usersCollection = database.collection("Users")
-            val userSnapshots = usersCollection.get().await()
+            val userRef = database.collection("Users").document(siteSuperVisor)
+            val constructionSiteRef = userRef.collection("construcitonName").document(constructionName)
+            val taskCollection = constructionSiteRef.collection("task")
 
-            for (userSnapshot in userSnapshots) {
-                val constructionSiteCollection =
-                    userSnapshot.reference.collection("construcitonName")
-                val constructionSiteSnapshots = constructionSiteCollection.get().await()
+            val taskQuerySnapshot = taskCollection
+                .get()
+                .await()
 
-                for (constructionSiteSnapshot in constructionSiteSnapshots) {
-                    val taskCollection = constructionSiteSnapshot.reference.collection("task")
-                    val taskSnapshots = taskCollection.get().await()
+            for (taskDoc in taskQuerySnapshot) {
+                val taskIdCollectionRef = taskDoc.reference.collection("taskId")
+                val taskIdQuerySnapshot = taskIdCollectionRef.get().await()
 
-                    for (taskSnapshot in taskSnapshots) {
-                        val taskQuery = taskSnapshot.reference.collection("taskId")
-                            .whereArrayContains("workerList", workerName)
-                        val taskQuerySnapshot = taskQuery.get().await()
+                for (taskIdDoc in taskIdQuerySnapshot) {
+                    val data = taskIdDoc.data
+                    val workerList = data["workerList"] as? List<String> ?: listOf()
 
-                        for (taskDoc in taskQuerySnapshot) {
-                            val data = taskDoc.data
-                            val message = data["message"] as? String ?: ""
-                            val title = data["title"] as? String ?: ""
-                            val workerList = data["workerList"] as? List<String> ?: listOf()
-                            val day = data["day"] as? String ?: ""
-                            val taskId = (data["taskId"] as? Long ?: 0).toLong()
+                    if (workerList.contains(workerName)) {
+                        val message = data["message"] as? String ?: ""
+                        val title = data["title"] as? String ?: ""
+                        val day = data["day"] as? String ?: ""
+                        val taskId = (data["taskId"] as? Long ?: 0).toLong()
 
-                            val retrievedTaskModel = TaskModel(
-                                taskId = taskId,
-                                message = message,
-                                title = title,
-                                workerList = workerList,
-                                day = day,
-                                currentUser = userSnapshot.id, // Güncelleme gerekebilir
-                                constructionArea = constructionSiteSnapshot.id, // Güncelleme gerekebilir
-                            )
-                            tasks.add(retrievedTaskModel)
-                        }
+                        val retrievedTaskModel = TaskModel(
+                            taskId = taskId,
+                            message = message,
+                            title = title,
+                            workerList = workerList,
+                            day = day,
+                            currentUser = siteSuperVisor,
+                            constructionArea = constructionName
+                        )
+                        tasks.add(retrievedTaskModel)
                     }
                 }
             }
+
             tasks.toList()
         }
     }
+
+
 
     override suspend fun saveStatisticInfo(workerInfoModel: WorkInfoModel): Result<Unit> {
         return kotlin.runCatching {
