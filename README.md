@@ -25,6 +25,23 @@ Geliştirdiğim "Şantiye Takip" uygulaması, inşaat sektöründeki proje yöne
     </td>
   </tr>
 </table>
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/erkocali1/SiteSupervisor/blob/master/app/src/main/res/drawable/ss5.png" alt="Resim 1" width="200" height="450" style="border: 2px solid black; margin: 10px;">
+      <br>Image 5
+    </td>
+    <td align="center">
+      <img src="https://github.com/erkocali1/SiteSupervisor/blob/master/app/src/main/res/drawable/ss6.png" alt="Resim 2" width="200" height="450" style="border: 2px solid black; margin: 10px;">
+      <br>Image 6
+    </td>
+    <td align="center">
+      <img src="https://github.com/erkocali1/SiteSupervisor/blob/master/app/src/main/res/drawable/ss7.png" alt="Resim 3" width="200" height="450" style="border: 2px solid black; margin: 10px;">
+      <br>Image 7
+    </td>
+  </tr>
+</table>
+
 
 
 
