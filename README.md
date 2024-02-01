@@ -85,4 +85,41 @@ Geliştirdiğim "Şantiye Takip" uygulaması, inşaat sektöründeki proje yöne
     </td>
   </tr>
 </table>
+<h1 align="center">English</h1>
+<h3 align="center">Site Tracking: Control Center for Your Construction Projects</h3>
+
+The "Site Tracking" application we've developed is a mobile app designed to simplify and enhance project management in the construction industry. This app provides a range of features for site managers and team leaders to effortlessly track daily activities, organize teams, and effectively manage project progress.
+
+## Features
+
+### Site Creation and Management
+- Users can effortlessly create and instantly manage their projects within the "Site Tracking" app.
+- Each site can have a dedicated location, enabling teams to track the current location within the site area.
+
+### Daily Activity Tracking
+- Streamline the process of recording daily activities on the construction site with user-friendly features.
+- Capture daily tasks, user-specified tasks, and general progress information in this section.
+
+### Team Management
+- Efficiently add and manage teams working on the site through the application.
+- Team leaders can assign and monitor tasks, ensuring a more streamlined completion of work.
+
+### Percent Complete Records
+- Each team member can easily log their daily work and time spent.
+- Site managers can review these records in bulk, providing a comprehensive evaluation of the overall project progress.
+
+### Settings Section
+- Customize site-specific details in the "Settings" section, allowing users to update location information, site passwords, and other essential data.
+- Add and manage teams working on the site seamlessly from this section.
+
+### Sharing Feature
+- Share site images securely with selected individuals using a designated password.
+- Ensure project security and transparency by restricting sharing, allowing only specific individuals to view site data.
+
+## Usage
+The "Site Tracking" application offers a user-friendly interface to efficiently organize and monitor tasks within construction projects. It strengthens communication among teams, facilitating timely and budget-friendly project completion. Developed specifically for professionals in the construction industry, this application empowers users to manage projects more effectively.
+
+The Site Tracking application is an ideal solution for those seeking to alleviate daily challenges in the construction sector and manage projects with increased transparency. Explore the "Site Tracking" application today to enhance the efficiency of your project management!
+
+
 
