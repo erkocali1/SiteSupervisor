@@ -76,3 +76,13 @@ Geliştirdiğim "Şantiye Takip" uygulaması, inşaat sektöründeki proje yöne
 "Şantiye Takip" uygulaması, inşaat projelerinde işleri düzenlemek ve izlemek için kullanıcı dostu bir arayüz sunar. Ekipler arasında iletişimi güçlendirirken, projelerin zamanında ve bütçe içinde tamamlanmasına yardımcı olur. İnşaat sektöründeki profesyoneller için geliştirilen bu uygulama, projelerinizi daha etkili bir şekilde yönetmenize olanak tanır.
 
 Şantiye Takip uygulaması, inşaat sektöründeki günlük zorlukları azaltmak ve projeleri daha şeffaf bir şekilde yönetmek isteyen herkes için mükemmel bir çözümdür. Siz de projelerinizi daha verimli bir şekilde yönetmek ve kontrol etmek için "Şantiye Takip" uygulamasını keşfedin!
+
+<table>
+  <tr>
+    <td align="center" style="border: 2px solid black; padding: 10px;">
+      <img src="https://github.com/erkocali1/SiteSupervisor/blob/master/app/src/main/res/drawable/ss9.png" alt="Resim 1" width="800" height="450" style="margin-bottom: 10px;">
+      <br>Image 8
+    </td>
+  </tr>
+</table>
+
