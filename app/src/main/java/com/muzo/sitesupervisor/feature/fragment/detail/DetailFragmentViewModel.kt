@@ -101,7 +101,6 @@ class DetailFragmentViewModel @Inject constructor(
     fun addImageToFirebaseStorage(fileUris: List<Uri>?, postId: String) {
         viewModelScope.launch {
             addImageToFirebaseStorageUseCase(fileUris, postId).asReSource().onEach { result ->
-                Log.d("hello", "fileUris=> $fileUris postıd=> $postId")
                 when (result) {
                     is Resource.Error -> {
                         _uiState.value = UpdateState(loading = false, message = ERROR_MESSAGE)

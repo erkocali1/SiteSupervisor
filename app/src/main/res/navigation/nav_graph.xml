@@ -179,6 +179,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_userFragment"
             app:destination="@id/userFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_pdfFragment"
+            app:destination="@id/pdfFragment" />
     </fragment>
     <fragment
         android:id="@+id/locationFragment"
@@ -238,6 +241,15 @@
         android:name="com.muzo.sitesupervisor.feature.fragment.userFragment.UserFragment"
         android:label="fragment_user"
         tools:layout="@layout/fragment_user" />
+    <fragment
+        android:id="@+id/pdfFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.pdfFragment.PdfFragment"
+        android:label="fragment_pdf"
+        tools:layout="@layout/fragment_pdf" >
+        <action
+            android:id="@+id/action_pdfFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
 
 
 </navigation>

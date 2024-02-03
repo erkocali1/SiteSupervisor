@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -25,8 +26,8 @@ class SelectionFragment : Fragment() {
     ): View? {
         binding = FragmentSelectionBinding.inflate(layoutInflater, container, false)
 
-        Log.d("LOOG THAT",viewModels.currentUser?.uid.toString())
         setButtonClickListeners()
+        backPressEvent()
         return binding.root
 
     }
@@ -38,6 +39,13 @@ class SelectionFragment : Fragment() {
     private fun setButtonClickListeners() {
         binding.btnJoin.setOnClickListener { navigateFragment(R.id.action_selectionFragment_to_joinAreaFragment) }
         binding.btnCreate.setOnClickListener { navigateFragment(R.id.action_selectionFragment_to_createAreaFragment) }
+    }
+
+
+    private fun backPressEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+            requireActivity().finish()
+        }
     }
 
 

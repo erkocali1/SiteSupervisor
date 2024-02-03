@@ -43,7 +43,6 @@ class VerifyPasswordFragment : Fragment() {
     ): View? {
 
         binding = FragmentVerifyPasswordBinding.inflate(layoutInflater, container, false)
-        Log.d("sellamn", "burasıo çalıştuı")
         infAlert()
         getSiteInfo()
         viewModel.getPassword(siteSupervisor, constructionArea)

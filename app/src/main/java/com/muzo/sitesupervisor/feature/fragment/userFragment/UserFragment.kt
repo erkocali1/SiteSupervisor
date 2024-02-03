@@ -14,6 +14,7 @@ import com.google.firebase.firestore.auth.User
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
+import com.muzo.sitesupervisor.core.common.toastMessage
 import com.muzo.sitesupervisor.core.constans.Constants
 import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.databinding.FragmentUserBinding
@@ -50,7 +51,8 @@ class UserFragment : Fragment() {
             val editor = sp.edit()
             editor.putBoolean(Constants.KEY_IS_ENTERED, false)
             editor.apply()
-            findNavController().popBackStack(R.id.enterFragment, false)
+            toastMessage("Uygulamadan çıkılıyor tekrar giriş yapın",requireContext())
+            requireActivity().finish()
         }
     }
 

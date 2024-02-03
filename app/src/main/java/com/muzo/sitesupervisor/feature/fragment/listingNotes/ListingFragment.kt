@@ -32,7 +32,7 @@ class ListingFragment : Fragment() {
     private lateinit var binding: FragmentListingBinding
     private lateinit var adapter: ListingAdapter
     private lateinit var list: List<DataModel>
-    private lateinit var sp:SharedPreferences
+    private lateinit var sp: SharedPreferences
 
 
     override fun onCreateView(
@@ -102,16 +102,11 @@ class ListingFragment : Fragment() {
 
             supervisorUserFlow.collect { supervisorUser ->
                 constructionAreaFlow.collect { constructionArea ->
-                    Log.d("DataStore super", supervisorUser ?: "null")
-                    Log.d("DataStore", constructionArea ?: "null")
 
-                    // Check User or Guest
                     validationUser(currentUser, supervisorUser)
 
                     if (supervisorUser != null && constructionArea != null) {
                         viewModel.getAllData(supervisorUser, constructionArea)
-                        Log.d("bakacaz", "$supervisorUser and $constructionArea")
-
                     }
                 }
             }
@@ -141,18 +136,32 @@ class ListingFragment : Fragment() {
 
     private fun backPressEvent() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            sp= requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            val editor=sp.edit()
-            editor.putBoolean(KEY_IS_ENTERED,false)
+            sp = requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            val editor = sp.edit()
+            editor.putBoolean(KEY_IS_ENTERED, false)
             editor.apply()
-            findNavController().popBackStack(R.id.selectionFragment, false)
+
+            // Check if the selectionFragment is in the back stack
+            val selectionFragmentInBackStack = findNavController().popBackStack(
+                R.id.selectionFragment,
+                false
+            )
+
+            // If selectionFragment is not in the back stack, remove ListingFragment from back stack
+            if (!selectionFragmentInBackStack) {
+                findNavController().popBackStack()
+            }
+
+            // Always navigate to SelectionFragment
+            findNavController().navigate(R.id.selectionFragment)
         }
     }
 
-    private fun loginEvent(){
-        sp= requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val editor=sp.edit()
-        editor.putBoolean(KEY_IS_ENTERED,true)
+
+    private fun loginEvent() {
+        sp = requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val editor = sp.edit()
+        editor.putBoolean(KEY_IS_ENTERED, true)
         editor.apply()
     }
 

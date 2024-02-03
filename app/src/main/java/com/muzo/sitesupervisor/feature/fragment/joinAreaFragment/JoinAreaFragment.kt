@@ -117,7 +117,6 @@ class JoinAreaFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.saveDataStore(siteSupervisor, constructionName)
             binding.btnJoin.setOnClickListener {
-                Log.d("kontrol", userConstructionData.currentUser)
                 if (currentUser == siteSupervisor) {
                     findNavController().navigate(R.id.action_joinAreaFragment_to_listingFragment)
                 } else {

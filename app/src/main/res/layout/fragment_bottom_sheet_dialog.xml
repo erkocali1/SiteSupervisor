@@ -112,6 +112,7 @@
                     android:id="@+id/et_finishDay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLength="4"
                     android:hint="Yevmiye Mik.(Gün) "
                     android:inputType="number"
                     android:paddingStart="4sp"
@@ -139,6 +140,7 @@
                     android:id="@+id/et_coast_money"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLength="7"
                     android:hint="Ödenecek Miktar "
                     android:inputType="number"
                     android:paddingStart="4sp"
@@ -160,6 +162,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Ödenen Miktar "
+                    android:maxLength="7"
                     android:inputType="number"
                     android:paddingStart="4sp"
                     android:textSize="13sp" />

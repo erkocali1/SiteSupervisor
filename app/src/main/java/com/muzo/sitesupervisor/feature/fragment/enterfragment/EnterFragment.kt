@@ -12,6 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.Resource
+import com.muzo.sitesupervisor.core.common.hide
+import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.KEY_IS_ENTERED
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.PREF_NAME
 import com.muzo.sitesupervisor.databinding.FragmentEnterBinding
@@ -59,8 +61,11 @@ class EnterFragment : Fragment() {
             viewModel.userInfo.collect {
                 when (it) {
                     is Resource.Error -> {}
-                    is Resource.Success -> navigateToSelectionFragment()
-                    Resource.Loading -> {}
+                    is Resource.Success -> {
+                        binding.progressBar.hide()
+                        navigateToSelectionFragment()
+                    }
+                    Resource.Loading -> {binding.progressBar.show()}
                     else -> {}
                 }
             }

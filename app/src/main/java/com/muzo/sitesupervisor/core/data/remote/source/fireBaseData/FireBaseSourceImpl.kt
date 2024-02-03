@@ -64,44 +64,56 @@ class FireBaseSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun fetchData(
+   override suspend fun fetchData(
         currentUser: String,
         constructionName: String,
         postId: String
     ): Result<DataModel> {
         return kotlin.runCatching {
-            val documentSnapshot =
-                database.collection("Users").document(currentUser).collection("construcitonName")
-                    .document(constructionName).collection("posts").document(postId).get().await()
+            val querySnapshot =
+                database.collection("Users")
+                    .document(currentUser)
+                    .collection("construcitonName")
+                    .document(constructionName)
+                    .collection("posts")
+                    .orderBy("postId")
+                    .get()
+                    .await()
 
-            if (documentSnapshot.exists()) {
-                val data = documentSnapshot.data
+            val dataModels = mutableListOf<DataModel>()
+
+            for (document in querySnapshot.documents) {
+                val data = document.data
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
                 val photoUrl = data?.get("photoUrl") as? List<String> ?: listOf()
                 val day = data?.get("day") as? String ?: ""
                 val time = data?.get("time") as? String ?: ""
-                val id = data?.get("id") as? Long ?: 0
+                val id = data?.get("postId") as? Long ?: 0
                 val modificationDate = data?.get("modificationDate") as? String ?: ""
                 val modificationTime = data?.get("modificationTime") as? String ?: ""
 
-                DataModel(
-                    id = id,
-                    message = message,
-                    title = title,
-                    photoUrl = photoUrl,
-                    time = time,
-                    day = day,
-                    currentUser = currentUser,
-                    constructionArea = constructionName,
-                    modificationDate = modificationDate,
-                    modificationTime = modificationTime
+                dataModels.add(
+                    DataModel(
+                        id = id,
+                        message = message,
+                        title = title,
+                        photoUrl = photoUrl,
+                        time = time,
+                        day = day,
+                        currentUser = currentUser,
+                        constructionArea = constructionName,
+                        modificationDate = modificationDate,
+                        modificationTime = modificationTime
+                    )
                 )
-            } else {
-                throw NoSuchElementException("Document not found")
             }
+
+            // Assuming you want to return the first element
+            dataModels.firstOrNull() ?: throw NoSuchElementException("Document not found")
         }
     }
+
 
 
     override suspend fun fetchArea(): Result<List<UserConstructionData>> {

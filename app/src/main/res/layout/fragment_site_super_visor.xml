@@ -295,7 +295,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4sp"
                         android:text="muhammedalierkoc92@gmail.com"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="@+id/mail_constant"
                         app:layout_constraintStart_toEndOf="@+id/mail_constant"
                         app:layout_constraintTop_toTopOf="@+id/mail_constant" />
@@ -307,7 +307,7 @@
                         android:inputType="textPersonName"
                         android:maxLength="28"
                         android:maxLines="1"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:visibility="invisible"
                         app:layout_constraintBottom_toBottomOf="@+id/mail_constant"
                         app:layout_constraintEnd_toStartOf="@+id/ic_mail_edit"
@@ -359,6 +359,7 @@
 
     </androidx.cardview.widget.CardView>
 
+    
 
     <ProgressBar
         android:id="@+id/progressBar"

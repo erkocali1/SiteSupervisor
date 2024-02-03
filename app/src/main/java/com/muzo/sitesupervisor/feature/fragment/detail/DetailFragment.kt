@@ -475,7 +475,6 @@ class DetailFragment : Fragment() {
                 val receivedData = arguments?.getLong("id")
                 postId = receivedData!!
                 putString("bigPhoto", uri)
-                Log.d("aslihanerkoc", postId.toString())
                 putLong("id", postId!!)
 
             }

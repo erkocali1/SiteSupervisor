@@ -267,7 +267,8 @@ class SiteSuperVisorFragment : Fragment() {
             val editor=sp.edit()
             editor.putBoolean(Constants.KEY_IS_ENTERED,false)
             editor.apply()
-            findNavController().popBackStack(R.id.enterFragment, false)
+            toastMessage("Uygulamadan çıkılıyor tekrar giriş yapın",requireContext())
+            requireActivity().finish()
         }
     }
 

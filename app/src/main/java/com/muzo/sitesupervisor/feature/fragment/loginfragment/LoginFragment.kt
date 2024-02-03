@@ -39,7 +39,10 @@ class LoginFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.loginFlow.collect {
                 when (it) {
-                    is Resource.Error -> toastMessage(it.exception?.message!!)
+                    is Resource.Error -> {
+                        binding.progressBar.hide()
+                        toastMessage(it.exception?.message!!)
+                    }
                     Resource.Loading -> {
                         binding.progressBar.show()
                     }
@@ -47,7 +50,10 @@ class LoginFragment : Fragment() {
                         binding.progressBar.hide()
                         navigateFragment()
                     }
-                    else -> {}
+                    else -> {
+                        binding.progressBar.hide()
+
+                    }
                 }
             }
         }

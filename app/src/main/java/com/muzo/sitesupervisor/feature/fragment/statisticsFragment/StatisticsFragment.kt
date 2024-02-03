@@ -383,7 +383,7 @@ class StatisticsFragment : Fragment() {
         alertDialogBuilder.setPositiveButton("Evet") { _, _ ->
             deleteStatistic(infoVocation, randomId)
         }
-        alertDialogBuilder.setNegativeButton("Hayat") { dialog, _ ->
+        alertDialogBuilder.setNegativeButton("Hayır") { dialog, _ ->
             dialog.dismiss()
         }
 

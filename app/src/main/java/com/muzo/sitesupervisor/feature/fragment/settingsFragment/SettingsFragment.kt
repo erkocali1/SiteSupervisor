@@ -99,6 +99,9 @@ class SettingsFragment : Fragment() {
         binding.cvUser.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_userFragment)
         }
+        binding.cvPdf.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_pdfFragment)
+        }
     }
 
     private fun getSiteInfo() {
