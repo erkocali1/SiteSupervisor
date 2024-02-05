@@ -39,9 +39,10 @@ class JoinAreaFragment : Fragment() {
 
         binding = FragmentJoinAreaBinding.inflate(layoutInflater, container, false)
         currentUser = viewModel.currentUser
+
         infAlert()
         observeData()
-
+        clickEvent()
         return binding.root
     }
 
@@ -52,14 +53,26 @@ class JoinAreaFragment : Fragment() {
 
                 when {
                     uiState.loading -> {
+                        binding.cvWhiteBackground.hide()
+                        binding.cvTop.hide()
                         binding.progressBar.show()
 
                     }
 
                     uiState.resultList != null -> {
-                        binding.progressBar.hide()
                         list = uiState.resultList
-                        setList(getConstructionNames(list))
+                        val constructionAreasList: List<String> = list.flatMap { it.constructionAreas }.toList()
+                        if (constructionAreasList.isEmpty()) {
+                            binding.emptyIv.show()
+                            binding.btnNavigate.show()
+                            binding.emptyListText.show()
+                        } else {
+                            binding.cvWhiteBackground.show()
+                            binding.cvTop.show()
+                            binding.btnNavigate.hide()
+                            binding.progressBar.hide()
+                            setList(getConstructionNames(list))
+                        }
                     }
                 }
             }
@@ -69,7 +82,8 @@ class JoinAreaFragment : Fragment() {
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
             .setTitle("Şantiye Seçin").setCancelable(false)
-            .setMessage("Görüntülemek istediğiniz şantiyeyi seçin.").setDarkMode(false).setGravity(Gravity.CENTER)
+            .setMessage("Görüntülemek istediğiniz şantiyeyi seçin.").setDarkMode(false)
+            .setGravity(Gravity.CENTER)
             .setAnimation(DialogAnimation.DEFAULT)
             .setOnClickListener(object : OnDialogClickListener {
                 override fun onClick(dialog: AestheticDialog.Builder) {
@@ -77,6 +91,12 @@ class JoinAreaFragment : Fragment() {
                     //actions...
                 }
             }).show()
+    }
+    private fun clickEvent(){
+        binding.btnNavigate.setOnClickListener {
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.createAreaFragment)
+        }
     }
 
     private fun toastMessage(message: String) {
@@ -98,7 +118,7 @@ class JoinAreaFragment : Fragment() {
 
         binding.listConstruction.setOnItemClickListener { _, _, position, _ ->
             val selectedConstruction = constructionNames[position]
-            toastMessage("You selected the $selectedConstruction construction name")
+            toastMessage("Seçilen şantiye $selectedConstruction")
             joinEvent(selectedConstruction)
         }
     }

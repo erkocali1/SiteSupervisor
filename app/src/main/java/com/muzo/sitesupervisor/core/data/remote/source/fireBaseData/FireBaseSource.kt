@@ -18,6 +18,7 @@ interface FireBaseSource {
 
     suspend fun deletePost(currentUser: String, constructionName: String, postId: String):Result<Unit>
 
+    suspend fun deleteArea(currentUser: String, constructionName: String, ): Result<Unit>
     suspend fun fetchArea(): Result<List<UserConstructionData>>
     suspend fun getAllPost(currentUser: String, constructionName: String):Result<List<DataModel>>
 

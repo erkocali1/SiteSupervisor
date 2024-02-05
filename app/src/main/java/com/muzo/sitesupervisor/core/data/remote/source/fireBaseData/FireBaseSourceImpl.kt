@@ -3,6 +3,7 @@ package com.muzo.sitesupervisor.core.data.remote.source.fireBaseData
 import android.net.Uri
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await
@@ -51,6 +52,45 @@ class FireBaseSourceImpl @Inject constructor(
             postsRef.set(post).await()
         }
     }
+
+    override suspend fun deleteArea(currentUser: String, constructionName: String): Result<Unit> {
+        return kotlin.runCatching {
+            val currentUserRef = database.collection("Users").document(currentUser)
+            val constructionSiteRef = currentUserRef.collection("construcitonName").document(constructionName)
+
+            // Tüm alt koleksiyonları ve alt belgeleri sırasıyla sil
+            deleteCollection(constructionSiteRef.collection("posts"))
+            deleteCollection(constructionSiteRef.collection("task"))
+            deleteCollection(constructionSiteRef.collection("statistic"))
+            deleteCollection(constructionSiteRef.collection("location"))
+
+            // Ana belgeyi sil
+            constructionSiteRef.delete().await()
+        }
+    }
+
+    private suspend fun deleteCollection(collection: CollectionReference) {
+        val batchSize = 500L
+        val query = collection.limit(batchSize)
+
+        while (true) {
+            val snapshot = query.get().await()
+            val size = snapshot.size()
+
+            if (size == 0) {
+                break
+            }
+
+            val batch = database.batch()
+            snapshot.documents.forEach { batch.delete(it.reference) }
+            batch.commit().await()
+
+            if (size < batchSize) {
+                break
+            }
+        }
+    }
+
 
     override suspend fun deletePost(
         currentUser: String,

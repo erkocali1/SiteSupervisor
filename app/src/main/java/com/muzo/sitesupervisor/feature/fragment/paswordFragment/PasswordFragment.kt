@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.paswordFragment
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -18,6 +20,7 @@ import com.muzo.sitesupervisor.R
 import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.common.toastMessage
+import com.muzo.sitesupervisor.core.constans.Constants
 import com.muzo.sitesupervisor.databinding.FragmentPasswordBinding
 import com.muzo.sitesupervisor.feature.fragment.settingsFragment.userInfo.ItemType
 import com.muzo.sitesupervisor.feature.fragment.settingsFragment.userInfo.SiteSuperVisorViewModel
@@ -56,6 +59,7 @@ class PasswordFragment : Fragment() {
                 binding.editText5
             )
         )
+        backPressEvent()
         setPassword()
         return binding.root
     }
@@ -120,6 +124,24 @@ class PasswordFragment : Fragment() {
         }
     }
 
+    private fun deleteData() {
+        updateItJob = lifecycleScope.launch {
+            viewModel.deleteAreaState.collect { deleteAreaState ->
+                when {
+                    deleteAreaState.loading -> {
+                        binding.progressBar.show()
+                    }
+
+                    deleteAreaState.result -> {
+                        binding.progressBar.hide()
+                        toastMessage("Şantiye şifresi oluştrulmadı kayıt siliniyor",requireContext())
+                        findNavController().popBackStack(R.id.selectionFragment, false)
+                    }
+                }
+            }
+        }
+    }
+
     private fun navigateFragment() {
         findNavController().navigate(R.id.action_passwordFragment_to_listingFragment)
     }
@@ -153,6 +175,12 @@ class PasswordFragment : Fragment() {
                     siteSupervisor = supervisor!!
                 }
             }
+        }
+    }
+    private fun backPressEvent() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            viewModel.deleteArea(siteSupervisor,constructionArea)
+            deleteData()
         }
     }
 }

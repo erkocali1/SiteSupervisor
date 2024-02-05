@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muzo.sitesupervisor.core.common.Resource
 import com.muzo.sitesupervisor.core.common.asReSource
+import com.muzo.sitesupervisor.core.constans.Constants
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.OK_MESSAGE
 import com.muzo.sitesupervisor.core.data.local.dataStore.MyDataStore
 import com.muzo.sitesupervisor.core.data.local.repository.LocalPostRepository
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.core.data.remote.repository.auth.AuthRepository
 import com.muzo.sitesupervisor.domain.AddTeamUseCase
 import com.muzo.sitesupervisor.domain.FireBaseSaveDataUseCase
+import com.muzo.sitesupervisor.domain.GetAreaUseCase
 import com.muzo.sitesupervisor.feature.fragment.settingsFragment.team.AddTeamState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +33,7 @@ class CreateAreFragmentViewModel @Inject constructor(
     private val localPostRepository: LocalPostRepository,
     private val addTeamUseCase: AddTeamUseCase,
     private val myDataStore: MyDataStore,
+    private val useCase: GetAreaUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SaveDataState> = MutableStateFlow(SaveDataState())
@@ -38,9 +42,16 @@ class CreateAreFragmentViewModel @Inject constructor(
     private val _addItemState: MutableStateFlow<CreateTeamState> = MutableStateFlow(CreateTeamState())
     val addItemState=_addItemState
 
+    private val _getOtherItemState: MutableStateFlow<GetArea> = MutableStateFlow(GetArea())
+    val getOtherItemState=_getOtherItemState
+
 
     val currentUser = authRepository.currentUser
 
+
+    init {
+        getArea()
+    }
 
     fun saveArea(dataModel: DataModel) {
         viewModelScope.launch {
@@ -66,9 +77,7 @@ class CreateAreFragmentViewModel @Inject constructor(
             }.launchIn(this)
         }
 
-
     }
-
     fun addItem(currentUser:String, teams: List<String>, constructionName: String) {
         viewModelScope.launch {
             addTeamUseCase(currentUser, teams, constructionName).asReSource().onEach { result ->
@@ -88,8 +97,33 @@ class CreateAreFragmentViewModel @Inject constructor(
                 }
             }.launchIn(this)
         }
+    }
+    private fun getArea() {
+        viewModelScope.launch {
+            useCase().asReSource().onEach { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _getOtherItemState.value = _getOtherItemState.value.copy(
+                            loading = true
+                        )
+                    }
 
+                    is Resource.Error -> {
+                        _getOtherItemState.value = _getOtherItemState.value.copy(
+                            loading = false, message = result.exception?.message
+                        )
+                    }
 
+                    is Resource.Success -> {
+                        _getOtherItemState.value = _getOtherItemState.value.copy(
+                            loading = false,
+                            resultList = result.data
+                        )
+
+                    }
+                }
+            }.launchIn(this)
+        }
     }
 
     fun getCurrentDateAndTime(): Pair<String, String> {
@@ -121,4 +155,10 @@ data class SaveDataState(
 data class CreateTeamState(
     val result: Boolean = false,
     val loading: Boolean = false
+)
+
+data class GetArea(
+    val loading: Boolean = false,
+    val message: String? = null,
+    val resultList: List<UserConstructionData>? = null
 )

@@ -16,6 +16,8 @@ interface FireBaseRepository {
 
     suspend fun deletePost(currentUser: String, constructionName: String, postId: String):Result<Unit>
 
+    suspend fun deleteArea(currentUser: String, constructionName: String, ): Result<Unit>
+
     suspend fun fetchData(currentUser: String, constructionName: String,postId:String):Result<DataModel>
 
     suspend fun fetchArea():Result<List<UserConstructionData>>

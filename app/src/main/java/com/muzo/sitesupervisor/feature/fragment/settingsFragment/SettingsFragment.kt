@@ -88,10 +88,8 @@ class SettingsFragment : Fragment() {
         binding.cvPerson.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_siteSuperVisorFragment)
         }
-
         binding.cvPasswordSettings.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_settingsPasswordFragment)
-
         }
         binding.cvTeam.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_teamFragment)
@@ -101,6 +99,9 @@ class SettingsFragment : Fragment() {
         }
         binding.cvPdf.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_pdfFragment)
+        }
+        binding.cvDeleteArea.setOnClickListener {
+            findNavController().navigate(R.id.action_settingsFragment_to_deleteAreaFragment)
         }
     }
 
@@ -120,6 +121,7 @@ class SettingsFragment : Fragment() {
             binding.cvPdf.hide()
             binding.cvPasswordSettings.hide()
             binding.cvUser.show()
+            binding.cvDeleteArea.hide()
         }
     }
 

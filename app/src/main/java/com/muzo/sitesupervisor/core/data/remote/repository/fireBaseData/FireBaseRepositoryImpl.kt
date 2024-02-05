@@ -22,6 +22,10 @@ class FireBaseRepositoryImpl @Inject constructor(private val fireBaseSource: Fir
        return fireBaseSource.deletePost(currentUser, constructionName, postId)
     }
 
+    override suspend fun deleteArea(currentUser: String, constructionName: String): Result<Unit> {
+        return fireBaseSource.deleteArea(currentUser, constructionName)
+    }
+
     override suspend fun fetchData(
         currentUser: String,
         constructionName: String,

@@ -15,6 +15,7 @@ import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.constans.Constants.Companion.ConstructionTeams.TEAMS
 import com.muzo.sitesupervisor.core.data.model.DataModel
+import com.muzo.sitesupervisor.core.data.model.UserConstructionData
 import com.muzo.sitesupervisor.databinding.FragmentCreateAreaBinding
 import com.thecode.aestheticdialogs.AestheticDialog
 import com.thecode.aestheticdialogs.DialogAnimation
@@ -22,6 +23,7 @@ import com.thecode.aestheticdialogs.DialogStyle
 import com.thecode.aestheticdialogs.DialogType
 import com.thecode.aestheticdialogs.OnDialogClickListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -29,6 +31,8 @@ class CreateAreaFragment : Fragment() {
     private lateinit var binding: FragmentCreateAreaBinding
     private val viewModel: CreateAreFragmentViewModel by viewModels()
     private var postId: Long? = null
+    private var list: List<UserConstructionData>? = null
+    private var stringList: List<String>? = null
 
 
     override fun onCreateView(
@@ -38,6 +42,7 @@ class CreateAreaFragment : Fragment() {
 
         infAlert()
         observeData()
+        getOtherLoc()
         return binding.root
     }
 
@@ -52,34 +57,42 @@ class CreateAreaFragment : Fragment() {
 
 
 
-            if (constructionNameFirst.isNotEmpty() ||constructionNameSecond.isNotEmpty()){
+            if (constructionNameFirst.isNotEmpty() || constructionNameSecond.isNotEmpty()) {
+                if (stringList?.contains(constructionName) == true) {
+                    toastMessage("Bu şantiye mevcut lütfen başka bir isim deneyin.")
+                } else {
 
-                val dataModel = createDataModel(constructionName)
+                    val dataModel = createDataModel(constructionName)
 
+                    lifecycleScope.launch {
+                        postId = viewModel.saveRoom(dataModel)
+                        dataModel.id = postId
+                        viewModel.saveArea(dataModel)
+                    }
 
-                lifecycleScope.launch {
-                    postId = viewModel.saveRoom(dataModel)
-                    dataModel.id = postId
-                    viewModel.saveArea(dataModel)
-                }
+                    lifecycleScope.launch {
+                        viewModel.uiState.collect { uiState ->
+                            when {
 
-                lifecycleScope.launch {
-                    viewModel.uiState.collect { uiState ->
-                        when {
+                                uiState.loading -> {
+                                    binding.cvWhiteBackground.hide()
+                                    binding.cvTop.hide()
+                                    binding.progressBar.show()
+                                }
 
-                            uiState.loading -> {
-                                binding.progressBar.show()
-                            }
+                                uiState.isSuccessful -> {
 
-                            uiState.isSuccessful -> {
-                                toastMessage(uiState.message!!)
-                                navigateFragment()
-                                viewModel.addItem(currentUser, TEAMS, constructionName)
-                            }
+                                    toastMessage(uiState.message!!)
+                                    navigateFragment()
+                                    viewModel.addItem(currentUser, TEAMS, constructionName)
+                                }
 
-                            uiState.message != null -> {
-                                toastMessage(uiState.message.toString())
-                                binding.progressBar.hide()
+                                uiState.message != null -> {
+                                    binding.cvWhiteBackground.show()
+                                    binding.cvTop.show()
+                                    toastMessage(uiState.message.toString())
+                                    binding.progressBar.hide()
+                                }
                             }
                         }
                     }
@@ -89,6 +102,32 @@ class CreateAreaFragment : Fragment() {
             }
         }
     }
+
+    private fun getOtherLoc() {
+        lifecycleScope.launch {
+            viewModel.getOtherItemState.collect { getOtherItemState ->
+                when {
+                    getOtherItemState.loading -> {
+                        binding.cvWhiteBackground.hide()
+                        binding.cvTop.hide()
+                        binding.progressBar.show()
+                    }
+
+                    getOtherItemState.resultList != null -> {
+                        binding.cvWhiteBackground.show()
+                        binding.cvTop.show()
+                        list = getOtherItemState.resultList
+                        val constructionAreasList: List<String>? =
+                            list?.flatMap { it.constructionAreas }?.toList()
+                        stringList = constructionAreasList
+
+                    }
+                }
+
+            }
+        }
+    }
+
 
     private fun toastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -106,6 +145,7 @@ class CreateAreaFragment : Fragment() {
             findNavController().navigate(R.id.action_createAreaFragment_to_passwordFragment)
         }
     }
+
     private fun createDataModel(constructionName: String): DataModel {
 
         val currentUser = viewModel.currentUser?.uid.toString()
@@ -120,6 +160,7 @@ class CreateAreaFragment : Fragment() {
             constructionArea = constructionName
         )
     }
+
     private fun infAlert() {
         AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
             .setTitle("Şantiye bilgilerini doldurun").setCancelable(false)

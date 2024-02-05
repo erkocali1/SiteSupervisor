@@ -43,6 +43,7 @@
 
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_whiteBackground"
         android:layout_width="match_parent"
         android:layout_height="280sp"
         android:layout_marginStart="45sp"
@@ -129,5 +130,44 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="invisible" />
+
+    <ImageView
+        android:padding="8sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/empty_iv"
+        android:layout_marginTop="80sp"
+        android:visibility="gone"
+        android:src="@drawable/scat"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"/>
+
+    <TextView
+        android:padding="24sp"
+        android:id="@+id/empty_list_text"
+        style="@style/montserrat_semi_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14sp"
+        android:text="Görüntülenecek Şantiye Yok Lütfen Yeni Bir Tane Oluşturun"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/empty_iv" />
+
+    <Button
+        android:id="@+id/btnNavigate"
+        android:layout_width="150sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24sp"
+        android:backgroundTint="@color/logButton"
+        android:text="Yeni Oluştur"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/empty_list_text" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

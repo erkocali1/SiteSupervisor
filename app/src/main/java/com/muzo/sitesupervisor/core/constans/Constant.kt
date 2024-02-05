@@ -5,6 +5,8 @@ class Constants {
     companion object {
 
         const val REQUEST_CODE_LOCATION_PERMISSION = 0
+        const val REQUEST_CODE_PDF_PERMISSION  = 1
+
 
         const val ERROR_MESSAGE = "Registration failed"
         const val OK_MESSAGE = "Your application is okey"
