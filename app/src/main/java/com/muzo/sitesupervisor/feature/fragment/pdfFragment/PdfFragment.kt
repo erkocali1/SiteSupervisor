@@ -1,5 +1,6 @@
 package com.muzo.sitesupervisor.feature.fragment.pdfFragment
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
@@ -58,7 +59,7 @@ class PdfFragment : Fragment() {
         viewModel.getAllData(siteSupervisor, constructionArea)
         observeData()
         binding.btn.setOnClickListener {
-            generatePdfFromList(list)
+            showDeleteConfirmationDialog()
         }
     }
 
@@ -147,6 +148,20 @@ class PdfFragment : Fragment() {
 
     private fun toastMessage(message: String, context: Context) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Şantiye Çıktılarını Al")
+        builder.setMessage("Şantiye çıktıları pdf olarak Dosyalarım/İndirilenler klasörüne dosya adı bugünün tarihi olucak şekilde eklenicektir.Onaylıyor musunuz?")
+        builder.setPositiveButton("Evet") { dialog, _ ->
+            generatePdfFromList(list)
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Hayır") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 }
 

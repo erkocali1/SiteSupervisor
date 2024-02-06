@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.muzo.sitesupervisor.core.common.await
 import com.muzo.sitesupervisor.core.data.model.DataModel
@@ -190,14 +191,16 @@ class FireBaseSourceImpl @Inject constructor(
 
             val postsSnapshot =
                 database.collection("Users").document(currentUser).collection("construcitonName")
-                    .document(constructionName).collection("posts").get().await()
+                    .document(constructionName).collection("posts")
+                    .orderBy("postId", Query.Direction.DESCENDING) // Order by postId in descending order
+                    .get().await()
 
             for (postDocument in postsSnapshot.documents) {
                 val data = postDocument.data
                 val message = data?.get("message") as? String ?: ""
                 val title = data?.get("title") as? String ?: ""
                 val photoUrl =
-                    data?.get("photoUrl") as? List<String> ?: listOf() // PhotoUrl artık liste
+                    data?.get("photoUrl") as? List<String> ?: listOf()
                 val day = data?.get("day") as? String ?: ""
                 val time = data?.get("time") as? String ?: ""
                 val id = data?.get("postId") as? Long ?: 0
@@ -222,6 +225,7 @@ class FireBaseSourceImpl @Inject constructor(
             dataModelList.toList()
         }
     }
+
 
 
     override suspend fun addImageToFirebaseStorage(
