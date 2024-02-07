@@ -120,15 +120,11 @@ class CreateAreaFragment : Fragment() {
                         val constructionAreasList: List<String>? =
                             list?.flatMap { it.constructionAreas }?.toList()
                         stringList = constructionAreasList
-
                     }
                 }
-
             }
         }
     }
-
-
     private fun toastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }

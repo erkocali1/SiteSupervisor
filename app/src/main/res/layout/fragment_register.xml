@@ -190,8 +190,8 @@
                             android:background="@null"
                             android:hint="Şifre"
                             android:inputType="textPassword"
-                            android:maxLines="1"
                             android:maxLength="20"
+                            android:maxLines="1"
                             android:textSize="16sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -246,9 +246,9 @@
                             android:layout_height="wrap_content"
                             android:background="@null"
                             android:hint="Şifre Onayla"
-                            android:maxLines="1"
                             android:inputType="textPassword"
                             android:maxLength="20"
+                            android:maxLines="1"
                             android:textSize="16sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -256,18 +256,48 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="40sp"
+                android:layout_height="40sp"
+                android:layout_marginTop="8sp"
+                app:layout_constraintTop_toBottomOf="@+id/cv_confirm_password"
+                app:layout_constraintStart_toStartOf="@id/cv_confirm_password"/>
+
+            <TextView
+                android:id="@+id/checkbox_text"
+                style="@style/montserrat_semi_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gizlilik sözleşmesini okudum onayladım."
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/checkbox"
+                app:layout_constraintTop_toTopOf="@+id/checkbox"
+                app:layout_constraintBottom_toBottomOf="@+id/checkbox"/>
+
+
 
             <Button
                 android:id="@+id/btnRegister"
                 android:layout_width="160sp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24sp"
+                android:layout_marginTop="12sp"
                 android:backgroundTint="@color/logButton"
                 android:text="Kayıt Ol"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cv_confirm_password" />
+                app:layout_constraintTop_toBottomOf="@id/checkbox" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                app:layout_constraintStart_toStartOf="@+id/checkbox_text"
+                app:layout_constraintEnd_toEndOf="@+id/checkbox_text"
+                app:layout_constraintTop_toBottomOf="@+id/checkbox_text"/>
+
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

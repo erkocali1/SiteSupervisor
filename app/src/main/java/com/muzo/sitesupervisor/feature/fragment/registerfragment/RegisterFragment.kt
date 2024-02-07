@@ -2,6 +2,7 @@ package com.muzo.sitesupervisor.feature.fragment.registerfragment
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,11 @@ import com.muzo.sitesupervisor.core.common.hide
 import com.muzo.sitesupervisor.core.common.show
 import com.muzo.sitesupervisor.core.data.model.UserInfo
 import com.muzo.sitesupervisor.databinding.FragmentRegisterBinding
+import com.thecode.aestheticdialogs.AestheticDialog
+import com.thecode.aestheticdialogs.DialogAnimation
+import com.thecode.aestheticdialogs.DialogStyle
+import com.thecode.aestheticdialogs.DialogType
+import com.thecode.aestheticdialogs.OnDialogClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,6 +42,7 @@ class RegisterFragment : Fragment() {
 
         observeData()
         clickEvent()
+        infAlert()
         return binding.root
     }
 
@@ -53,7 +60,6 @@ class RegisterFragment : Fragment() {
                         toastMessage("Kayıt İşlemi Başarılı bir şekilde Tamamlandı.")
                         navigateFragment()
                     }
-
                     else -> {}
                 }
             }
@@ -61,27 +67,38 @@ class RegisterFragment : Fragment() {
     }
 
     private fun clickEvent() {
+        binding.checkboxText.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_vebViewFragment)
+        }
+
+
+
         binding.btnRegister.setOnClickListener {
             val nameText = binding.etUserName.text.toString()
             val email = binding.etMail.text.toString()
             val password = binding.etPassword.text.toString()
             val confirmPassword = binding.etConfirmPassword.text.toString()
+            val checkBoxChecked = binding.checkbox.isChecked
 
             if (nameText.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
                 if (confirmPassword == password) {
-                    name = nameText
-                    viewModel.signUp(nameText, email, password)
+                    if (checkBoxChecked) {
+                        name = nameText
+                        viewModel.signUp(nameText, email, password)
+                    } else {
+                        toastMessage("Lütfen Gizlilik Sözleşmesini Onaylayın")
+                        findNavController().navigate(R.id.action_registerFragment_to_vebViewFragment)
 
+                    }
                 } else {
                     toastMessage("Şifre Eşleşmiyor")
                 }
-
             } else {
                 toastMessage("Boş Alanları Doldurunuz")
             }
-
         }
     }
+
 
     private fun getInfo(fireBaseUser: FirebaseUser) {
         val mail = fireBaseUser.email
@@ -101,6 +118,19 @@ class RegisterFragment : Fragment() {
 
     private fun toastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun infAlert() {
+        AestheticDialog.Builder(requireActivity(), DialogStyle.FLAT, DialogType.INFO)
+            .setTitle("Kayıt İşlemi").setCancelable(false)
+            .setMessage("Lütfen kayıt olmak için gerekli bilgileri doldurun ayrıca devam etmek için gizlilik sözleşmesini okuyun ve onaylayın.")
+            .setDarkMode(false).setGravity(Gravity.CENTER).setAnimation(DialogAnimation.DEFAULT)
+            .setOnClickListener(object : OnDialogClickListener {
+                override fun onClick(dialog: AestheticDialog.Builder) {
+                    dialog.dismiss()
+                    //actions...
+                }
+            }).show()
     }
 
 }

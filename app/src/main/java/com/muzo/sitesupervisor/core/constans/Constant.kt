@@ -9,6 +9,7 @@ class Constants {
 
 
         const val ERROR_MESSAGE = "Registration failed"
+        const val URL = "https://sites.google.com/view/santiye-takip-privacy-policy/ana-sayfa"
         const val OK_MESSAGE = "Your application is okey"
         const val DATABASE_NAME = "news_db"
         const val PREF_NAME = "login_event"

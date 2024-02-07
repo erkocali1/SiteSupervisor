@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_registerFragment_to_selectionFragment"
             app:destination="@id/selectionFragment" />
+        <action
+            android:id="@+id/action_registerFragment_to_vebViewFragment"
+            app:destination="@id/vebViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/selectionFragment"
@@ -268,6 +271,15 @@
         <action
             android:id="@+id/action_deleteAreaFragment_to_selectionFragment"
             app:destination="@id/selectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/vebViewFragment"
+        android:name="com.muzo.sitesupervisor.feature.fragment.webView.VebViewFragment"
+        android:label="fragment_veb_view"
+        tools:layout="@layout/fragment_veb_view" >
+        <action
+            android:id="@+id/action_vebViewFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
     </fragment>
 
 

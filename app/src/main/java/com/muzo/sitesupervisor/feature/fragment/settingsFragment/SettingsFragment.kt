@@ -1,6 +1,7 @@
 package com.muzo.sitesupervisor.feature.fragment.settingsFragment
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -67,19 +68,48 @@ class SettingsFragment : Fragment() {
     }
 
     private fun locationEvent() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             toastMessage("Konum İzini Alındı.", requireContext())
             findNavController().navigate(R.id.action_settingsFragment_to_locationFragment)
             // Konum bilgisini kullanma kodu buraya gelecek
         } else {
             // Konum izni verilmemişse izin isteyin
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+            showLocationPermissionDialog()
+        }
+    }
+
+    private fun showLocationPermissionDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Konum İzni")
+        builder.setMessage("'Şantiye Takip' uygulamasında şantiye konumunu görüntülemek ve şantiye konumuna gidebilmek için konum izni gereklidir.")
+        builder.setPositiveButton("İzin Ver") { _, _ ->
+            // Kullanıcı izin verdi, izin iste
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 REQUEST_CODE_LOCATION_PERMISSION
             )
         }
+        builder.setNegativeButton("İptal") { _, _ ->
+            // Kullanıcı izin vermedi, iptal et
+            Toast.makeText(requireContext(), "Konum izni verilmedi", Toast.LENGTH_SHORT).show()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
+
+
 
     private fun clickEvents() {
         binding.cvLocation.setOnClickListener {
