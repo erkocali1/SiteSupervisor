@@ -89,7 +89,7 @@ class SettingsFragment : Fragment() {
     private fun showLocationPermissionDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Konum İzni")
-        builder.setMessage("'Şantiye Takip' uygulamasında şantiye konumunu görüntülemek ve şantiye konumuna gidebilmek için konum izni gereklidir.")
+        builder.setMessage("'Şantiye Takip' uygulamasında şantiye konumunu görüntülemek ve şantiye konumuna gidebilmek için konum izni gereklidir.Ayrıca şantiye konumu haricinde hiç bir konum bilgisi kaydedilmez veya gösterilmez.")
         builder.setPositiveButton("İzin Ver") { _, _ ->
             // Kullanıcı izin verdi, izin iste
             ActivityCompat.requestPermissions(
