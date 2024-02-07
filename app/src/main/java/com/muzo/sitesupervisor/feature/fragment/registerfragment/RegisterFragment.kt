@@ -113,7 +113,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun navigateFragment() {
-        findNavController().navigate(R.id.action_registerFragment_to_selectionFragment)
+        findNavController().navigate(R.id.selectionFragment)
     }
 
     private fun toastMessage(message: String) {
