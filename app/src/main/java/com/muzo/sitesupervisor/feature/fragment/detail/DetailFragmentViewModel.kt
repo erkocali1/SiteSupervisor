@@ -37,8 +37,6 @@ class DetailFragmentViewModel @Inject constructor(
     private val localPostRepository: LocalPostRepository,
     private val addImageToFirebaseStorageUseCase: AddImageToFirebaseStorageUseCase,
     private val dataStore: MyDataStore,
-    private val getDataFromRoomUseCase: GetDataFromRoomUseCase,
-    private val getImageUrlFromFireStoreUseCase: GetImageUrlFromFireStoreUseCase,
     private val getDataUseCase: GetDataUseCase,
     private val deletePostUseCase:DeletePostUseCase
 ) : ViewModel() {

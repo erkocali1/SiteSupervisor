@@ -1,18 +1,18 @@
-package com.muzo.sitesupervisor.feature.adapters.listingimageadapter
+package com.muzo.sitesupervisor.feature.adapters.smallAdapter
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.databinding.ItemImageBinding
+import com.muzo.sitesupervisor.databinding.SmallItemImageBinding
 
 
-class ListingImageAdapter(private val list: List<String>?,val onClick: (item: String) -> Unit) :
-    RecyclerView.Adapter<ListingImageAdapter.ViewHolder>() {
+class SmallAdapter(private val list: List<String>?,val onClick: (item: String) -> Unit) :
+    RecyclerView.Adapter<SmallAdapter.ViewHolder>() {
 
-    inner class ViewHolder(private val binding: ItemImageBinding) :
+    inner class ViewHolder(private val binding: SmallItemImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: String) {
@@ -29,7 +29,7 @@ class ListingImageAdapter(private val list: List<String>?,val onClick: (item: St
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = SmallItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -44,6 +44,3 @@ class ListingImageAdapter(private val list: List<String>?,val onClick: (item: St
         return list?.size ?: 0
     }
 }
-
-
-

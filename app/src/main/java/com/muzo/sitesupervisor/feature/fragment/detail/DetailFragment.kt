@@ -250,6 +250,7 @@ class DetailFragment : Fragment() {
     private fun getData() {
         val receivedData = arguments?.getLong("id")
         checkout = lifecycleScope.launch {
+            Log.d("receivedData",receivedData.toString())
             viewModel.getData(siteSupervisor, constructionArea, receivedData.toString())
             viewModel.uiState.collect { uiState ->
                 when {
@@ -273,6 +274,7 @@ class DetailFragment : Fragment() {
     private fun bind(item: DataModel) {
 
         stringList = item.photoUrl
+        Log.d("resimDetail",stringList.toString())
         adapterImage = ListingImageAdapter(stringList) {
             navigateToBigPhotoFragment(it)
         }

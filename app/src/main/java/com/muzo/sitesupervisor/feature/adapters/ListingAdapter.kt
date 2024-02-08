@@ -10,6 +10,7 @@ import com.muzo.sitesupervisor.core.data.model.DataModel
 import com.muzo.sitesupervisor.core.data.model.DateTimeDetails
 import com.muzo.sitesupervisor.databinding.ItemRowBinding
 import com.muzo.sitesupervisor.feature.adapters.listingimageadapter.ListingImageAdapter
+import com.muzo.sitesupervisor.feature.adapters.smallAdapter.SmallAdapter
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -40,7 +41,7 @@ class ListingAdapter(private val list: List<DataModel>, val onClick: (item: Data
                 val layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
                 innerRecyclerView.layoutManager = layoutManager
-                val adapter = ListingImageAdapter(item.photoUrl) {}
+                val adapter = SmallAdapter(item.photoUrl) {}
                 innerRecyclerView.adapter = adapter
 
                 root.setOnClickListener {

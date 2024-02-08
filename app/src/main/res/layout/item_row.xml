@@ -116,7 +116,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:padding="8sp">
+                android:padding="4sp">
 
 
                 <TextView
@@ -151,12 +151,12 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/iv_rv"
                     android:layout_width="match_parent"
-                    android:layout_height="60sp"
+                    android:layout_height="70sp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:listitem="@layout/item_photo" />
+                    tools:listitem="@layout/small_item_image" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

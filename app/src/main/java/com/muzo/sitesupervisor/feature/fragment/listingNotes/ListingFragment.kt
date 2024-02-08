@@ -76,6 +76,7 @@ class ListingFragment : Fragment() {
                 putParcelable("dataList", postList)
                 putString("from", "recyclerview")
                 putLong("id", data.id!!)
+                Log.d("resim",data.id.toString())
             }
             findNavController().navigate(R.id.action_listingFragment_to_detailFragment, bundle)
         }
