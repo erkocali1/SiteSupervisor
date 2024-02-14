@@ -85,6 +85,9 @@ Geliştirdiğim "Şantiye Takip" uygulaması, inşaat sektöründeki proje yöne
     </td>
   </tr>
 </table>
+<a href="https://play.google.com/store/apps/details?id=com.muzo.sitesupervisor">
+ <img src="https://github.com/erkocali1/SiteSupervisor/assets/116030125/15958210-f270-4bcf-aef8-d8edd542fec2" alt="Resim 1" width="300" height="100" style="margin-bottom: 10px;">
+</a>
 <h1 align="center">English</h1>
 <h3 align="center">Site Tracking: Control Center for Your Construction Projects</h3>
 
