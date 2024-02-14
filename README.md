@@ -125,4 +125,7 @@ The "Site Tracking" application offers a user-friendly interface to efficiently 
 The Site Tracking application is an ideal solution for those seeking to alleviate daily challenges in the construction sector and manage projects with increased transparency. Explore the "Site Tracking" application today to enhance the efficiency of your project management!
 
 
+<a href="https://play.google.com/store/apps/details?id=com.muzo.sitesupervisor">
+ <img src="https://github.com/erkocali1/SiteSupervisor/assets/116030125/15958210-f270-4bcf-aef8-d8edd542fec2" alt="Resim 1" width="300" height="100" style="margin-bottom: 10px;">
+</a>
 
